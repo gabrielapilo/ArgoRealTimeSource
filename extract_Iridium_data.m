@@ -13,8 +13,20 @@ idatapath = ARGO_SYS_PARAM.iridium_path;
 
 % system(['cp -f *.000.* /home/ftp/pub/gronell/iridium_data'])
 
-% code for BOM retrieve iridium files
-BOM_retrieve_Iridium
+% code for BOM retrieve iridium files, and CSIRO to put iridium files in.
+% Does nothing if the ARGO_SYS_PARAM.processor is not set or does not have
+% 'CSIRO' or 'BOM' in the field.
+try
+    BOM_retrieve_Iridium
+catch Me
+    logerr(5,'error in iridium ftp transfer')
+    logerr(5,['Message: ' Me.message ])
+    for jk = 1:length(Me.stack)
+        logerr(5,Me.stack(jk).file)
+        logerr(5,['Line: ' num2str(Me.stack(jk).line)])
+    end
+end
+
 if ispc
 system(['mv -f *.000.* ' ARGO_SYS_PARAM.iridium_path 'iridium_processed\000files'])
 else
@@ -313,7 +325,9 @@ if(m>0)
         
     end
    % code for BOM send ftp done message to CSIRO
-    BOM_send_iridium_notify
+   % Now the BOM will move the files after doing a mget in
+   % BOM_retrieve_Iridium (above). Do both for short term
+     BOM_send_iridium_notify
     
 end
 

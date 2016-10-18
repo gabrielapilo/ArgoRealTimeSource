@@ -585,8 +585,9 @@ end
 report_iridium_here=1
 
 %first, delete them from the ftp area if already grabbed by BOM
+%Now done by BOM, we just copy over new files.
 % if ~opts.redo
-    remove_BOM_ftp
+     remove_BOM_ftp
 % end
 extract_Iridium_data
 
