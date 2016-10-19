@@ -1010,7 +1010,7 @@ if isfield(fpp,'Tilt')
 end
 
 netcdf.putVar(ncid,NPARAID,[0,0],[4,1],'TEMP');
-netcdf.putVar(ncid,NPARAID,[0,1],[4,1],'CNDC');
+netcdf.putVar(ncid,NPARAID,[0,1],[4,1],'PSAL');
 netcdf.putVar(ncid,NPARAID,[0,2],[4,1],'PRES');
 
 netcdf.putVar(ncid,NPARSENSID,[0,0],[8,1],'CTD_TEMP');
@@ -1024,7 +1024,7 @@ netcdf.putVar(ncid,NPARACCID,[0,0],[length(aa),1],aa);
 aa= num2str(caldb.temp_res);
 netcdf.putVar(ncid,NPARRESID,[0,0],[length(aa),1],aa);
 
-netcdf.putVar(ncid,NPARUNITID,[0,1],[13,1],'Siemens/meter');
+netcdf.putVar(ncid,NPARUNITID,[0,1],[13,1],'psu');
 aa=num2str(caldb.cond_acc);
 netcdf.putVar(ncid,NPARACCID,[0,1],[length(aa),1],aa);
 aa= num2str(caldb.cond_res);
