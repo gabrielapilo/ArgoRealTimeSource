@@ -32,15 +32,6 @@ if isfield(ARGO_SYS_PARAM,'processor')
     eval(['cd ' ARGO_SYS_PARAM.iridium_path]);
     % Check for the data processor information - set in set_argo_sys_params.m
     if ~isempty(strfind(ARGO_SYS_PARAM.processor,'CSIRO'))
-        %keep the old system going until we are certain the other is
-        %working
-        system(['cp -f *.000.* /home/ftp/pub/gronell/iridium_data'])
-        system(['cp -f *.log /home/ftp/pub/gronell/iridium_data'])
-        system(['cp -f *.msg /home/ftp/pub/gronell/iridium_data'])
-        system(['cp -f *.isus /home/ftp/pub/gronell/iridium_data'])
-        system(['chmod -f 666 /home/ftp/pub/gronell/iridium_data/*'])
-
-        %update to use the new ftp area dedicated for argo:
         % CSIRO copies the data to the FTP
         ftp_conn = ftp(ARGO_SYS_PARAM.ftp.ftp,ARGO_SYS_PARAM.ftp.name,ARGO_SYS_PARAM.ftp.pswd);
         cd(ftp_conn,'iridium_data');
@@ -49,14 +40,7 @@ if isfield(ARGO_SYS_PARAM,'processor')
         mput(ftp_conn,'*.msg')
         mput(ftp_conn,'*.isus')
         close(ftp_conn);
-    elseif ~isempty(strfind(ARGO_SYS_PARAM.processor,'BOM'))
-    %____________________________________________________________    
-        %keep the old system going until we are certain the other is
-        %working.
-        % Lisa: COMMENT THIS LINE OUT TO TEST THE NEW SYSTEM
-         system([ARGO_SYS_PARAM.root_dir 'src/retrieveIRIDIUM'])
-    %____________________________________________________________    
-        
+    elseif ~isempty(strfind(ARGO_SYS_PARAM.processor,'BOM'))        
         %BOM are retrieving the data from the FTP
         ftp_conn = ftp(ARGO_SYS_PARAM.ftp.ftp,ARGO_SYS_PARAM.ftp.name,ARGO_SYS_PARAM.ftp.pswd);
         cd(ftp_conn,'iridium_data');
