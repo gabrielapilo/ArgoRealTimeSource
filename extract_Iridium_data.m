@@ -11,8 +11,6 @@ jnow = julian(clock);      % Local time - now
 eval(['cd ' ARGO_SYS_PARAM.iridium_path]);
 idatapath = ARGO_SYS_PARAM.iridium_path;
 
-% system(['cp -f *.000.* /home/ftp/pub/gronell/iridium_data'])
-
 % code for BOM retrieve iridium files, and CSIRO to put iridium files in.
 % Does nothing if the ARGO_SYS_PARAM.processor is not set or does not have
 % 'CSIRO' or 'BOM' in the field.
@@ -48,7 +46,6 @@ for j=1:m
     if (a{j,5} == 0)
         % mail out error
         mail_out_iridium_log_error([a{j,1}],2)
-        %         system(['cp -f ' a{j,1} ' ' ARGO_SYS_PARAM.iridium_path '/iridium_bad_files'])
     end
 end
 
@@ -66,28 +63,28 @@ aa = aa(:,1:end-3);
 
 for i = 1:size(aa,1)
     if ismember(aa(i,:),nn,'rows') == 0
+        % find_rudics_file will only look for files on server if processor
+        % is CSIRO.
         found=find_rudics_file(a{i,1});
         if ~found
             mail_out_iridium_log_error([a{i,1}],1);
-        end
-        %             system(['cp -f ' a{i,1} ' ' ARGO_SYS_PARAM.iridium_path '/iridium_bad_files']);
-        try
-            %                 system(['cp -f ' ARGO_SYS_PARAM.iridium_path '/iridium_bad_files/' aa(i,:) 'msg '...
-            %                     ARGO_SYS_PARAM.iridium_path]);
+        else
+            %need to transfer to ftp (only works if CSIRO is processor)
+            BOM_retrieve_Iridium
         end
     end
 end
 for i = 1:size(bb,1)
     if ismember(bb(i,:),nn,'rows') == 0
+        % find_rudics_file will only look for files on server if processor
+        % is CSIRO.
         found=find_rudics_file(b{i,1});
         if ~found
             mail_out_iridium_log_error([b{i,1}],1);
+        else
+            %need to transfer to ftp (only works if CSIRO is processor)
+            BOM_retrieve_Iridium
         end
-        %             system(['cp -f ' b{i,1} ' ' ARGO_SYS_PARAM.iridium_path '/iridium_bad_files']);
-    end
-    try
-        %                 system(['cp -f ' ARGO_SYS_PARAM.iridium_path '/iridium_bad_files/' aa(i,:) 'log '...
-        %                     ARGO_SYS_PARAM.iridium_path]);
     end
 end
 
@@ -327,7 +324,7 @@ if(m>0)
    % code for BOM send ftp done message to CSIRO
    % Now the BOM will move the files after doing a mget in
    % BOM_retrieve_Iridium (above). Do both for short term
-     BOM_send_iridium_notify
+%      BOM_send_iridium_notify
     
 end
 
