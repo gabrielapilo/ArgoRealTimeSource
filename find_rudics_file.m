@@ -15,6 +15,7 @@
 function [found]=find_rudics_file(filen)
 
 global ARGO_SYS_PARAM ARGO_ID_CROSSREF
+found = [];
 if isfield(ARGO_SYS_PARAM,'processor')
     
     % Check for the data processor information - set in set_argo_sys_params.m
@@ -52,7 +53,7 @@ if isfield(ARGO_SYS_PARAM,'processor')
             d=dirc(lookhere{i});
             if ~isempty(d)
                 if d{5}~=0
-                    dd=['system ' '''cp ' lookhere{i} ' ' ARGO_SYS_PARAM.iridium_path];
+                    dd=['system ' '''cp ' lookhere{i} ' ' ARGO_SYS_PARAM.iridium_path ''''];
                     eval(dd);
                     found=1;
                     return
