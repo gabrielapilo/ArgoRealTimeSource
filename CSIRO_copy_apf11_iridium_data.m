@@ -14,7 +14,8 @@ if isfield(ARGO_SYS_PARAM,'processor')
         close(ts);
         
         % now cleanup the original directories on rudics-server-hf:
-        system(['mv /rudics-server-hf/f' num2str(dbdat.maker_id) '/' fn '* /rudics-server-hf/f' num2str(dbdat.maker_id) '/backup'])
+        system(['mv ' ARGO_SYS_PARAM.rudics_server '/f' num2str(dbdat.maker_id) '/' fn '* ' ...
+            ARGO_SYS_PARAM.rudics_server '/f' num2str(dbdat.maker_id) '/backup'])
         
     end
 end
