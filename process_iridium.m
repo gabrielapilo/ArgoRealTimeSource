@@ -1455,6 +1455,8 @@ end
             end
             
             traj = load_traj_apex_iridium(traj,pmeta,np,dbdat,float);
+            %save the updated traj file:
+            save(tfnm,'traj');
             trajectory_iridium_nc(dbdat,float,traj);
         end
     end
