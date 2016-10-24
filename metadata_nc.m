@@ -1024,7 +1024,7 @@ netcdf.putVar(ncid,NPARACCID,[0,0],[length(aa),1],aa);
 aa= num2str(caldb.temp_res);
 netcdf.putVar(ncid,NPARRESID,[0,0],[length(aa),1],aa);
 
-netcdf.putVar(ncid,NPARUNITID,[0,1],[13,1],'psu');
+netcdf.putVar(ncid,NPARUNITID,[0,1],[3,1],'psu');
 aa=num2str(caldb.cond_acc);
 netcdf.putVar(ncid,NPARACCID,[0,1],[length(aa),1],aa);
 aa= num2str(caldb.cond_res);
