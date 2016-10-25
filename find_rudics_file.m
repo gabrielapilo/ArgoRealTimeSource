@@ -15,7 +15,7 @@
 function [found]=find_rudics_file(filen)
 
 global ARGO_SYS_PARAM ARGO_ID_CROSSREF
-found = [];
+found = 0;
 if isfield(ARGO_SYS_PARAM,'processor')
     
     % Check for the data processor information - set in set_argo_sys_params.m
@@ -45,15 +45,16 @@ if isfield(ARGO_SYS_PARAM,'processor')
         
         lookhere{1} = [ARGO_SYS_PARAM.rudics_server '/f' num2str(aic(kk,5)) '/datafiles/' nfilen];
         lookhere{2} = [ARGO_SYS_PARAM.rudics_server '/f' num2str(aic(kk,5)) '/badfiles/' nfilen];
-        lookhere{3} = [ARGO_SYS_PARAM.secondary_server '/f' num2str(aic(kk,5)) '/datafiles/' nfilen];
-        lookhere{4} = [ARGO_SYS_PARAM.secondary_server '/f' num2str(aic(kk,5)) '/badfiles/' nfilen];
-        lookhere{5} = [ARGO_SYS_PARAM.secondary_server '/f' num2str(aic(kk,5)) '/' nfilen];
+        lookhere{3} = [ARGO_SYS_PARAM.rudics_server '/f' num2str(aic(kk,5)) '/' nfilen];
+        lookhere{4} = [ARGO_SYS_PARAM.secondary_server '/f' num2str(aic(kk,5)) '/datafiles/' nfilen];
+        lookhere{5} = [ARGO_SYS_PARAM.secondary_server '/f' num2str(aic(kk,5)) '/badfiles/' nfilen];
+        lookhere{6} = [ARGO_SYS_PARAM.secondary_server '/f' num2str(aic(kk,5)) '/' nfilen];
         
-        for i=1:5
+        for i=1:6
             d=dirc(lookhere{i});
             if ~isempty(d)
                 if d{5}~=0
-                    dd=['system ' '''cp ' lookhere{i} ' ' ARGO_SYS_PARAM.iridium_path ''''];
+                    dd=['system ' '''scp ' lookhere{i} ' ' ARGO_SYS_PARAM.iridium_path ''''];
                     eval(dd);
                     found=1;
                     return
