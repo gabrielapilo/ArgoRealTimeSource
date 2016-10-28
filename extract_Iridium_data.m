@@ -15,7 +15,7 @@ idatapath = ARGO_SYS_PARAM.iridium_path;
 % Does nothing if the ARGO_SYS_PARAM.processor is not set or does not have
 % 'CSIRO' or 'BOM' in the field.
 try
-    BOM_retrieve_Iridium
+     BOM_retrieve_Iridium
 catch Me
     logerr(5,'error in iridium ftp transfer')
     logerr(5,['Message: ' Me.message ])
@@ -100,35 +100,6 @@ aa = char(a{:,1});
 aa = aa(:,1:end-3);
 [nn,ia,ib] = intersect(aa,bb,'rows');
 
-%now check remaining files for truncated messages, if they are there,
-%send message and move file to iridium_bad_files - Bec 22 Oct 2010
-for i = 1:length(ia)
-    dat = textread(a{ia(i)},'%s','delimiter','\n');
-    if(~isempty(dat))
-        if isempty(strmatch('<EOT>',char(dat{end})))
-            %no end of file marker
-            mail_out_iridium_log_error([a{ia(i),1}],1);
-            %                 crash2=1;
-            %                 system(['cp -f ' a{ia(i),1} ' ' ARGO_SYS_PARAM.iridium_path '/iridium_bad_files']);
-        end
-    end
-end
-for i = 1:length(ib)
-    if (exist(b{ib(i)},'file'))
-        fid = fopen(b{ib(i)});
-        
-        dat = textscan(fid,'%s','delimiter','\n');
-        fclose(fid);
-        %         dat = textread(b{ib(i)},'%s','delimiter','\n');
-        if ~isempty(dat)
-            if  isempty(strmatch('<EOT>',char(dat{end})));
-                %no end of file marker
-                mail_out_iridium_log_error([b{ib(i),1}],1);
-                %                 system(['cp -f ' b{ib(i),1} ' ' ARGO_SYS_PARAM.iridium_path '/iridium_bad_files']);
-            end
-        end
-    end
-end
 
 % a=[a
 %     b]
