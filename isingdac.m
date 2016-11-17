@@ -17,8 +17,17 @@
 % USAGE: dstat = isingdac(fnms);
 
 function dstat = isingdac(fnms)
-
+global ARGO_SYS_PARAM
 persistent file_type profile_number wmo_id file_name
+
+if ~isfield(ARGO_SYS_PARAM,'processor')
+    dstat = 1;
+    return
+end
+if isempty(strfind(ARGO_SYS_PARAM.processor,'CSIRO'))
+    dstat = 1;
+    return
+end
 
 if isempty(file_type)
    disp('Loading GDAC list')
