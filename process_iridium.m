@@ -130,6 +130,7 @@ if(np==0);return;end
 
 stage = 1;
 pro = new_profile_struct(dbdat);
+cal_rep = zeros(1,6);
 
 
 if ~exist([fnm '.mat'],'file')
@@ -256,10 +257,10 @@ end
     gg=fgetl(fid);
     %first lines are park data:
     
-    while isempty(strmatch('Park',gg)) & isempty(strmatch('$ Profile',gg))
+    while isempty(strmatch('Park',gg)) & isempty(strmatch('$ Profile',gg)) & gg ~= -1
         gg=fgetl(fid);
     end
-    while ~isempty(strmatch('Park',gg))
+    while ~isempty(strmatch('Park',gg)) & gg ~= -1
         j=j+1;
 %         if strmatch('ParkPts',gg);ll=12;dd=53;end
 %         if strmatch('ParkObs',gg);ll=9;dd=32;end
@@ -307,39 +308,40 @@ end
     
     %the next line is the profile end time: check you have the
     %right line, then check that the date is sensible
-    if(~isempty(strmatch('$ Profile',gg)))  % note - this appears to be identical for all formats
-        jday_ascent_end= julian(datevec(gg(36:end)));
-        jdays = jday_ascent_end;
-        dt_min = [1997 1 1 0 0 0];
-        dt_max = [datestr(now+3,31)];
-        kk=strfind(dt_max,'-');
-        dt_max(kk)=' ';
-        kk=strfind(dt_max,':');
-        
-        dt_max=[str2num(dt_max(1:4)) 12 31 23 59 59];
-        dt_maxj=julian(dt_max);
-        dt_minj=julian(dt_min);
-        
-        head=gregorian(jdays);
-        if any(head(1:6)<dt_min) || any(head(1:6)>dt_max)
-            logerr(2,['Implausible date/time components: ' num2str(head(1:6))]);
-            jdays = NaN;
-        elseif jdays<dt_minj || jdays>dt_maxj
-            logerr(2,['Implausible date/time components: ' num2str(head(1:6))]);
-            jdays = NaN;
+    if gg ~= -1
+        if(~isempty(strmatch('$ Profile',gg)))   % note - this appears to be identical for all formats
+            jday_ascent_end= julian(datevec(gg(36:end)));
+            jdays = jday_ascent_end;
+            dt_min = [1997 1 1 0 0 0];
+            dt_max = [datestr(now+3,31)];
+            kk=strfind(dt_max,'-');
+            dt_max(kk)=' ';
+            kk=strfind(dt_max,':');
+            
+            dt_max=[str2num(dt_max(1:4)) 12 31 23 59 59];
+            dt_maxj=julian(dt_max);
+            dt_minj=julian(dt_min);
+            
+            head=gregorian(jdays);
+            if any(head(1:6)<dt_min) || any(head(1:6)>dt_max)
+                logerr(2,['Implausible date/time components: ' num2str(head(1:6))]);
+                jdays = NaN;
+            elseif jdays<dt_minj || jdays>dt_maxj
+                logerr(2,['Implausible date/time components: ' num2str(head(1:6))]);
+                jdays = NaN;
+            end
+            gdhed = find(~isnan(jdays));
+            if isempty(gdhed)
+                logerr(1,'No usable date info');
+                return
+            end
+        else
+            logerr(3,['bad ascent end ' num2str(pmeta.wmo_id)]);
         end
-        gdhed = find(~isnan(jdays));
-        if isempty(gdhed)
-            logerr(1,'No usable date info');
-            return
-        end
-    else
-        logerr(3,['bad ascent end ' num2str(pmeta.wmo_id)]);
     end
-    
     l=0;
     gg=fgetl(fid);  %this contains the number of park samples
-    if(~isempty(strmatch('$ Discrete',gg)))
+    if(~isempty(strmatch('$ Discrete',gg))) & gg ~= -1
         p_samples=str2num(gg(20:end));
         gg=fgetl(fid); % contains header for park samples OR the number of oxygen profile samples (subtype 1006)
         for k=1:p_samples
@@ -584,27 +586,28 @@ end
     end
     
     gg=fgetl(fid);  %number of profile samples
-    
-    % just in case this is an under ice profile, store the date/time info now
-    % and it can be overwritten later...
     pro.npoints=0;
-    jj=strfind(gg,'NBin');
-    if(~isempty(jj))
-        gregdate=gg(3:22);
-        dd=datestr(datenum(gregdate),31);
-        pro.datetime_vec= [str2num(dd(1:4)) str2num(dd(6:7)) str2num(dd(9:10)) str2num(dd(12:13)) str2num(dd(15:16)) str2num(dd(18:19))];
-        pro.jday=jdays;
-        pro.jday_ascent_end=jdays;
-        pro.npoints=str2num(gg(jj+5:end-1));
-    elseif gg==-1
-        
-    else %use the data from the park termination as time
-        pro.datetime_vec=head;
-        pro.jday=jdays;
-        pro.jday_ascent_end=jdays;
+    if gg ~= -1
+        % just in case this is an under ice profile, store the date/time info now
+        % and it can be overwritten later...
+        jj=strfind(gg,'NBin');
+        if(~isempty(jj))
+            gregdate=gg(3:22);
+            dd=datestr(datenum(gregdate),31);
+            pro.datetime_vec= [str2num(dd(1:4)) str2num(dd(6:7)) str2num(dd(9:10)) str2num(dd(12:13)) str2num(dd(15:16)) str2num(dd(18:19))];
+            pro.jday=jdays;
+            pro.jday_ascent_end=jdays;
+            pro.npoints=str2num(gg(jj+5:end-1));
+        elseif gg==-1
+            
+        else %use the data from the park termination as time
+            pro.datetime_vec=head;
+            pro.jday=jdays;
+            pro.jday_ascent_end=jdays;
+        end
     end
-    
-    if(~isempty(jj) & gg~=-1)
+    if gg ~=-1
+    if(~isempty(jj))
         gg=fgetl(fid);  %start line
         j=pro.npoints+1;
         if dbdat.subtype==1007 | dbdat.subtype==1008 | dbdat.subtype==1009
@@ -848,6 +851,7 @@ end
             gg=fgetl(fid);
         end
     end
+    end
     
     yy=find(pro.p_raw==0 & pro.t_raw==0 & pro.s_raw==0);
     if ~isempty(yy)
@@ -879,7 +883,7 @@ end
      
     pro.npoints=length(pro.p_raw);
     
-    while(isempty(gg))
+    while(isempty(gg)& gg~=-1)
         %         if(~isempty(strfind(gg,'GPS fix failed')) | ~isempty(strfind(gg,'GPS fix not available')));
         gg=fgetl(fid);
         %             if (strmatch('# GPS fix',g2));
@@ -1043,7 +1047,7 @@ end
         
     % after finish loading profile, check for rollover and
     % assign fp to fpp(np)
-    if(length(float)>3)
+    if(length(float)>3 & ~isempty(pro.jday))
         np=profile_rollover(pro,float,dbdat);
     end
     
@@ -1375,7 +1379,6 @@ end
     prec.profile_number = float(np).profile_number;
     
     %still need to plot and further process float:
-    cal_rep = zeros(1,6);
     if(pro.npoints>0)  %do we have data?!
         float = calibrate_p(float,np);
         
