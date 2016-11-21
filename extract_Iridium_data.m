@@ -141,14 +141,14 @@ a=dirc([idatapath '*.msg']);
 
 [m,n]=size(a);
 
-for j=1:m
-    if (a{j,5} == 0)
-        % mail out error
-        a(j,:)=[];
-        m=m-1;
-        break
-    end
-end
+% for j=1:m REMOVE THIS AND KEEP ZERO LENGTH FILES IN PROCESSING.
+%     if (a{j,5} == 0)
+%         % mail out error
+%         a(j,:)=[];
+%         m=m-1;
+%         break
+%     end
+% end
 
 % isfloat=0;
 
