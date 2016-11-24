@@ -621,7 +621,7 @@ end
             gg=fgetl(fid);
         end
         
-        while(isempty(strmatch('#',gg)) & j>1 & gg~=-1 & isempty(strmatch('<EOT>',gg))...
+        while(isempty(strmatch('#',gg)) & j>0 & gg~=-1 & isempty(strmatch('<EOT>',gg))...
                 & isempty(strmatch('Res',gg)))  % GPS fix',gg)) & j>1 & gg~=-1)
             
             j=j-1;
@@ -661,7 +661,7 @@ end
             if gg == -1
                 break
             end
-            if ~(isempty(strmatch('#',gg)) & j>1 & isempty(strmatch('<EOT>',gg))...
+            if ~(isempty(strmatch('#',gg)) & j>0 & isempty(strmatch('<EOT>',gg))...
                 & isempty(strmatch('Res',gg)))
                break
             end
