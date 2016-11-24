@@ -70,9 +70,6 @@ if isempty(gotcyc)
    return
 end
 
-today_str = sprintf('%04d%02d%02d%02d%02d%02d',fix(clock));
-
-
 % Only P, T, S and conductivity are stored in Core-Argo traj files - all
 % other parameters are in the B-files. 
 % Parameters defined in User Manual Ref table 3
@@ -126,7 +123,7 @@ ncwriteschema(schema.Filename,schema);
 
 [st,today_str]=system(['date -u +%Y%m%d%H%M%S']);
 today_str=today_str(1:14);
-if isempty(dc)
+if isempty(str2num(dc))
     dc=today_str;
 end
 
@@ -141,6 +138,7 @@ else
     dn(20:27)='Z update';
 end
 dnt=[hist dn];
+ncwriteatt(schema.Filename,'/','history',dnt);
 
 
 % ---------now add data
