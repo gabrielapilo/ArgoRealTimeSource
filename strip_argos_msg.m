@@ -441,11 +441,21 @@ if isempty(strmatch(fnm,'iridium'))
 	    clear old_ptest  %so will check new profile agains itself, not the previous profile
 	    pos_test1 = [];
 	    pos_test2 = [];
-	    
-	    if ndat>0 && any(argosidlist==argosid)
-	       % Unless we have just started, process the previous profile
-	       npro = process_one(rawdat,heads,b1tim,pmeta,dbdat,opts,npro);
-	    end
+        
+        if ndat>0 && any(argosidlist==argosid)
+            try
+                % Unless we have just started, process the previous profile
+                npro = process_one(rawdat,heads,b1tim,pmeta,dbdat,opts,npro);
+            catch Me
+                mail_out_argos_log_error(fnm,dbdat.wmo_id)
+                logerr(5,['error in processing argos float - ' num2str(dbdat.wmo_id)])
+                logerr(5,['Message: ' Me.message ])
+                for jk = 1:length(Me.stack)
+                    logerr(5,Me.stack(jk).file)
+                    logerr(5,['Line: ' num2str(Me.stack(jk).line)])
+                end
+            end
+        end
 	    
 	    argosid = num;	 
 	    if length(num)~=1
@@ -551,8 +561,18 @@ if isempty(strmatch(fnm,'iridium'))
 
 
    if ndat>0 && any(argosidlist==argosid)
-      % Unless somehow there were no profiles found, process the last profile
-      npro = process_one(rawdat,heads,b1tim,pmeta,dbdat,opts,npro);
+       % Unless somehow there were no profiles found, process the last profile
+       try
+           npro = process_one(rawdat,heads,b1tim,pmeta,dbdat,opts,npro);
+       catch Me
+           mail_out_argos_log_error(fnm,dbdat.wmo_id)
+           logerr(5,['error in processing argos float - ' num2str(dbdat.wmo_id)])
+           logerr(5,['Message: ' Me.message ])
+           for jk = 1:length(Me.stack)
+               logerr(5,Me.stack(jk).file)
+               logerr(5,['Line: ' num2str(Me.stack(jk).line)])
+           end
+       end
    end
 
    % finished with argos delivery processing - 
@@ -640,13 +660,15 @@ ARGO_RPT_FID = fclose(ARGO_RPT_FID);
 mail_out_ArgoRT_report
 
 web_database
-% and regenerate the tech pages:
-% do for each column
-UpdateTechIndexPage('HULLID')
-UpdateTechIndexPage('DEPORDER')
-UpdateTechIndexPage('WMOID')
-UpdateTechIndexPage('ARGOSID')
 
+if ~isempty(strmatch(ARGO_SYS_PARAM.processor,'CSIRO'))
+    % and regenerate the tech pages:
+    % do for each column
+    UpdateTechIndexPage('HULLID')
+    UpdateTechIndexPage('DEPORDER')
+    UpdateTechIndexPage('WMOID')
+    UpdateTechIndexPage('ARGOSID')
+end
 return
 
 
@@ -683,16 +705,7 @@ else
       logerr(4,['Expected float ' num2str(pmeta.wmo_id) ...
 		' - message saved to workfile N0_P0']);
    else
-       try
-           process_profile(rawdat,heads,b1tim,pmeta,dbdat,opts);
-       catch Me
-           logerr(5,['error in processing argos float - ' num2str(dbdat.wmo_id)])
-           logerr(5,['Message: ' Me.message ])
-           for jk = 1:length(Me.stack)
-               logerr(5,Me.stack(jk).file)
-               logerr(5,['Line: ' num2str(Me.stack(jk).line)])
-           end
-       end
+       process_profile(rawdat,heads,b1tim,pmeta,dbdat,opts);
    end
 end
 
