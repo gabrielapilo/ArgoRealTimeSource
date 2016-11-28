@@ -641,7 +641,11 @@ mail_out_ArgoRT_report
 
 web_database
 % and regenerate the tech pages:
+% do for each column
 UpdateTechIndexPage('HULLID')
+UpdateTechIndexPage('DEPORDER')
+UpdateTechIndexPage('WMOID')
+UpdateTechIndexPage('ARGOSID')
 
 return
 
@@ -679,7 +683,16 @@ else
       logerr(4,['Expected float ' num2str(pmeta.wmo_id) ...
 		' - message saved to workfile N0_P0']);
    else
-      process_profile(rawdat,heads,b1tim,pmeta,dbdat,opts);
+       try
+           process_profile(rawdat,heads,b1tim,pmeta,dbdat,opts);
+       catch Me
+           logerr(5,['error in processing argos float - ' num2str(dbdat.wmo_id)])
+           logerr(5,['Message: ' Me.message ])
+           for jk = 1:length(Me.stack)
+               logerr(5,Me.stack(jk).file)
+               logerr(5,['Line: ' num2str(Me.stack(jk).line)])
+           end
+       end
    end
 end
 
