@@ -1,6 +1,3 @@
-%email Vito when they are moved!!!
-% system(['cat ' idatapath '/iridiumarrival.txt | mail -s"new profile from Iridium float ' num2str(dbdat.maker_id) '" ' ARGO_SYS_PARAM.overdue_operator_addrs]);
-
 % move files for BOM.
 if isfield(ARGO_SYS_PARAM,'processor')
     
