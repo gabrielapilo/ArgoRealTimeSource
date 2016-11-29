@@ -165,9 +165,9 @@ end
 % send netCDF
 
 if ispc
-    [status,ww] = system([ARGO_SYS_PARAM.root_dir 'src\writeGDAC&']);%%%PUTDATA dengdeng
+    [status,ww] = system([ARGO_SYS_PARAM.root_dir 'src\GroupSpecific\writeGDAC&']);%%%PUTDATA dengdeng
 else
-    [status,ww] = system([ARGO_SYS_PARAM.root_dir 'src/writeGDAC &']);
+    [status,ww] = system([ARGO_SYS_PARAM.root_dir 'src/GroupSpecific/writeGDAC &']);
 end
 if status ~= 0
     logerr(2,['initiating writeGDAC failed: ' ww]);
@@ -198,9 +198,9 @@ end
 [status,ww] = system(['ls ' eIdir]);
 if ~isempty(ww)
     if ispc
-        [status,ww] = system([ARGO_SYS_PARAM.root_dir 'src\write_Iridium_tesac']);
+        [status,ww] = system([ARGO_SYS_PARAM.root_dir 'src\GroupSpecific\write_Iridium_tesac']);
     else
-        [status,ww] = system([ARGO_SYS_PARAM.root_dir 'src/write_Iridium_tesac']);
+        [status,ww] = system([ARGO_SYS_PARAM.root_dir 'src/GroupSpecific/write_Iridium_tesac']);
     end
     if(status~=0)
         logerr(2,['Send of Iridium tesac failed, reason is ' ww]);
@@ -213,9 +213,9 @@ end
 [status,ww] = system(['ls ' eBUFRdir]);
 if ~isempty(ww)
     if ispc
-        [status,ww] = system([ARGO_SYS_PARAM.root_dir 'src\write_BUFR_ftp']);
+        [status,ww] = system([ARGO_SYS_PARAM.root_dir 'src\GroupSpecific\write_BUFR_ftp']);
     else
-        [status,ww] = system([ARGO_SYS_PARAM.root_dir 'src/write_BUFR_ftp']);
+        [status,ww] = system([ARGO_SYS_PARAM.root_dir 'src/GroupSpecific/write_BUFR_ftp']);
     end
     if(status==0)
         logerr(2,['Send of BUFR nc messages failed, reason is ' ww]);
