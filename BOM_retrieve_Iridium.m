@@ -43,6 +43,14 @@ if isfield(ARGO_SYS_PARAM,'processor')
     elseif ~isempty(strfind(ARGO_SYS_PARAM.processor,'BOM'))        
         %BOM are retrieving the data from the FTP
         ftp_conn = ftp(ARGO_SYS_PARAM.ftp.ftp,ARGO_SYS_PARAM.ftp.name,ARGO_SYS_PARAM.ftp.pswd);
+        %get any apf 11 data first:
+        eval(['cd ' ARGO_SYS_PARAM.iridium_path '/apf11data/']);
+        mget(ftp_conn,'*.*.*.science_log.csv');
+        mget(ftp_conn,'*.*.*.vitals_log.csv');
+        mget(ftp_conn,'*.*.*.system_log.txt');
+        
+        %now go get the other iridiums
+        eval(['cd ' ARGO_SYS_PARAM.iridium_path]);
         cd(ftp_conn,'iridium_data');
         mget(ftp_conn,'*')
         cd(ftp_conn,'../');
