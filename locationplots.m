@@ -88,5 +88,5 @@ else
     my_save_fig(fnm,'clobber')
 end
 
-system(['chmod 664 ' fpth '*if']);
+system(['chmod -f 664 ' fpth '*if']);
 
