@@ -99,12 +99,6 @@ if(m>0)
                     %after processing, move the files from the delivery directory into the
                     %individual directories:
                     ss=strfind(a{i,1},'.');
-                    % try
-                    %     system(['mv '  ARGO_SYS_PARAM.iridium_delivery_path a{i,1}(1:ss(2)) '* ' ARGO_SYS_PARAM.iridium_delivery_path  num2str(dbdat.maker_id)]);
-                    % catch
-                    %     system(['mv '  ARGO_SYS_PARAM.iridium_delivery_path a{i,1}(1:ss(2)) '* ' ARGO_SYS_PARAM.iridium_delivery_path 'f'  num2str(dbdat.maker_id)]);
-                    % end
-
 	
                     if(~isempty(dbdat))
                         if (exist([ARGO_SYS_PARAM.iridium_path  'iridium_processed/' num2str(dbdat.wmo_id)])~=7)
@@ -114,7 +108,7 @@ if(m>0)
                             system(['mv -f ' a{i,1} ' ' ARGO_SYS_PARAM.iridium_path  'iridium_processed/' num2str(dbdat.wmo_id)]);
                         end
 					% code for copy the data within CSIRO
-% 					CSIRO_copy_phy_data
+ 					CSIRO_copy_phy_data
                     end
 
                 end
@@ -122,7 +116,4 @@ if(m>0)
         end
 
     end
-	% code for BOM send ftp done message to CSIRO
-	BOM_send_iridium_notify
-
 end
