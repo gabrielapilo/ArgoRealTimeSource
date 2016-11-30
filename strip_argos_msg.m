@@ -602,23 +602,31 @@ end
 
 
 %diagnostic line:
-report_iridium_here=1
+disp('Processing Iridium Files ...')
 
-%first, delete them from the ftp area if already grabbed by BOM
-%Now done by BOM, we just copy over new files.
-% if ~opts.redo
-%      remove_BOM_ftp
-% end
 extract_Iridium_data
 
 
-%add this in when ready to test!:
+%APF 11 floats
 try
-extract_apf11data
+    extract_apf11data
+catch Me
+    logerr(5,['error in processing APF11 float - ' num2str(dbdat.wmo_id)])
+    logerr(5,['Message: ' Me.message ])
+    for jk = 1:length(Me.stack)
+        logerr(5,Me.stack(jk).file)
+        logerr(5,['Line: ' num2str(Me.stack(jk).line)])
+    end
 end
-retrieve_phy_data %this data is delivered to the 'incoming' ftp site and
-		  %needs to be copied to iridium_data
-extract_phy_data   %polynya floats.
+%only for CSIRO operations
+if isfield(ARGO_SYS_PARAM,'processor')
+    if ~isempty(strfind(ARGO_SYS_PARAM.processor,'CSIRO'))
+        
+        retrieve_phy_data %this data is delivered to the 'incoming' ftp site and
+        %needs to be copied to iridium_data
+    end
+end
+extract_phy_data   %polynya floats. 3 only.
 
 extract_Solo2_data  % new code to process solo2 floats ourselves
 	  
@@ -634,6 +642,7 @@ if opts.tr_now
 end
 
 % Record the ftp file details in the processing records
+%does this get used for iridium data, phy, solo2? Review.
 prec_dat = load(PREC_FNM);
 if isfield(prec_dat,'ftp_details')
    ftp_details = prec_dat.ftp_details;
@@ -647,9 +656,17 @@ else
    ftp_details(5).nprofiles = 0;
 end
 try
-ftp_details(1).ftptime = ftptime;
-ftp_details(1).nlines = nlin;
-ftp_details(1).nprofiles = npro;
+    ftp_details(1).ftptime = ftptime;
+    ftp_details(1).nlines = nlin;
+    ftp_details(1).nprofiles = npro;
+catch Me
+    logerr(3,['Warning: FTPtime etc details not recorded for float - ' num2str(dbdat.wmo_id)])
+    logerr(3,['Message: ' Me.message ])
+    for jk = 1:length(Me.stack)
+        logerr(5,Me.stack(jk).file)
+        logerr(5,['Line: ' num2str(Me.stack(jk).line)])
+    end
+
 end
    load(PREC_FNM,'PROC_RECORDS');
    save(PREC_FNM,'PROC_RECORDS','ftp_details','-v6');		  
