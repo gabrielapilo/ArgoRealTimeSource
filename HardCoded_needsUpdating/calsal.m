@@ -149,8 +149,9 @@ for kk = ical(:)'
 
  
    %turn off calibration for 1901121 because of deep spikes in data:
-   %and for 5901707 because it is in a bad area for calibrating.
-if(fp.wmo_id==1901121 | fp.wmo_id==1901324 | fp.wmo_id==1901321 | fp.wmo_id==5901707 |fp.wmo_id==5901706 )
+   %and for 5901707, 5903249 because it is in a bad area for calibrating.
+if(fp.wmo_id==1901121 | fp.wmo_id==1901324 | fp.wmo_id==1901321 | ...
+        fp.wmo_id==5901707 |fp.wmo_id==5901706 | fp.wmo_id==5903249)
     calibrate=0;
     %and turn off calibration for these floats because they are in salty
     %water that's triggering calibration wihtout valid cause:
