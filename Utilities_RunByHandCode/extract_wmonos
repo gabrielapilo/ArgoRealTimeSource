@@ -1,0 +1,12 @@
+#!/bin/csh
+
+# Read in float names from wmono.list
+
+# Then read through the specified argos download file
+# ...and grep for "02039" and then the float number
+# to determine the number of satellite passes that have
+# been picked up for each float.
+
+foreach float (`more wmono.list`)
+  echo $float : `grep 02039 argos72.log| grep $float | wc -l`
+end
