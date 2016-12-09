@@ -257,10 +257,17 @@ if dbdat.flbb
         jj=jj+1;
         n_param=n_param+2;
     end
+    if dbdat.subtype == 1026
+        jj = jj+4;
+    end
+    if dbdat.subtype == 1029
+        jj = jj+1;
+    end
     if dbdat.flbb2
         jj=jj+1;
         n_param=n_param+2;
     end
+    
         
 end
 if dbdat.tmiss
@@ -883,24 +890,26 @@ if dbdat.oxy
 end
 
 if dbdat.flbb
-    jj=jj+1;
-    aa=s.FLBB.mfg;
-    netcdf.putVar(ncid,SENSORMAKERID,[0,jj-1],[length(aa),1],aa);
-    aa='SCATTEROMETER_BBP';
-    netcdf.putVar(ncid,SENSORID,[0,jj-1],[length(aa),1],aa);
-    aa=s.FLBB.ModelNo;
-    netcdf.putVar(ncid,SENSORMODELID,[0,jj-1],[length(aa),1],aa);
-    aa=s.FLBB.SerialNo;
-    netcdf.putVar(ncid,SENSORSERNOID,[0,jj-1],[length(aa),1],aa);
-    jj=jj+1;
-    aa=s.FLBB.mfg;
-    netcdf.putVar(ncid,SENSORMAKERID,[0,jj-1],[length(aa),1],aa);
-    aa='FLUOROMETER_CHLA';
-    netcdf.putVar(ncid,SENSORID,[0,jj-1],[length(aa),1],aa);
-    aa=s.FLBB.ModelNo;
-    netcdf.putVar(ncid,SENSORMODELID,[0,jj-1],[length(aa),1],aa);
-    aa=s.FLBB.SerialNo;
-    netcdf.putVar(ncid,SENSORSERNOID,[0,jj-1],[length(aa),1],aa);
+    if dbdat.subtype < 1021
+        jj=jj+1;
+        aa=s.FLBB.mfg;
+        netcdf.putVar(ncid,SENSORMAKERID,[0,jj-1],[length(aa),1],aa);
+        aa='SCATTEROMETER_BBP';
+        netcdf.putVar(ncid,SENSORID,[0,jj-1],[length(aa),1],aa);
+        aa=s.FLBB.ModelNo;
+        netcdf.putVar(ncid,SENSORMODELID,[0,jj-1],[length(aa),1],aa);
+        aa=s.FLBB.SerialNo;
+        netcdf.putVar(ncid,SENSORSERNOID,[0,jj-1],[length(aa),1],aa);
+        jj=jj+1;
+        aa=s.FLBB.mfg;
+        netcdf.putVar(ncid,SENSORMAKERID,[0,jj-1],[length(aa),1],aa);
+        aa='FLUOROMETER_CHLA';
+        netcdf.putVar(ncid,SENSORID,[0,jj-1],[length(aa),1],aa);
+        aa=s.FLBB.ModelNo;
+        netcdf.putVar(ncid,SENSORMODELID,[0,jj-1],[length(aa),1],aa);
+        aa=s.FLBB.SerialNo;
+        netcdf.putVar(ncid,SENSORSERNOID,[0,jj-1],[length(aa),1],aa);
+    end
     
     if isfield(fpp,'CDOM_raw')     % dbdat.subtype==1006  %cdom sensor
         jj=jj+1;
@@ -912,6 +921,94 @@ if dbdat.flbb
         netcdf.putVar(ncid,SENSORMODELID,[0,jj-1],[length(aa),1],aa);
         aa=s.FLBB.SerialNo;
         netcdf.putVar(ncid,SENSORSERNOID,[0,jj-1],[length(aa),1],aa);
+    end
+    
+    if dbdat.subtype > 1025 & dbdat.subtype < 1030 %MCOMS wetlabs types NHM floats
+        if dbdat.subtype == 1026 %BB3 eco model (not in spreadsheet) with MCOMS FLBBCD (in spreadsheet)
+            jj=jj+1;
+            aa=s.FLBB.mfg;
+            netcdf.putVar(ncid,SENSORMAKERID,[0,jj-1],[length(aa),1],aa);
+            aa='BACKSCATTERINGMETER_BBP700';
+            netcdf.putVar(ncid,SENSORID,[0,jj-1],[length(aa),1],aa);
+            aa='ECO_BB3';
+            netcdf.putVar(ncid,SENSORMODELID,[0,jj-1],[length(aa),1],aa);
+            aa=s.FLBB.SerialNo;
+            netcdf.putVar(ncid,SENSORSERNOID,[0,jj-1],[length(aa),1],aa);
+            jj=jj+1;
+            aa=s.FLBB.mfg;
+            netcdf.putVar(ncid,SENSORMAKERID,[0,jj-1],[length(aa),1],aa);
+            aa='BACKSCATTERINGMETER_BBP532';
+            netcdf.putVar(ncid,SENSORID,[0,jj-1],[length(aa),1],aa);
+            aa='ECO_BB3';
+            netcdf.putVar(ncid,SENSORMODELID,[0,jj-1],[length(aa),1],aa);
+            aa=s.FLBB.SerialNo;
+            netcdf.putVar(ncid,SENSORSERNOID,[0,jj-1],[length(aa),1],aa);
+            jj=jj+1;
+            aa=s.FLBB.mfg;
+            netcdf.putVar(ncid,SENSORMAKERID,[0,jj-1],[length(aa),1],aa);
+            aa='BACKSCATTERINGMETER_BBP470';
+            netcdf.putVar(ncid,SENSORID,[0,jj-1],[length(aa),1],aa);
+            aa='ECO_BB3';
+            netcdf.putVar(ncid,SENSORMODELID,[0,jj-1],[length(aa),1],aa);
+            aa=s.FLBB.SerialNo;
+            netcdf.putVar(ncid,SENSORSERNOID,[0,jj-1],[length(aa),1],aa);
+            jj=jj+1;
+            aa=s.FLBB.mfg;
+            netcdf.putVar(ncid,SENSORMAKERID,[0,jj-1],[length(aa),1],aa);
+            aa='FLUOROMETER_CHLA';
+            netcdf.putVar(ncid,SENSORID,[0,jj-1],[length(aa),1],aa);
+            aa=s.FLBB.ModelNo;
+            netcdf.putVar(ncid,SENSORMODELID,[0,jj-1],[length(aa),1],aa);
+            aa=s.FLBB.SerialNo;
+            netcdf.putVar(ncid,SENSORSERNOID,[0,jj-1],[length(aa),1],aa);
+            jj=jj+1;
+            aa=s.FLBB.mfg;
+            netcdf.putVar(ncid,SENSORMAKERID,[0,jj-1],[length(aa),1],aa);
+            aa='FLUOROMETER_CDOM';
+            netcdf.putVar(ncid,SENSORID,[0,jj-1],[length(aa),1],aa);
+            aa=s.FLBB.ModelNo;
+            netcdf.putVar(ncid,SENSORMODELID,[0,jj-1],[length(aa),1],aa);
+            aa=s.FLBB.SerialNo;
+            netcdf.putVar(ncid,SENSORSERNOID,[0,jj-1],[length(aa),1],aa);
+            jj=jj+1;
+            aa=s.FLBB.mfg;
+            netcdf.putVar(ncid,SENSORMAKERID,[0,jj-1],[length(aa),1],aa);
+            aa='BACKSCATTERINGMETER_BBP700';
+            netcdf.putVar(ncid,SENSORID,[0,jj-1],[length(aa),1],aa);
+            aa=s.FLBB.ModelNo;
+            netcdf.putVar(ncid,SENSORMODELID,[0,jj-1],[length(aa),1],aa);
+            aa=s.FLBB.SerialNo;
+            netcdf.putVar(ncid,SENSORSERNOID,[0,jj-1],[length(aa),1],aa);
+        end
+        if dbdat.subtype > 1026 & dbdat.subtype < 1030 %MCOMS flbb2
+            jj=jj+1;
+            aa=s.FLBB.mfg;
+            netcdf.putVar(ncid,SENSORMAKERID,[0,jj-1],[length(aa),1],aa);
+            aa='FLUOROMETER_CHLA';
+            netcdf.putVar(ncid,SENSORID,[0,jj-1],[length(aa),1],aa);
+            aa=s.FLBB.ModelNo;
+            netcdf.putVar(ncid,SENSORMODELID,[0,jj-1],[length(aa),1],aa);
+            aa=s.FLBB.SerialNo;
+            netcdf.putVar(ncid,SENSORSERNOID,[0,jj-1],[length(aa),1],aa);
+            jj=jj+1;
+            aa=s.FLBB.mfg;
+            netcdf.putVar(ncid,SENSORMAKERID,[0,jj-1],[length(aa),1],aa);
+            aa='BACKSCATTERINGMETER_BBP700';
+            netcdf.putVar(ncid,SENSORID,[0,jj-1],[length(aa),1],aa);
+            aa=s.FLBB.ModelNo;
+            netcdf.putVar(ncid,SENSORMODELID,[0,jj-1],[length(aa),1],aa);
+            aa=s.FLBB.SerialNo;
+            netcdf.putVar(ncid,SENSORSERNOID,[0,jj-1],[length(aa),1],aa);
+            jj=jj+1;
+            aa=s.FLBB.mfg;
+            netcdf.putVar(ncid,SENSORMAKERID,[0,jj-1],[length(aa),1],aa);
+            aa='BACKSCATTERINGMETER_BBP532';
+            netcdf.putVar(ncid,SENSORID,[0,jj-1],[length(aa),1],aa);
+            aa=s.FLBB.ModelNo;
+            netcdf.putVar(ncid,SENSORMODELID,[0,jj-1],[length(aa),1],aa);
+            aa=s.FLBB.SerialNo;
+            netcdf.putVar(ncid,SENSORSERNOID,[0,jj-1],[length(aa),1],aa);
+        end
     end
 end
 
