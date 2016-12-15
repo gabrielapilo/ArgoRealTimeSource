@@ -104,7 +104,7 @@ end
 %____________________________________________________________________
 % Edit the code starting from here to use matlab netcdf toolbox
 hist=[];
-dc=[];
+dc='';
 if exist(fname,'file') == 2
     try
         hist=ncreadatt(fname,'/','history');
