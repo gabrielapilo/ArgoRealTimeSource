@@ -631,6 +631,16 @@ if isempty(aa)
     clear blankstr
     blankstr(1:128)=' ';
     tv(kk,1:128)=blankstr;
+elseif length(aa) > 128
+    %cut down on the blanks
+    aa = num2str(val,'%6.4f ');
+    clear blankstr
+    blankstr(1:128)=' ';
+    if length(aa) > 128
+        aa = aa(1:126); %truncate the last part-number
+    end
+    blankstr(1:length(aa))=aa;
+    tv(kk,1:128)=blankstr;    
 else
     clear blankstr
     blankstr(1:128)=' ';
