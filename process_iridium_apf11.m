@@ -85,7 +85,7 @@ global PREC_FNM PROC_REC_WMO PROC_RECORDS
 global ARGO_REPORT ARGO_RPT_FID
 
 [ dbdat.argos_id dbdat.wmo_id ]
-idatapath = [ARGO_SYS_PARAM.iridium_path 'apf11data/'];
+idatapath = ARGO_SYS_PARAM.iridium_path;
 
 fn=pmeta.ftp_fname;      % science log
 jnow=julian(clock);      % Local time - now

@@ -39,7 +39,7 @@ dbdat=getdbase(wmo_id);
 % create the file name here:
 pns=sprintf('%3.3i',pn+dbdat.np0);
 
-fnm=dirc([ARGO_SYS_PARAM.root_dir 'iridium_data/apf11data/f' num2str(aic(kk,2)) '.' pns '.*.system_log.txt']);
+fnm=dirc([ARGO_SYS_PARAM.iridium_path 'f' num2str(aic(kk,2)) '.' pns '.*.system_log.txt']);
 
 
 if ~isempty(fnm)

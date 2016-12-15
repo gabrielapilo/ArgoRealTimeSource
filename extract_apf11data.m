@@ -21,8 +21,8 @@ end
 Too_Old_Days = 11;         % Realtime: no interested beyond 10 and a bit days. 
 jnow = julian(clock);      % Local time - now
 
-eval(['cd ' ARGO_SYS_PARAM.iridium_path 'apf11data']);
-idatapath = [ARGO_SYS_PARAM.iridium_path 'apf11data/'];
+eval(['cd ' ARGO_SYS_PARAM.iridium_path]);
+idatapath = ARGO_SYS_PARAM.iridium_path;
     
 
 system(['mv -f *.000.* ' ARGO_SYS_PARAM.iridium_path 'iridium_processed/apf11000files']);

@@ -7,11 +7,11 @@ if isfield(ARGO_SYS_PARAM,'processor')
         
         ts = ftp(ARGO_SYS_PARAM.ftp.ftp,ARGO_SYS_PARAM.ftp.name,ARGO_SYS_PARAM.ftp.pswd);
         cd(ts,'iridium_data');
-        mput(ts,[ARGO_SYS_PARAM.iridium_path  'iridium_processed/' num2str(dbdat.wmo_id) '/'  fn '*'])
+        mput(ts,[ARGO_SYS_PARAM.iridium_path  'iridium_processed/' num2str(dbdat.wmo_id) '/'  fn '*.???'])
         close(ts);
         
         % now cleanup the original directories on rudics-server-hf:
-        system(['mv ' ARGO_SYS_PARAM.rudics_server '/f' num2str(dbdat.maker_id) '/' fn '* ' ...
+        system(['mv ' ARGO_SYS_PARAM.rudics_server '/f' num2str(dbdat.maker_id) '/' fn '*.??? ' ...
             ARGO_SYS_PARAM.rudics_server '/f' num2str(dbdat.maker_id) '/backup'])
         
     end
