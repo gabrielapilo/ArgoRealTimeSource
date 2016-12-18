@@ -611,8 +611,7 @@ if any(stage>=1)
 
 	 if opts.rtmode
 	    try
-            %put this in, separated out by Ann and lost
-            web_plot_generation(float(np),dbdat);
+            web_profile_plot(float(np),dbdat);
 	       web_float_summary(float,dbdat,1);
 	       time_section_plot(float);
 	       waterfallplots(float);

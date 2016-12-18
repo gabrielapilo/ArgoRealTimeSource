@@ -1473,7 +1473,7 @@ end
     if opts.rtmode
         try
             %put this in, separated out by Ann and lost
-            web_plot_generation(float(np),dbdat);
+            web_profile_plot(float(np),dbdat);
             web_float_summary(float,dbdat,1);
             time_section_plot(float);
             waterfallplots(float);
@@ -1515,9 +1515,6 @@ if any(stage>0)
     float(np).proc_status = prec.proc_status;
     % Write float array back to file
     save(fnm,'float','-v6');
-    
-    % Stage 2 adds new info to profile page, so generate it at both stages.
-    web_profile_plot(float(np),dbdat);
 end
 
 
