@@ -25,9 +25,9 @@ opts.redo=1;
 % first, get the file names:
 
 [fpp,dbdat]=getargo(wmo_id);
-load ([ARGO_SYS_PARAM.root_dir 'matfiles/float' num2str(wmo_id) '.old.mat']);
+load ([ARGO_SYS_PARAM.root_dir 'matfiles/float' num2str(wmo_id) '.mat']);
 
-for i=1:length(float)
+for i=209%:length(float)
         file=find_argos_download(wmo_id,i);
 
 % now re-run the specified profiles:
@@ -37,7 +37,7 @@ for i=1:length(float)
 % for i=1:m
 %     try
 if ~isempty(file)
-        strip_argos_msg_noweb(file,wmo_id,opts)
+        strip_argos_msg(file,wmo_id,opts)
 end
 end
 

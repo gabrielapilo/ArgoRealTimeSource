@@ -7,9 +7,11 @@ if isempty(ARGO_SYS_PARAM)
    set_argo_sys_params;
 end
 
+kk = 5903260;
 getdbase(0);
-for ii = [680:683,686]%1:length(THE_ARGO_FLOAT_DB)
-    [fpp,dbdat] = getargo(THE_ARGO_FLOAT_DB(ii).wmo_id);
+for ii = kk%1:length(THE_ARGO_FLOAT_DB)
+    [fpp,dbdat] = getargo(ii);
+%     [fpp,dbdat] = getargo(THE_ARGO_FLOAT_DB(ii).wmo_id);
     if ~isempty(fpp)
 %         trajectory_nc(dbdat,fpp);
 %         techinfo_nc(dbdat,fpp);
