@@ -1,4 +1,7 @@
 %run with mypark_depths2
+clear
+fn = '/home/argo/ArgoRT/Deployment_Planning/deploymentplan_2016_17_2.csv';
+K = load(fn);
 
 %holddepy=-45.92;
 %holddepx=137.86;
@@ -6,16 +9,14 @@
 % holddepy=[-62.5 -62 -60 -10 -27 -30]
 % holddepx=[115 117.25 122.75 85.25 107 110]
 % 
-% load 'Book4.csv'
-% load floatspecs_IMOS2012.csv
 % f= [-46 147.75
 % -48 147
 % -50 146.25
 % -52 145.75]
 % 
 %         %floatspecs_IMOS2012
-% holddepy=K(:,1);
-% holddepx=K(:,2);
+holddepy=K(:,1);
+holddepx=K(:,2);
 % holddepy=reb(:,1)';
 % holddepx=reb(:,2)';
 % 
@@ -93,8 +94,8 @@ save(fnm2,'-mat','holddepx','holddepy');
 %data2(ifl(k),6)=spark(k);
 %end
 
-title(['Float deployment planning to date ' date ' 14-15 floats'])
-save_fig (['Float_deployment_planning_14-15.gif'])
+title(['Float deployment planning to date ' date ' 2016-17 floats'])
+save_fig (['Float_deployment_planning_16-17.gif'])
 
 
 
