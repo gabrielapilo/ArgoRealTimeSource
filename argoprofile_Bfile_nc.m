@@ -4218,8 +4218,8 @@ netcdf.close(ncid)
 
 % if exist('isingdac')==2
 %     if isingdac(fname)~=2
-        %         % change this back to export!!!
-        [status,ww] = system(['cp -f ' fname ' ' ARGO_SYS_PARAM.root_dir 'export_hold']);
+
+        [status,ww] = system(['cp -f ' fname ' ' ARGO_SYS_PARAM.root_dir 'export']);
         if ispc
             [status,ww] = system(['copy /Y ' fname ' ' ARGO_SYS_PARAM.root_dir 'export']);
         else
