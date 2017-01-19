@@ -1645,7 +1645,7 @@ if dbdat.irr & ~dbdat.irr2
     netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'long_name','Raw downwelling irradiance at 412 nanometers');
     %         netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'standard_name','moles_of_RAWDOWNIRRA412_per_unit_mass_in_sea_water');
     netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'units','count');
-    netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'_FillValue',single(fval));
+    netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'_FillValue',double(fval));
     %         netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'valid_min','');
     %         netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'valid_max','');
 %     netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'C_format','%9.1f');
@@ -1701,7 +1701,7 @@ if dbdat.irr & ~dbdat.irr2
     netcdf.putAtt(ncid,NRAWDOWNIRRA443ID,'long_name','Raw downwelling irradiance at 443 nanometers');
     %         netcdf.putAtt(ncid,NRAWDOWNIRRA443ID,'standard_name','moles_of_RAWDOWNIRRA443_per_unit_mass_in_sea_water');
     netcdf.putAtt(ncid,NRAWDOWNIRRA443ID,'units','count');
-    netcdf.putAtt(ncid,NRAWDOWNIRRA443ID,'_FillValue',single(fval));
+    netcdf.putAtt(ncid,NRAWDOWNIRRA443ID,'_FillValue',double(fval));
     %         netcdf.putAtt(ncid,NRAWDOWNIRRA443ID,'valid_min','');
     %         netcdf.putAtt(ncid,NRAWDOWNIRRA443ID,'valid_max','');
 %     netcdf.putAtt(ncid,NRAWDOWNIRRA443ID,'C_format','%9.1f');
@@ -1757,7 +1757,7 @@ if dbdat.irr & ~dbdat.irr2
     netcdf.putAtt(ncid,NRAWDOWNIRRA490ID,'long_name','Raw downwelling irradiance at 490 nanometers');
     %         netcdf.putAtt(ncid,NRAWDOWNIRRA490ID,'standard_name','moles_of_RAWDOWNIRRA490_per_unit_mass_in_sea_water');
     netcdf.putAtt(ncid,NRAWDOWNIRRA490ID,'units','count');
-    netcdf.putAtt(ncid,NRAWDOWNIRRA490ID,'_FillValue',single(fval));
+    netcdf.putAtt(ncid,NRAWDOWNIRRA490ID,'_FillValue',double(fval));
     %         netcdf.putAtt(ncid,NRAWDOWNIRRA490ID,'valid_min','');
     %         netcdf.putAtt(ncid,NRAWDOWNIRRA490ID,'valid_max','');
 %     netcdf.putAtt(ncid,NRAWDOWNIRRA490ID,'C_format','%9.1f');
@@ -2233,7 +2233,7 @@ if dbdat.irr2
     NRAWDOWN_PARID=netcdf.defVar(ncid,'RAW_DOWNWELLING_PAR','NC_DOUBLE',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NRAWDOWN_PARID,'long_name','Raw downwelling photosynthetic available radiation');
     netcdf.putAtt(ncid,NRAWDOWN_PARID,'units','count');
-    netcdf.putAtt(ncid,NRAWDOWN_PARID,'_FillValue',single(fval));
+    netcdf.putAtt(ncid,NRAWDOWN_PARID,'_FillValue',double(fval));
 %     netcdf.putAtt(ncid,NRAWDOWN_PARID,'C_format','%9.1f');
 %     netcdf.putAtt(ncid,NRAWDOWN_PARID,'FORTRAN_format','F9.1');
     netcdf.putAtt(ncid,NRAWDOWN_PARID,'resolution',' ');
