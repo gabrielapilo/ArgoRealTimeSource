@@ -253,14 +253,18 @@ end
     cullMissions_iridium(dbdat,[idatapath fn]);
     
     fid=fopen([idatapath fn]);
+    c = textscan(fid,'%s','delimiter','\n');
+    fclose(fid)
+    c = c{:};
     j=0;
-    gg=fgetl(fid);
+
     %first lines are park data:
-    
-    while isempty(strmatch('Park',gg)) & isempty(strmatch('$ Profile',gg)) & gg ~= -1
-        gg=fgetl(fid);
-    end
-    while ~isempty(strmatch('Park',gg)) & gg ~= -1
+    ii = find(strncmp('ParkPt',c,6));
+    if isempty(ii)
+        ii = find(strncmp('ParkObs:',c,8));
+    end        
+    for a = 1:length(ii)
+        gg = c{ii(a)};
         j=j+1;
 %         if strmatch('ParkPts',gg);ll=12;dd=53;end
 %         if strmatch('ParkObs',gg);ll=9;dd=32;end
@@ -295,7 +299,6 @@ end
             if(length(gg)>68);pro.park_s(j)=pd(3);end
             if(length(gg)>76);pro.park_SBEOxyfreq(j)=pd(4);end
         end
-        gg=fgetl(fid);
     end
     if(~isempty(pro.park_s))
         pro.park_s=change(pro.park_s,'==',0,NaN);
@@ -308,44 +311,50 @@ end
     
     %the next line is the profile end time: check you have the
     %right line, then check that the date is sensible
-    if gg ~= -1
-        if(~isempty(strmatch('$ Profile',gg)))   % note - this appears to be identical for all formats
-            jday_ascent_end= julian(datevec(gg(36:end)));
-            jdays = jday_ascent_end;
-            dt_min = [1997 1 1 0 0 0];
-            dt_max = [datestr(now+3,31)];
-            kk=strfind(dt_max,'-');
-            dt_max(kk)=' ';
-            kk=strfind(dt_max,':');
-            
-            dt_max=[str2num(dt_max(1:4)) 12 31 23 59 59];
-            dt_maxj=julian(dt_max);
-            dt_minj=julian(dt_min);
-            
-            head=gregorian(jdays);
-            if any(head(1:6)<dt_min) || any(head(1:6)>dt_max)
-                logerr(2,['Implausible date/time components: ' num2str(head(1:6))]);
-                jdays = NaN;
-            elseif jdays<dt_minj || jdays>dt_maxj
-                logerr(2,['Implausible date/time components: ' num2str(head(1:6))]);
-                jdays = NaN;
-            end
-            gdhed = find(~isnan(jdays));
-            if isempty(gdhed)
-                logerr(1,'No usable date info');
-                return
-            end
-        else
-            logerr(3,['bad ascent end ' num2str(pmeta.wmo_id)]);
+    ii = find(strncmp('$ Profile',c,9));
+    if ~isempty(ii) && ii <= length(c)   % note - this appears to be identical for all formats
+        gg = c{ii};
+        jday_ascent_end= julian(datevec(gg(36:end)));
+        jdays = jday_ascent_end;
+        dt_min = [1997 1 1 0 0 0];
+        dt_max = [datestr(now+3,31)];
+        kk=strfind(dt_max,'-');
+        dt_max(kk)=' ';
+        kk=strfind(dt_max,':');
+        
+        dt_max=[str2num(dt_max(1:4)) 12 31 23 59 59];
+        dt_maxj=julian(dt_max);
+        dt_minj=julian(dt_min);
+        
+        head=gregorian(jdays);
+        if any(head(1:6)<dt_min) || any(head(1:6)>dt_max)
+            logerr(2,['Implausible date/time components: ' num2str(head(1:6))]);
+            jdays = NaN;
+        elseif jdays<dt_minj || jdays>dt_maxj
+            logerr(2,['Implausible date/time components: ' num2str(head(1:6))]);
+            jdays = NaN;
         end
+        gdhed = find(~isnan(jdays));
+        if isempty(gdhed)
+            logerr(1,'No usable date info');
+            return
+        end
+    else
+        logerr(3,['bad ascent end ' num2str(pmeta.wmo_id)]);
     end
+  
     l=0;
-    gg=fgetl(fid);  %this contains the number of park samples
-    if(~isempty(strmatch('$ Discrete',gg))) & gg ~= -1
+    ii = find(strncmp('$ Discrete',c,10));
+    if ~isempty(ii) 
+        gg = c{ii};
         p_samples=str2num(gg(20:end));
-        gg=fgetl(fid); % contains header for park samples OR the number of oxygen profile samples (subtype 1006)
+        ii = ii+1;
         for k=1:p_samples
-            gg=fgetl(fid);
+            ii = ii+1;
+            if ii > length(c)
+                break
+            end
+            gg=c{ii};
             j=j+1;
             parkd=sscanf(gg,'%f');
             if dbdat.oxy            %dbdat.subtype==1006  | dbdat.subtype==1007  | dbdat.subtype==1008 | dbdat.subtype==1020 % this is the oxygen profile area:
@@ -584,10 +593,11 @@ end
         pro.n_parkaverages=length(pro.park_p);
         
     end
-    
-    gg=fgetl(fid);  %number of profile samples
+    jj = [];
+    ii = ii+1;
+    if ii <= length(c)
+    gg=c{ii};  %number of profile samples
     pro.npoints=0;
-    if gg ~= -1
         % just in case this is an under ice profile, store the date/time info now
         % and it can be overwritten later...
         jj=strfind(gg,'NBin');
@@ -598,17 +608,18 @@ end
             pro.jday=jdays;
             pro.jday_ascent_end=jdays;
             pro.npoints=str2num(gg(jj+5:end-1));
-        elseif gg==-1
-            
         else %use the data from the park termination as time
             pro.datetime_vec=head;
             pro.jday=jdays;
             pro.jday_ascent_end=jdays;
         end
     end
-    if gg ~=-1
-    if(~isempty(jj))
-        gg=fgetl(fid);  %start line
+    
+    %data for the profile
+    ii = ii+1;
+    
+    if ~isempty(jj) && ii <= length(c)
+        gg=c{ii};  %start line
         j=pro.npoints+1;
         if dbdat.subtype==1007 | dbdat.subtype==1008 | dbdat.subtype==1009
             j=j+l;
@@ -617,11 +628,11 @@ end
         % seabird bio floats have two additional lines with the serial
         % numbers of the sensors
         if dbdat.subtype==1026 | dbdat.subtype==1027 | dbdat.subtype==1028 | dbdat.subtype==1029
-            gg=fgetl(fid);
-            gg=fgetl(fid);
+            ii = ii+2;
+            gg=c{ii};
         end
         
-        while(isempty(strmatch('#',gg)) & j>0 & gg~=-1 & isempty(strmatch('<EOT>',gg))...
+        while(isempty(strmatch('#',gg)) & j>0 & ii <= length(c) & isempty(strmatch('<EOT>',gg))...
                 & isempty(strmatch('Res',gg)))  % GPS fix',gg)) & j>1 & gg~=-1)
             
             j=j-1;
@@ -634,31 +645,35 @@ end
                 if(isempty(l2))
                     while strmatch('00000000000000',gg)
                         j=j-1;
-                        gg=fgetl(fid);
-                     if ~isempty(strmatch('Res',gg)) | j==0
-%                         gg=fgetl(fid);
-                        break
+                        ii = ii+1;
+                        gg=c{ii};
+                        if ~isempty(strmatch('Res',gg)) | j==0
+                            %                         gg=fgetl(fid);
+                            break
+                        end
                     end
-                   end
                 else
                     j=j-str2num(gg(ll+1:l2-1));
-                    gg=fgetl(fid);
+                    ii = ii+1;
+                    gg=c{ii};
                     if ~isempty(strmatch('Res',gg))
-                        gg=fgetl(fid);
+                        ii = ii+1;
+                        gg=c{ii};
                         break
                     end
                 end
                 %                pro.npoints=j;
             end
-%             gg=gg
+            %             gg=gg
             if ~isempty(strmatch('Res',gg))
-                gg=fgetl(fid);
+                ii = ii+1;
+                gg=c{ii};
                 break
             end
             if  j==0
                 break
             end
-            if gg == -1
+            if ii > length(c)
                 break
             end
             if ~(isempty(strmatch('#',gg)) & j>0 & isempty(strmatch('<EOT>',gg))...
@@ -848,10 +863,11 @@ end
                     pro.nsamps(j)=hex2dec(gg(13:14));
                 end
             end
-            gg=fgetl(fid);
+            ii = ii+1;
+            gg = c{ii};
         end
     end
-    end
+ 
     
     yy=find(pro.p_raw==0 & pro.t_raw==0 & pro.s_raw==0);
     if ~isempty(yy)
@@ -883,165 +899,176 @@ end
      
     pro.npoints=length(pro.p_raw);
     
-    while(isempty(gg)& gg~=-1)
-        %         if(~isempty(strfind(gg,'GPS fix failed')) | ~isempty(strfind(gg,'GPS fix not available')));
-        gg=fgetl(fid);
-        %             if (strmatch('# GPS fix',g2));
-        % %                 gg=g2;
-        %                 break;
-        %             elseif strmatch('Apf',g2);
-        %                 break;
-        % %             else
-        % %                 break;
-        %             end
-        % %         end
-        %         gg=fgetl(fid);
+    %     if(gg~=-1)  %under ice profile that doesn't have location information...
+    %             if(isempty(strfind(gg,'GPS fix failed')) && isempty(strfind(gg,'GPS fix not available')));
+    %
+    %                 %now get position information from GPS:
+    %                 kk=strfind(gg,'in ');
+    %                 k2=strfind(gg,' seconds');
+    %                 pro.GPSfixtime=gg(kk+3:k2-1);
+    %                 gg=fgetl(fid);
+    %                 gg=fgetl(fid);     %lat and long
+    %                 pro.lat=sscanf(gg(15:21),'%f');
+    %                 pro.lon=sscanf(gg(5:14),'%f');
+    %                 if pro.lon<0; pro.lon=360+pro.lon; end
+    %                 location_date=[str2num(gg(29:32)) str2num(gg(23:24)) str2num(gg(26:27)) ...
+    %                     str2num(gg(34:35)) str2num(gg(36:37)) str2num(gg(38:39))];
+    %                 pro.datetime_vec(1,1:6)=location_date;
+    %                 pro.jday_location=julian(location_date);
+    %                 pro.GPSsatellites=str2num(gg(40:end));
+    %                 pro.jday=jdays;
+    %                 pro.jday_ascent_end=jdays;
+    %                 gg=fgetl(fid);
+    ii = find(strncmp('# Ice evasion initiated',c,23));
+    if ~isempty(ii)
+        pro.icedetection=1;
+        % decode depth
+        % flag this message = 1
+    end
+    ii = find(strncmp('# Ice-cap',c,9));
+    if ~isempty(ii)
+        pro.icedetection=1;
+    end
+    ii = find(strncmp('# Leads or break-up of surface ice',c,34));
+    if ~isempty(ii)
+        %                 flag this message 3
+        pro.icedetection=1;
     end
     
-    if(gg~=-1)  %under ice profile that doesn't have location information...
-        %             if(isempty(strfind(gg,'GPS fix failed')) && isempty(strfind(gg,'GPS fix not available')));
-        %
-        %                 %now get position information from GPS:
-        %                 kk=strfind(gg,'in ');
-        %                 k2=strfind(gg,' seconds');
-        %                 pro.GPSfixtime=gg(kk+3:k2-1);
-        %                 gg=fgetl(fid);
-        %                 gg=fgetl(fid);     %lat and long
-        %                 pro.lat=sscanf(gg(15:21),'%f');
-        %                 pro.lon=sscanf(gg(5:14),'%f');
-        %                 if pro.lon<0; pro.lon=360+pro.lon; end
-        %                 location_date=[str2num(gg(29:32)) str2num(gg(23:24)) str2num(gg(26:27)) ...
-        %                     str2num(gg(34:35)) str2num(gg(36:37)) str2num(gg(38:39))];
-        %                 pro.datetime_vec(1,1:6)=location_date;
-        %                 pro.jday_location=julian(location_date);
-        %                 pro.GPSsatellites=str2num(gg(40:end));
-        %                 pro.jday=jdays;
-        %                 pro.jday_ascent_end=jdays;
-        %                 gg=fgetl(fid);
-        while gg~=-1
+    %technical information for direct recording (no calculations)
+    str = {'IceMLMedianT','IceMLSample','ActiveBallastAdjustments',...
+        'AirBladderPressure',...
+        'BuoyancyPumpOnTime',...
+        'CurrentPistonPosition','DeepProfilePistonPosition',...
+        'GpsFixTime','ParkPistonPosition','ParkBuoyancyPosition',...
+        'RtcSkew',...
+        'Sbe41cpStatus','SurfacePistonPosition',...
+        'SurfaceBuoyancyPosition'};
+    str2 = {'iceMLMedianT','iceMLSamples','n_parkbuoyancy_adj',...
+        'airbladderpres',...
+        'pumpmotortime',...
+        'maxpistonpos','profilepistonpos',...
+        'GPSfixtime','parkpistonpos','parkpistonpos',...
+        'RTCskew',...
+        'SBE41status','pistonpos',...
+        'pistonpos'};
+    
+    for a = 1:length(str)
+        ii = find(strncmp(str{a},c,length(str{a})));
+        if ~isempty(ii)
+            %             for b = 1:length(ii)
+            %sometimes more than one report of tech data, but will
+            %                 probably break everything if we collect all, so just
+            %                 first one for now? Should be the same data each time?
+            gg = c{ii(1)};
             ll=strfind(gg,'=');
-            if strmatch('# Ice evasion initiated',gg)
-                pro.icedetection=1;
-                % decode depth
-                % flag this message = 1
-            elseif strmatch('IceMLMedianT',gg)
-                pro.iceMLMedianT=str2num(gg(ll+1:end));
-            elseif strmatch('IceMLSample',gg)
-                pro.iceMLSamples=str2num(gg(ll+1:end));
-            elseif strmatch('# Ice-cap',gg)
-                pro.icedetection=1;
-            elseif strmatch('# Leads or break-up of surface ice',gg)
-%                 flag this message 3
-                pro.icedetection=1;
-            elseif strmatch('Apf9i',gg)
-                
-            elseif strmatch('ActiveBallastAdjustments',gg)
-                pro.n_parkbuoyancy_adj=str2num(gg(ll+1:end));
-            elseif strmatch('AirBladderPressure',gg)
-                pro.airbladderpres=str2num(gg(ll+1:end));
-            elseif strmatch('AirPumpAmps',gg)
-                pro.airpumpcurrent=(str2num(gg(ll+1:end)) * 4.052) - 3.606;
-            elseif strmatch('AirPumpVolts',gg)
-                pro.airpumpvoltage=calc_volt9a(str2num(gg(ll+1:end)));
-            elseif strmatch('BuoyancyPumpOnTime',gg)
-                pro.pumpmotortime=str2num(gg(ll+1:end));
-            elseif strmatch('BuoyancyPumpAmps',gg)
-                pro.buoyancypumpcurrent=(str2num(gg(ll+1:end)) * 4.052) - 3.606;
-            elseif strmatch('BuoyancyPumpVolts',gg)
-                pro.buoyancypumpvoltage=calc_volt9a(str2num(gg(ll+1:end)));
-            elseif strmatch('CurrentPistonPosition',gg)
-                pro.maxpistonpos=str2num(gg(ll+1:end));
-            elseif strmatch('DeepProfilePistonPosition',gg)
-                pro.profilepistonpos=str2num(gg(ll+1:end));
-            elseif strmatch('DeepProfileBuoyancyPosition',gg)
-                pro.profilepistonpos=str2num(gg(ll+1:end));
-            elseif strmatch('GpsFixTime',gg)
-                pro.gpsfixtime=str2num(gg(ll+1:end));
-            elseif strmatch('FloatId',gg)
-                
-            elseif strmatch('ParkDescentP',gg)
-                
-            elseif strmatch('ParkPistonPosition',gg)
-                pro.parkpistonpos=str2num(gg(ll+1:end));
-            elseif strmatch('ParkBuoyancyPosition',gg)
-                pro.parkpistonpos=str2num(gg(ll+1:end));
-            elseif strmatch('ParkObs',gg)
-                
-            elseif strmatch('ProfileId',gg)
-                
-            elseif strmatch('ObsIndex',gg)
-                
-            elseif strmatch('QuiescentAmps',gg)
-                pro.parkbatterycurrent=(str2num(gg(ll+1:end)) * 4.052) - 3.606;
-            elseif strmatch('QuiescentVolts',gg)
-                pro.parkbatteryvoltage=calc_volt9a(str2num(gg(ll+1:end)));
-            elseif strmatch('RtcSkew',gg)
-                pro.RTCskew=str2num(gg(ll+1:end));
-            elseif strmatch('Sbe41cpAmps',gg)
-                pro.SBEpumpcurrent=(str2num(gg(ll+1:end)) * 4.052) - 3.606;
-            elseif strmatch('Sbe41cpVolts',gg)
-                pro.SBEpumpvoltage=calc_volt9a(str2num(gg(ll+1:end)));
-            elseif strmatch('Sbe41cpStatus',gg)
-                pro.SBE41status=gg(ll+1:end);
-            elseif strmatch('status',gg)
-                l2=strfind(gg(ll+1:end),'x');
-                pro.sfc_termination=[dec2hex(str2num(gg(ll+1:ll+l2-1))) dec2hex(str2num(gg(ll+l2+1:end)))];
-            elseif strmatch('SurfacePistonPosition',gg)
-                pro.pistonpos=str2num(gg(ll+1:end));
-            elseif strmatch('SurfaceBuoyancyPosition',gg)
-                pro.pistonpos=str2num(gg(ll+1:end));
-            elseif strmatch('SurfacePressure',gg)
-                pro.surfpres=str2num(gg(ll+1:end));
-                pro.surfpres_qc=0;
-                pro.surfpres_used=pro.surfpres;
-            elseif strmatch('Vacuum',gg)
-                pro.p_internal=(0.293 * str2num(gg(ll+1:end)) - 29.767);
-                
-            elseif(strmatch('# GPS fix',gg))  %found a fix!
-                ff=ff+1;
-                %now get position information from GPS:
-                kk=strfind(gg,'in ');
-                k2=strfind(gg,' seconds');
-                gl=gg(kk+3:k2-1);
-                if ff==1
-                    pro.GPSfixtime=gl;
-                else
-                    pro.GPSfixtime(ff,1:k2-kk-3)=gl;
-                end
-                gg=fgetl(fid);
-                gg=fgetl(fid);     %lat and long
-                if dbdat.maker==4  % == 1016 | dbdat.subtype == 1017
-                    pro.lat(ff)=sscanf(gg(15:23),'%f');
-                    pro.lon(ff)=sscanf(gg(5:14),'%f');
-                else
-                    pro.lat(ff)=sscanf(gg(14:21),'%f');
-                    pro.lon(ff)=sscanf(gg(5:14),'%f');
-                end
-                if pro.lon(ff)<0; pro.lon(ff)=360+pro.lon(ff); end
-                if dbdat.maker == 4  %subtype == 1016 | dbdat.subtype == 1017
-                    location_date=[str2num(gg(31:34)) str2num(gg(25:26)) str2num(gg(28:29)) ...
-                        str2num(gg(36:37)) str2num(gg(38:39)) str2num(gg(40:41))];
-                    pro.datetime_vec(ff,1:6)=location_date;
-                    pro.jday_location(ff)=julian(location_date);
-                    pro.GPSsatellites(ff)=str2num(gg(42:end));
-                else
-                    location_date=[str2num(gg(29:32)) str2num(gg(23:24)) str2num(gg(26:27)) ...
-                        str2num(gg(34:35)) str2num(gg(36:37)) str2num(gg(38:39))];
-                    pro.datetime_vec(ff,1:6)=location_date;
-                    pro.jday_location(ff)=julian(location_date);
-                    try
-                        pro.GPSsatellites(ff)=str2num(gg(40:end));
-                    catch
-                        pro.GPSsatellites(ff)= NaN;
-                    end
-                end
-                pro.jday=jdays;
-                pro.jday_ascent_end=jdays;
+            pro.(str2{a})=str2num(gg(ll+1:end));
+            %             end
+        end
+    end
+    
+    %some of the tech info that requires calculation:
+    %currents
+    str = {'AirPumpAmps','BuoyancyPumpAmps','QuiescentAmps',...
+        'Sbe41cpAmps'};
+    str2 = {'airpumpcurrent','buoyancypumpcurrent','parkbatterycurrent',...
+        'SBEpumpcurrent'};
+    for a = 1:length(str)
+        ii = find(strncmp(str{a},c,length(str{a})));
+        if ~isempty(ii)
+            gg = c{ii(1)};
+            ll=strfind(gg,'=');
+            pro.(str2{a})=(str2num(gg(ll+1:end)) * 4.052) - 3.606;
+        end
+    end
+    %volts
+    str = {'AirPumpVolts','BuoyancyPumpVolts','QuiescentVolts',...
+        'Sbe41cpVolts'};
+    str2 = {'airpumpvoltage','buoyancypumpvoltage','parkbatteryvoltage',...
+        'SBEpumpvoltage'};
+    for a = 1:length(str)
+        ii = find(strncmp(str{a},c,length(str{a})));
+        if ~isempty(ii)
+            gg = c{ii(1)};
+            ll=strfind(gg,'=');
+            pro.(str2{a})=calc_volt9a(str2num(gg(ll+1:end)));
+        end
+    end
+    %we are not decoding these yet:
+    %             elseif strmatch('Apf9i',gg)
+    %             elseif strmatch('FloatId',gg)
+    %             elseif strmatch('ParkDescentP',gg)
+    %             elseif strmatch('ParkObs',gg)
+    %             elseif strmatch('ProfileId',gg)
+    %             elseif strmatch('ObsIndex',gg)
+    
+    %Others:
+    ii = find(strncmp('status',c,6));
+    if ~isempty(ii)
+        gg = c{ii(1)};
+        ll=strfind(gg,'=');
+        l2=strfind(gg(ll+1:end),'x');
+        pro.sfc_termination=[dec2hex(str2num(gg(ll+1:ll+l2-1))) dec2hex(str2num(gg(ll+l2+1:end)))];
+    end
+    ii = find(strncmp('SurfacePressure',c,15));
+    if ~isempty(ii)
+        gg = c{ii(1)};
+        ll=strfind(gg,'=');
+        pro.surfpres=str2num(gg(ll+1:end));
+        pro.surfpres_qc=0;
+        pro.surfpres_used=pro.surfpres;
+    end
+    ii = find(strncmp('Vacuum',c,6));
+    if ~isempty(ii)
+        gg = c{ii(1)};
+        ll=strfind(gg,'=');
+        pro.p_internal=(0.293 * str2num(gg(ll+1:end)) - 29.767);
+    end
+    ii = find(strncmp('# GPS fix',c,9));
+    if ~isempty(ii)
+        for ff = 1:length(ii)
+            gg = c{ii(ff)};
+            %now get position information from GPS:
+            kk=strfind(gg,'in ');
+            k2=strfind(gg,' seconds');
+            gl=gg(kk+3:k2-1);
+            if ff==1
+                pro.GPSfixtime=gl;
+            else
+                pro.GPSfixtime(ff,1:k2-kk-3)=gl;
             end
-            gg=fgetl(fid);
-            while isempty(gg)
-                gg=fgetl(fid);
+            
+            if ii(ff)+2 > length(c)
+                break
             end
+            gg=c{ii(ff)+2};     %lat and long
+            if dbdat.maker==4  % == 1016 | dbdat.subtype == 1017
+                pro.lat(ff)=sscanf(gg(15:23),'%f');
+                pro.lon(ff)=sscanf(gg(5:14),'%f');
+            else
+                pro.lat(ff)=sscanf(gg(14:21),'%f');
+                pro.lon(ff)=sscanf(gg(5:14),'%f');
+            end
+            if pro.lon(ff)<0; pro.lon(ff)=360+pro.lon(ff); end
+            if dbdat.maker == 4  %subtype == 1016 | dbdat.subtype == 1017
+                location_date=[str2num(gg(31:34)) str2num(gg(25:26)) str2num(gg(28:29)) ...
+                    str2num(gg(36:37)) str2num(gg(38:39)) str2num(gg(40:41))];
+                pro.datetime_vec(ff,1:6)=location_date;
+                pro.jday_location(ff)=julian(location_date);
+                pro.GPSsatellites(ff)=str2num(gg(42:end));
+            else
+                location_date=[str2num(gg(29:32)) str2num(gg(23:24)) str2num(gg(26:27)) ...
+                    str2num(gg(34:35)) str2num(gg(36:37)) str2num(gg(38:39))];
+                pro.datetime_vec(ff,1:6)=location_date;
+                pro.jday_location(ff)=julian(location_date);
+                try
+                    pro.GPSsatellites(ff)=str2num(gg(40:end));
+                catch
+                    pro.GPSsatellites(ff)= NaN;
+                end
+            end
+            pro.jday=jdays;
+            pro.jday_ascent_end=jdays;
         end
     end
         
@@ -1328,16 +1355,19 @@ end
 
    
     %now open log file and read further technical data:
-    fclose(fid);
+%     fclose(fid);
     fid=fopen([idatapath fn(1:ss(2)) 'log']);
-    
     if fid<=0
         %         return
     else
+        c = textscan(fid,'%s','delimiter','\n');
+        fclose(fid)
+        c = c{:};
+        
         j=0;
-        gg=fgetl(fid);
-        while(gg~=-1)
-            
+        ii = find(cellfun(@isempty,strfind(c,'Descent()'))==0);
+        for a = 1:length(ii)
+            gg = c{ii(a)};
             ll=strfind(gg,'Descent()');
             if(~isempty(ll))
                 j=j+1;
@@ -1347,18 +1377,22 @@ end
                     pro.descent_jday(j)=julian(datevec(gg(2:21)));
                 end
             end
-            
+        end
+        ii = find(cellfun(@isempty,strfind(c,'Continuous profile started'))==0);
+        for a = 1:length(ii)
+            gg = c{ii(a)};
             ll=strfind(gg,'Continuous profile started');
             if(~isempty(ll))
                 pro.jday_ascent_start=julian(datevec(gg(2:21)));
-                gg=fgetl(fid);
-                gg=fgetl(fid);
-                ff=strfind(gg,'Volts');
-                f2=strfind(gg,'sec,');
-                if(isempty(ff))
-                    logerr(2,'error in reading voltage')
-                else
-                    pro.voltage=(str2num(gg(f2+4:ff-1)));
+                if ii(a) + 2 <= length(c)
+                    gg = c{ii(a)+2};
+                    ff=strfind(gg,'Volts');
+                    f2=strfind(gg,'sec,');
+                    if(isempty(ff))
+                        logerr(2,'error in reading voltage')
+                    else
+                        pro.voltage=(str2num(gg(f2+4:ff-1)));
+                    end
                 end
             end
             %       ll=strfind(gg,'Continuous profile stopped'); %- not needed
@@ -1368,12 +1402,7 @@ end
             %        if(~isempty(ll))
             %             pro.jday_ascent_end=julian(datevec(gg(2:21)));
             %        end
-            gg=fgetl(fid);
-            
-        end
-        
-        fclose(fid);
-        
+        end        
     end
     float(np) = pro;
     prec.profile_number = float(np).profile_number;
