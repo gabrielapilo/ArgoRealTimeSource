@@ -32,12 +32,24 @@ else
     startjday=float(1).jday(1);
     finalprof=float(end).profile_number;
 end
-        
+
+% make sure we don't have an empty jday in the last profile
+if isempty(float(end).jday)
+    %find the next filled one
+    ilast = length(float);
+    for a = ilast:-1:np+1
+        if ~isempty(float(a).jday)
+            finalprof = float(a).profile_number;
+            ilast = a;
+            break
+        end
+    end
+end
 % then, look for missing profiles or profiles with unreasonable numbers:
 
 %if (np > old_np + 2 & ~isempty(fp.jday))  % be generous
 if (np < old_np)
-    est_prof_interval=abs(float(end).jday(1)-startjday)/finalprof;
+    est_prof_interval=abs(float(ilast).jday(1)-startjday)/finalprof;
     new_prof_interval=abs(fp.jday(1)-startjday)/max(1,np-1);
     if new_prof_interval==0;return;end  %this is a true first profile 
     if(isapprox(new_prof_interval,est_prof_interval,2))
@@ -45,7 +57,7 @@ if (np < old_np)
         return
     else
         %could be problem profile number -
-        logerr(3,['Odd profile number: ' num2str(np) ' ' datestr((float(end).jday(1))-jul0)]);
+        logerr(3,['Odd profile number: ' num2str(np) ' ' datestr((float(ilast).jday(1))-jul0)]);
         % and could be rollover
     end
 %     return % finished because np is greater than old np so not rollover...
