@@ -33,10 +33,10 @@ else
     finalprof=float(end).profile_number;
 end
 
+ilast = length(float);
 % make sure we don't have an empty jday in the last profile
 if isempty(float(end).jday)
     %find the next filled one
-    ilast = length(float);
     for a = ilast:-1:np+1
         if ~isempty(float(a).jday)
             finalprof = float(a).profile_number;
