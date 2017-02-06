@@ -65,6 +65,7 @@ if isempty(THE_ARGO_FLOAT_SENSOR_DB)
 
     fid = fopen(fnm,'r');
     tmpdb = textscan(fid,'%s','delimiter',',');   %,'bufsize',10000);
+    fclose(fid);
     tmpdb = tmpdb{1};
 
     ientry = 0;
