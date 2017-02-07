@@ -39,6 +39,9 @@ if isfield(ARGO_SYS_PARAM,'processor')
         mput(ftp_conn,'*.log')
         mput(ftp_conn,'*.msg')
         mput(ftp_conn,'*.isus')
+        mput(ftp_conn,'*.system_log.*')
+        mput(ftp_conn,'*.vitals_log.*')
+        mput(ftp_conn,'*.science_log.*')
         close(ftp_conn);
     elseif ~isempty(strfind(ARGO_SYS_PARAM.processor,'BOM'))        
         %BOM are retrieving the data from the FTP
