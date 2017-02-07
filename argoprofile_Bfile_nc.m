@@ -131,6 +131,8 @@ if exist(fname,'file')
        netcdf.close(ncid)
 %    hist=attnc(fname,'global','history');
 %    dc=getnc(fname,'DATE_CREATION');
+   catch
+       netcdf.close(ncid);
    end
    ncid=netcdf.create(fname,'CLOBBER');
 else
@@ -661,42 +663,42 @@ if dbdat.irr & ~dbdat.irr2
     netcdf.putAtt(ncid,NPRORAWDOWNIRRA555QCID,'_FillValue',' ');             
 
     NPROUPRAD412QCID=netcdf.defVar(ncid,'PROFILE_UP_RADIANCE412_QC','NC_CHAR',N_PROFID);
-    netcdf.putAtt(ncid,NPROUPRAD412QCID,'long_name','Global quality flag of PROFILE_UP_RADIANCE412 profile');
+    netcdf.putAtt(ncid,NPROUPRAD412QCID,'long_name','Global quality flag of UP_RADIANCE412 profile');
     netcdf.putAtt(ncid,NPROUPRAD412QCID,'conventions','Argo reference table 2a');
     netcdf.putAtt(ncid,NPROUPRAD412QCID,'_FillValue',' ');       
 
-    NPRORAWUPRAD412QCID=netcdf.defVar(ncid,'PROFILE_RAW_UPWELLING_RADIANCE412','NC_CHAR',N_PROFID);
-    netcdf.putAtt(ncid,NPRORAWUPRAD412QCID,'long_name','Global quality flag of PROFILE_UP_RADIANCE412 profile');
+    NPRORAWUPRAD412QCID=netcdf.defVar(ncid,'PROFILE_RAW_UPWELLING_RADIANCE412_QC','NC_CHAR',N_PROFID);
+    netcdf.putAtt(ncid,NPRORAWUPRAD412QCID,'long_name','Global quality flag of RAW_UPWELLING_RADIANCE412 profile');
     netcdf.putAtt(ncid,NPRORAWUPRAD412QCID,'conventions','Argo reference table 2a');
     netcdf.putAtt(ncid,NPRORAWUPRAD412QCID,'_FillValue',' ');        
 
     NPROUPRAD443QCID=netcdf.defVar(ncid,'PROFILE_UP_RADIANCE443_QC','NC_CHAR',N_PROFID);
-    netcdf.putAtt(ncid,NPROUPRAD443QCID,'long_name','Global quality flag of PROFILE_UP_RADIANCE443 profile');
+    netcdf.putAtt(ncid,NPROUPRAD443QCID,'long_name','Global quality flag of UP_RADIANCE443 profile');
     netcdf.putAtt(ncid,NPROUPRAD443QCID,'conventions','Argo reference table 2a');
     netcdf.putAtt(ncid,NPROUPRAD443QCID,'_FillValue',' ');       
 
-    NPRORAWUPRAD443QCID=netcdf.defVar(ncid,'PROFILE_RAW_UPWELLING_RADIANCE443','NC_CHAR',N_PROFID);
-    netcdf.putAtt(ncid,NPRORAWUPRAD443QCID,'long_name','Global quality flag of PROFILE_UP_RADIANCE443 profile');
+    NPRORAWUPRAD443QCID=netcdf.defVar(ncid,'PROFILE_RAW_UPWELLING_RADIANCE443_QC','NC_CHAR',N_PROFID);
+    netcdf.putAtt(ncid,NPRORAWUPRAD443QCID,'long_name','Global quality flag of RAW_UPWELLING_RADIANCE443 profile');
     netcdf.putAtt(ncid,NPRORAWUPRAD443QCID,'conventions','Argo reference table 2a');
     netcdf.putAtt(ncid,NPRORAWUPRAD443QCID,'_FillValue',' ');       
 
     NPROUPRAD490QCID=netcdf.defVar(ncid,'PROFILE_UP_RADIANCE490_QC','NC_CHAR',N_PROFID);
-    netcdf.putAtt(ncid,NPROUPRAD490QCID,'long_name','Global quality flag of PROFILE_UP_RADIANCE490 profile');
+    netcdf.putAtt(ncid,NPROUPRAD490QCID,'long_name','Global quality flag of UP_RADIANCE490 profile');
     netcdf.putAtt(ncid,NPROUPRAD490QCID,'conventions','Argo reference table 2a');
     netcdf.putAtt(ncid,NPROUPRAD490QCID,'_FillValue',' ');       
 
-    NPRORAWUPRAD490QCID=netcdf.defVar(ncid,'PROFILE_RAW_UPWELLING_RADIANCE490','NC_CHAR',N_PROFID);
-    netcdf.putAtt(ncid,NPRORAWUPRAD490QCID,'long_name','Global quality flag of PROFILE_UP_RADIANCE490 profile');
+    NPRORAWUPRAD490QCID=netcdf.defVar(ncid,'PROFILE_RAW_UPWELLING_RADIANCE490_QC','NC_CHAR',N_PROFID);
+    netcdf.putAtt(ncid,NPRORAWUPRAD490QCID,'long_name','Global quality flag of RAW_UPWELLING_RADIANCE490 profile');
     netcdf.putAtt(ncid,NPRORAWUPRAD490QCID,'conventions','Argo reference table 2a');
     netcdf.putAtt(ncid,NPRORAWUPRAD490QCID,'_FillValue',' ');       
 
     NPROUPRAD555QCID=netcdf.defVar(ncid,'PROFILE_UP_RADIANCE555_QC','NC_CHAR',N_PROFID);
-    netcdf.putAtt(ncid,NPROUPRAD555QCID,'long_name','Global quality flag of PROFILE_UP_RADIANCE555 profile');
+    netcdf.putAtt(ncid,NPROUPRAD555QCID,'long_name','Global quality flag of UP_RADIANCE555 profile');
     netcdf.putAtt(ncid,NPROUPRAD555QCID,'conventions','Argo reference table 2a');
     netcdf.putAtt(ncid,NPROUPRAD555QCID,'_FillValue',' ');       
 
-    NPRORAWUPRAD555QCID=netcdf.defVar(ncid,'PROFILE_RAW_UPWELLING_RADIANCE555','NC_CHAR',N_PROFID);
-    netcdf.putAtt(ncid,NPRORAWUPRAD555QCID,'long_name','Global quality flag of PROFILE_UP_RADIANCE555 profile');
+    NPRORAWUPRAD555QCID=netcdf.defVar(ncid,'PROFILE_RAW_UPWELLING_RADIANCE555_QC','NC_CHAR',N_PROFID);
+    netcdf.putAtt(ncid,NPRORAWUPRAD555QCID,'long_name','Global quality flag of RAW_UPWELLING_RADIANCE555 profile');
     netcdf.putAtt(ncid,NPRORAWUPRAD555QCID,'conventions','Argo reference table 2a');
     netcdf.putAtt(ncid,NPRORAWUPRAD555QCID,'_FillValue',' ');       
 
@@ -1299,7 +1301,7 @@ if dbdat.tmiss
     
     NCP660ADERRID=netcdf.defVar(ncid,'CP660_ADJUSTED_ERROR','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NCP660ADERRID,'long_name','Contains the error on the adjusted values as determined by the delayed mode QC process');
-    netcdf.putAtt(ncid,NCP660ADERRID,'units','ppb');
+    netcdf.putAtt(ncid,NCP660ADERRID,'units','m-1');
     netcdf.putAtt(ncid,NCP660ADERRID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NCP660ADERRID,'FORTRAN_format','F9.3');
     netcdf.putAtt(ncid,NCP660ADERRID,'resolution',' ');
@@ -1571,7 +1573,7 @@ if dbdat.suna
     NNITRATEADID=netcdf.defVar(ncid,'NITRATE_ADJUSTED','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NNITRATEADID,'long_name','Nitrate');
     netcdf.putAtt(ncid,NNITRATEADID,'standard_name','moles_of_nitrate_per_unit_mass_in_sea_water');
-    netcdf.putAtt(ncid,NNITRATEADID,'units','ppb');
+    netcdf.putAtt(ncid,NNITRATEADID,'units','micromole/kg');
     netcdf.putAtt(ncid,NNITRATEADID,'_FillValue',single(fval));
     %         netcdf.putAtt(ncid,NNITRATEADID,'valid_min','');
     %         netcdf.putAtt(ncid,NNITRATEADID,'valid_max','');
@@ -1839,7 +1841,7 @@ if dbdat.irr & ~dbdat.irr2
     NUPRAD412ADID=netcdf.defVar(ncid,'UP_RADIANCE412_ADJUSTED','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NUPRAD412ADID,'long_name','Upwelling radiance at 412 nanometers');
     netcdf.putAtt(ncid,NUPRAD412ADID,'standard_name','upwelling_radiance_in_sea_water');
-    netcdf.putAtt(ncid,NUPRAD412ADID,'units','W/m^2/nm');
+    netcdf.putAtt(ncid,NUPRAD412ADID,'units','W/m^2/nm/sr');
     netcdf.putAtt(ncid,NUPRAD412ADID,'_FillValue',single(fval));
     %         netcdf.putAtt(ncid,NUPRAD412ADID,'valid_min','');
     %         netcdf.putAtt(ncid,NUPRAD412ADID,'valid_max','');
@@ -1866,7 +1868,7 @@ if dbdat.irr & ~dbdat.irr2
     netcdf.putAtt(ncid,NUPRAD412ADERRID,'_FillValue',single(fval));
     
     NRAWUPRAD412ID=netcdf.defVar(ncid,'RAW_UPWELLING_RADIANCE412','NC_FLOAT',[N_LEVELSID,N_PROFID]);
-    netcdf.putAtt(ncid,NRAWUPRAD412ID,'long_name','Raw Upwelling radiance at 412 nanometers');
+    netcdf.putAtt(ncid,NRAWUPRAD412ID,'long_name','Raw upwelling radiance at 412 nanometers');
     %         netcdf.putAtt(ncid,NRAWUPRAD412ID,'standard_name','moles_of_RAWUPRAD412_per_unit_mass_in_sea_water');
     netcdf.putAtt(ncid,NRAWUPRAD412ID,'units','count');
     netcdf.putAtt(ncid,NRAWUPRAD412ID,'_FillValue',single(fval));
@@ -1895,7 +1897,7 @@ if dbdat.irr & ~dbdat.irr2
     NUPRAD443ADID=netcdf.defVar(ncid,'UP_RADIANCE443_ADJUSTED','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NUPRAD443ADID,'long_name','Upwelling radiance at 443 nanometers');
     netcdf.putAtt(ncid,NUPRAD443ADID,'standard_name','upwelling_radiance_in_sea_water');
-    netcdf.putAtt(ncid,NUPRAD443ADID,'units','W/m^2/nm');
+    netcdf.putAtt(ncid,NUPRAD443ADID,'units','W/m^2/nm/sr');
     netcdf.putAtt(ncid,NUPRAD443ADID,'_FillValue',single(fval));
     %         netcdf.putAtt(ncid,NUPRAD443ADID,'valid_min','');
     %         netcdf.putAtt(ncid,NUPRAD443ADID,'valid_max','');
@@ -1922,7 +1924,7 @@ if dbdat.irr & ~dbdat.irr2
     netcdf.putAtt(ncid,NUPRAD443ADERRID,'_FillValue',single(fval));
     
     NRAWUPRAD443ID=netcdf.defVar(ncid,'RAW_UPWELLING_RADIANCE443','NC_FLOAT',[N_LEVELSID,N_PROFID]);
-    netcdf.putAtt(ncid,NRAWUPRAD443ID,'long_name','Raw Upwelling radiance at 443 nanometers');
+    netcdf.putAtt(ncid,NRAWUPRAD443ID,'long_name','Raw upwelling radiance at 443 nanometers');
     %         netcdf.putAtt(ncid,NRAWUPRAD443ID,'standard_name','moles_of_RAWUPRAD443_per_unit_mass_in_sea_water');
     netcdf.putAtt(ncid,NRAWUPRAD443ID,'units','count');
     netcdf.putAtt(ncid,NRAWUPRAD443ID,'_FillValue',single(fval));
@@ -1951,7 +1953,7 @@ if dbdat.irr & ~dbdat.irr2
     NUPRAD490ADID=netcdf.defVar(ncid,'UP_RADIANCE490_ADJUSTED','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NUPRAD490ADID,'long_name','Upwelling radiance at 490 nanometers');
     netcdf.putAtt(ncid,NUPRAD490ADID,'standard_name','upwelling_radiance_in_sea_water');
-    netcdf.putAtt(ncid,NUPRAD490ADID,'units','W/m^2/nm');
+    netcdf.putAtt(ncid,NUPRAD490ADID,'units','W/m^2/nm/sr');
     netcdf.putAtt(ncid,NUPRAD490ADID,'_FillValue',single(fval));
     %         netcdf.putAtt(ncid,NUPRAD490ADID,'valid_min','');
     %         netcdf.putAtt(ncid,NUPRAD490ADID,'valid_max','');
@@ -1978,7 +1980,7 @@ if dbdat.irr & ~dbdat.irr2
     netcdf.putAtt(ncid,NUPRAD490ADERRID,'_FillValue',single(fval));
     
     NRAWUPRAD490ID=netcdf.defVar(ncid,'RAW_UPWELLING_RADIANCE490','NC_FLOAT',[N_LEVELSID,N_PROFID]);
-    netcdf.putAtt(ncid,NRAWUPRAD490ID,'long_name','Raw Upwelling radiance at 490 nanometers');
+    netcdf.putAtt(ncid,NRAWUPRAD490ID,'long_name','Raw upwelling radiance at 490 nanometers');
     %         netcdf.putAtt(ncid,NRAWUPRAD490ID,'standard_name','moles_of_RAWUPRAD490_per_unit_mass_in_sea_water');
     netcdf.putAtt(ncid,NRAWUPRAD490ID,'units','count');
     netcdf.putAtt(ncid,NRAWUPRAD490ID,'_FillValue',single(fval));
@@ -2007,7 +2009,7 @@ if dbdat.irr & ~dbdat.irr2
     NUPRAD555ADID=netcdf.defVar(ncid,'UP_RADIANCE555_ADJUSTED','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NUPRAD555ADID,'long_name','Upwelling radiance at 555 nanometers');
     netcdf.putAtt(ncid,NUPRAD555ADID,'standard_name','upwelling_radiance_in_sea_water');
-    netcdf.putAtt(ncid,NUPRAD555ADID,'units','W/m^2/nm');
+    netcdf.putAtt(ncid,NUPRAD555ADID,'units','W/m^2/nm/sr');
     netcdf.putAtt(ncid,NUPRAD555ADID,'_FillValue',single(fval));
     %         netcdf.putAtt(ncid,NUPRAD555ADID,'valid_min','');
     %         netcdf.putAtt(ncid,NUPRAD555ADID,'valid_max','');
@@ -2034,7 +2036,7 @@ if dbdat.irr & ~dbdat.irr2
     netcdf.putAtt(ncid,NUPRAD555ADERRID,'_FillValue',single(fval));
     
     NRAWUPRAD555ID=netcdf.defVar(ncid,'RAW_UPWELLING_RADIANCE555','NC_FLOAT',[N_LEVELSID,N_PROFID]);
-    netcdf.putAtt(ncid,NRAWUPRAD555ID,'long_name','Raw Upwelling radiance at 555 nanometers');
+    netcdf.putAtt(ncid,NRAWUPRAD555ID,'long_name','Raw upwelling radiance at 555 nanometers');
     %         netcdf.putAtt(ncid,NRAWUPRAD555ID,'standard_name','moles_of_RAWUPRAD555_per_unit_mass_in_sea_water');
     netcdf.putAtt(ncid,NRAWUPRAD555ID,'units','count');
     netcdf.putAtt(ncid,NRAWUPRAD555ID,'_FillValue',single(fval));
@@ -4218,8 +4220,8 @@ netcdf.putVar(ncid,NPARADAMOID,[0,0],[n,m],pdm');
 
 netcdf.close(ncid)
 
-% if exist('isingdac')==2
-%     if isingdac(fname)~=2
+%if the file is not already in the gdac as a D-mode, copy to export
+    if isingdac(fname)~=2
 
         [status,ww] = system(['cp -f ' fname ' ' ARGO_SYS_PARAM.root_dir 'export']);
         if ispc
@@ -4230,8 +4232,7 @@ netcdf.close(ncid)
         if status~=0
             logerr(3,['Copy of ' fname ' to export/ failed:' ww]);
         end
-%     end
-% end
+    end
 
 
 %----------------------------------------------------------------------------
