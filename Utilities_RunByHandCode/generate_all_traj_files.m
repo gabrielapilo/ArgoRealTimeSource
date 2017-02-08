@@ -10,9 +10,15 @@ end
 
 getdbase(0);
 count = 0; %using this to just do 5 floats.
+
+%% Iridium
 for ii = 1:length(THE_ARGO_FLOAT_DB)
     %testing the creation of iridium traj files
     if isempty(strmatch('9i',THE_ARGO_FLOAT_DB(ii).controlboardnumstring))
+        continue
+    end
+    if THE_ARGO_FLOAT_DB(ii).wmo_id ~= 1901146
+        
         continue
     end
     
@@ -50,7 +56,7 @@ for ii = 1:length(THE_ARGO_FLOAT_DB)
             pn = '000';
             pns = num2str(j);
             pn(end-length(pns)+1:end) = pns;
-            pmeta.ftp_name = [num2str(dbdat.argos_id) '.' pn '.log'];
+            pmeta.ftp_fname = [num2str(dbdat.argos_id) '.' pn '.log'];
             pmeta.pn = j;
             
             if j == length(fpp)
@@ -59,7 +65,7 @@ for ii = 1:length(THE_ARGO_FLOAT_DB)
             % create the netcdf and matlab trajectory files.
             disp(['WMO: ' num2str(pmeta.wmo_id) ', pn: ' num2str(pmeta.pn)])
 %             try
-            traj = load_traj_apex_iridium(traj,pmeta,pmeta.pn,dbdat,fpp); %for iridium floats
+            traj = load_traj_apex_iridium(traj,pmeta,pmeta.pn,dbdat,fpp,floc); %for iridium floats
 %             [traj,traj_mc_order] = load_traj_apex(traj,pmeta,dbdat,fpp,not_last,floc); % for argos floats
 %             catch Me
 %                 %open a file to write the message out for later checking
@@ -100,6 +106,43 @@ for ii = 1:length(THE_ARGO_FLOAT_DB)
 %                 fclose(fid);
 %                 
 %             end
+        end
+    end
+end
+return
+%% ARGOS
+for ii = 1:length(THE_ARGO_FLOAT_DB)
+    %testing the creation of iridium traj files
+    if THE_ARGO_FLOAT_DB(ii).iridium == 1
+        continue
+    end
+    if THE_ARGO_FLOAT_DB(ii).wmo_id ~= 1901126
+        
+        continue
+    end
+    
+    clear traj traj_mc_order
+    
+    [fpp,dbdat] = getargo(THE_ARGO_FLOAT_DB(ii).wmo_id);
+
+    if ~isempty(fpp)
+        %construct a location for the log files that have been processed
+        floc = [ARGO_SYS_PARAM.iridium_path 'iridium_processed/' ...
+            num2str(THE_ARGO_FLOAT_DB(ii).wmo_id) '/'];
+        
+        % get the file metadata information
+        pmeta.wmo_id = THE_ARGO_FLOAT_DB(ii).wmo_id;
+        not_last = 1;
+        %load the traj mat file just once:
+        tfnm = [ARGO_SYS_PARAM.root_dir 'trajfiles/T' num2str(pmeta.wmo_id)];
+        if exist([tfnm '.mat'],'file');
+            load(tfnm);
+        else
+            traj = [];
+        end
+                
+        if exist('traj','var') == 1
+            trajectory_nc(dbdat,fpp,traj,traj_mc_order)
         end
     end
 end
