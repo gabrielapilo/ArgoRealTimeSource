@@ -2,11 +2,11 @@
 %
 % INPUT: dbdat - master database record for this float
 %        fpp   - struct array containing the profiles for this float
-%        [traj]  - struct array containing trajectory info   
+%        [traj]  - struct array containing trajectory info
 %        [traj_mc_order]  - vector of MC codes in the right order for this float type
 %
 % changed to read traj metadata file if traj and traj_mc_order are not
-% specified.  These are now optional. 
+% specified.  These are now optional.
 %
 % Author:  Jeff Dunn CSIRO/BoM  Aug 2006, Oct 2012
 %
@@ -34,32 +34,32 @@ np = min([length(fpp) length(traj)]);
 % Count cycles for which we have data (ie ignore missing cycles)
 gotcyc = zeros(1,np);
 for ii = 1:np
-   gotcyc(ii) = ~isempty(fpp(ii).jday) && isfield(traj(ii),'TST') && ...
-       isfield(traj(ii).TST,'juld') && ~isempty(traj(ii).TST.juld);
+    gotcyc(ii) = ~isempty(fpp(ii).jday) && isfield(traj(ii),'TST') && ...
+        isfield(traj(ii).TST,'juld') && ~isempty(traj(ii).TST.juld);
 end
 gotcyc = find(gotcyc);
 if isempty(gotcyc)
-   logerr(2,['TRAJECTORY_NC:  No usable cycles, so no file made (WMO '...
-	     num2str(dbdat.wmo_id) ')']);
-   return
+    logerr(2,['TRAJECTORY_NC:  No usable cycles, so no file made (WMO '...
+        num2str(dbdat.wmo_id) ')']);
+    return
 end
 
 today_str = sprintf('%04d%02d%02d%02d%02d%02d',fix(clock));
 
 
 % Only P, T, S and conductivity are stored in Core-Argo traj files - all
-% other parameters are in the B-files. 
+% other parameters are in the B-files.
 % Parameters defined in User Manual Ref table 3
-pars = {'PRES','TEMP','PSAL'}; 
+pars = {'PRES','TEMP','PSAL'};
 % if ~isfield(fpp,'p_park_av') && ~isfield(fpp,'park_p')    %palace floats
 % without park averages - fill with empty data!
 %    % What about surface measurements??
 %    params = [];
 % else
-   params = [1 2];
-   if isfield(fpp,'park_s') || isfield(fpp,'s_park_av') 
-      params = [params 3];
-   end
+params = [1 2];
+if isfield(fpp,'park_s') || isfield(fpp,'s_park_av')
+    params = [params 3];
+end
 % end
 
 % ## LOTS MORE TO FILL IN HERE :
@@ -93,11 +93,11 @@ pkavnm = {'p_park_av','t_park_av','s_park_av'};
 surfnm = {'surf_Oxy_pressure','surf_t','surf_s'};
 
 if ispc
-fname = [ARGO_SYS_PARAM.root_dir 'netcdf\' num2str(dbdat.wmo_id) '\' num2str(dbdat.wmo_id) '_Rtraj.nc'];
-dirn = [ARGO_SYS_PARAM.root_dir 'netcdf\' num2str(dbdat.wmo_id) ];
+    fname = [ARGO_SYS_PARAM.root_dir 'netcdf\' num2str(dbdat.wmo_id) '\' num2str(dbdat.wmo_id) '_Rtraj.nc'];
+    dirn = [ARGO_SYS_PARAM.root_dir 'netcdf\' num2str(dbdat.wmo_id) ];
 else
-fname = [ARGO_SYS_PARAM.root_dir 'netcdf/' num2str(dbdat.wmo_id) '/' num2str(dbdat.wmo_id) '_Rtraj.nc'];
-dirn = [ARGO_SYS_PARAM.root_dir 'netcdf/' num2str(dbdat.wmo_id) ];
+    fname = [ARGO_SYS_PARAM.root_dir 'netcdf/' num2str(dbdat.wmo_id) '/' num2str(dbdat.wmo_id) '_Rtraj.nc'];
+    dirn = [ARGO_SYS_PARAM.root_dir 'netcdf/' num2str(dbdat.wmo_id) ];
 end
 
 
@@ -108,20 +108,20 @@ end
 hist=[];
 dc=[];
 if exist(fname,'file')
-   try
-       ncid=netcdf.open(fnm,'NOWRITE');
-       
-       hist=netcdf.getAtt(ncid,netcdf.getConstant('NC_GLOBAL'),'history');
-       dcvarid=netcdf.inqVarID(ncid,'DATE_CREATION');
-       dc=netcdf.getVar(ncid,dcvarid);
-       
-       netcdf.close(ncid)
-%     hist=attnc(fname,'global','history');
-%     dc=getnc(fname,'DATE_CREATION');
-   end
+    try
+        ncid=netcdf.open(fnm,'NOWRITE');
+        
+        hist=netcdf.getAtt(ncid,netcdf.getConstant('NC_GLOBAL'),'history');
+        dcvarid=netcdf.inqVarID(ncid,'DATE_CREATION');
+        dc=netcdf.getVar(ncid,dcvarid);
+        
+        netcdf.close(ncid)
+        %     hist=attnc(fname,'global','history');
+        %     dc=getnc(fname,'DATE_CREATION');
+    end
 else
 end
-     ncid=netcdf.create(fname,'CLOBBER');
+ncid=netcdf.create(fname,'CLOBBER');
 
 if isempty(dc)  | all(double(dc)==0) | all(double(dc)==32)
     if ispc
@@ -130,7 +130,7 @@ if isempty(dc)  | all(double(dc)==0) | all(double(dc)==32)
     else
         [st,today_str]=system(['date -u +%Y%m%d%H%M%S']);
         today_str=today_str(1:14);
-   end
+    end
     dc=today_str;
 end
 
@@ -176,7 +176,7 @@ STR64=netcdf.defDim(ncid,'STRING64',64);
 DaTi =netcdf.defDim(ncid,'DATE_TIME',14);
 
 % "When no parameter is measured along the trajectory, N_PARAM and any
-% field with a N_PARAM dimension are removed from the file..."    2.3.4 
+% field with a N_PARAM dimension are removed from the file..."    2.3.4
 if ~isempty(params)
     N_PARID=netcdf.defDim(ncid,'N_PARAM',length(params));
 end
@@ -207,7 +207,7 @@ netcdf.putAtt(ncid,NPLANUID,'_FillValue',' ');
 NDACENID=netcdf.defVar(ncid,'DATA_CENTRE','NC_CHAR',STR2);
 netcdf.putAtt(ncid,NDACENID,'long_name','Data centre in charge of float data processing');
 netcdf.putAtt(ncid,NDACENID,'conventions','Argo reference table 4');
-netcdf.putAtt(ncid,NDACENID,'_FillValue',' ');   
+netcdf.putAtt(ncid,NDACENID,'_FillValue',' ');
 
 % The commmittee proved their worth that day! And if a letter of a long_name
 % is not as decreed then the file is rejected - thus preventing global anarchy!
@@ -221,11 +221,11 @@ NPRONAID=netcdf.defVar(ncid,'PROJECT_NAME','NC_CHAR',STR64);
 % netcdf.putAtt(ncid,NPRONAID,'long_name','Program under which the float was deployed');
 netcdf.putAtt(ncid,NPRONAID,'long_name','Name of the project');
 netcdf.putAtt(ncid,NPRONAID,'_FillValue',' ');
-       
+
 NPINAID=netcdf.defVar(ncid,'PI_NAME','NC_CHAR',STR64);
 netcdf.putAtt(ncid,NPINAID,'long_name','Name of the principal investigator');
 netcdf.putAtt(ncid,NPINAID,'_FillValue',' ');
-     
+
 NDATYID=netcdf.defVar(ncid,'DATA_TYPE','NC_CHAR',STR16);
 netcdf.putAtt(ncid,NDATYID,'long_name','Data type');
 netcdf.putAtt(ncid,NDATYID,'conventions','Argo reference table 1');
@@ -249,10 +249,10 @@ netcdf.putAtt(ncid,NPOSSYSID,'long_name','Positioning system');
 netcdf.putAtt(ncid,NPOSSYSID,'_FillValue',' ');
 
 if ~isempty(params)
-NTRAJPARAID=netcdf.defVar(ncid,'TRAJECTORY_PARAMETERS','NC_CHAR',[STR16,N_PARID]);
-netcdf.putAtt(ncid,NTRAJPARAID,'long_name','List of available parameters for the station');
-netcdf.putAtt(ncid,NTRAJPARAID,'conventions','Argo reference table 3');
-netcdf.putAtt(ncid,NTRAJPARAID,'_FillValue',' ');   
+    NTRAJPARAID=netcdf.defVar(ncid,'TRAJECTORY_PARAMETERS','NC_CHAR',[STR16,N_PARID]);
+    netcdf.putAtt(ncid,NTRAJPARAID,'long_name','List of available parameters for the station');
+    netcdf.putAtt(ncid,NTRAJPARAID,'conventions','Argo reference table 3');
+    netcdf.putAtt(ncid,NTRAJPARAID,'_FillValue',' ');
 end
 
 NDASTAINDID=netcdf.defVar(ncid,'DATA_STATE_INDICATOR','NC_CHAR',STR4);
@@ -342,17 +342,17 @@ netcdf.putAtt(ncid,NPOSQCID,'_FillValue',' ');
 NCYCNUMID=netcdf.defVar(ncid,'CYCLE_NUMBER','NC_INT',N_MEASID);
 netcdf.putAtt(ncid,NCYCNUMID,'long_name','Float cycle number of the measurement');
 netcdf.putAtt(ncid,NCYCNUMID,'_FillValue',int32(99999));
-netcdf.putAtt(ncid,NCYCNUMID,'conventions','0...N, 0 : launch cycle, 1 : first complete cycle'); 
+netcdf.putAtt(ncid,NCYCNUMID,'conventions','0...N, 0 : launch cycle, 1 : first complete cycle');
 
 NCYCNUMADID=netcdf.defVar(ncid,'CYCLE_NUMBER_ADJUSTED','NC_INT',N_MEASID);
 netcdf.putAtt(ncid,NCYCNUMADID,'long_name','Adjusted float cycle number of the measurement');
 netcdf.putAtt(ncid,NCYCNUMADID,'_FillValue',int32(99999));
-netcdf.putAtt(ncid,NCYCNUMADID,'conventions','0...N, 0 : launch cycle, 1 : first complete cycle'); 
+netcdf.putAtt(ncid,NCYCNUMADID,'conventions','0...N, 0 : launch cycle, 1 : first complete cycle');
 
 NMEASCOID=netcdf.defVar(ncid,'MEASUREMENT_CODE','NC_INT',N_MEASID);
 netcdf.putAtt(ncid,NMEASCOID,'long_name','Flag referring to a measurement event in the cycle');
 netcdf.putAtt(ncid,NMEASCOID,'_FillValue',int32(99999));
-netcdf.putAtt(ncid,NMEASCOID,'conventions','Argo reference table 15'); 
+netcdf.putAtt(ncid,NMEASCOID,'conventions','Argo reference table 15');
 
 for ipar = params
     parnm = pars{ipar};
@@ -472,9 +472,9 @@ NJULDASSTASTID=netcdf.defVar(ncid,'JULD_ASCENT_START_STATUS','NC_CHAR',N_CYCLEID
 netcdf.putAtt(ncid,NJULDASSTASTID,'long_name','Status of start date of the ascent to the surface');
 netcdf.putAtt(ncid,NJULDASSTASTID,'_FillValue',' ');
 netcdf.putAtt(ncid,NJULDASSTASTID,'conventions','Argo reference table 19');
-% 
+%
 
-% % GDAC says we need a long_name but present manuals do not specifiy it 
+% % GDAC says we need a long_name but present manuals do not specifiy it
 
 NJULDASENDID=netcdf.defVar(ncid,'JULD_ASCENT_END','NC_DOUBLE',N_CYCLEID);
 netcdf.putAtt(ncid,NJULDASENDID,'long_name','End date of ascent to the surface');
@@ -821,8 +821,8 @@ netcdf.putVar(ncid,NREDTID,0,length('19500101000000'),'19500101000000');
 netcdf.putVar(ncid,NDACRID,0,length(dc),dc);
 
 for ii = 1:length(params)
-   str = pars{params(ii)};
-   netcdf.putVar(ncid,NTRAJPARAID,[0,params(ii)-1],[length(str),1],str);
+    str = pars{params(ii)};
+    netcdf.putVar(ncid,NTRAJPARAID,[0,params(ii)-1],[length(str),1],str);
 end
 
 netcdf.putVar(ncid,NDASTAINDID,0,length('2B  '),'2B  ');
@@ -845,7 +845,7 @@ switch dbdat.maker
         netcdf.putVar(ncid,NPLATYID,0,length('S2A'),'S2A');
 end
 
-aa =   sensdb.mfg_id;   
+aa =   sensdb.mfg_id;
 if ~ischar(aa)
     aa = num2str(aa);
 end
@@ -871,7 +871,7 @@ netcdf.putVar(ncid,NJULDQCID,iNM-1,length('1'),'1');
 netcdf.putVar(ncid,NPOSQCID,iNM-1,length('1'),'1');
 
 %  Set to 1 if/when position is checked,  otherwise 0. I assume they have
-%  been checked 
+%  been checked
 
 % num2str(-1)
 netcdf.putVar(ncid,NCYCNUMID,iNM-1,length(-1),-1);
@@ -892,79 +892,79 @@ netcdf.putVar(ncid,NDAUPID,0,length(today_str),today_str);
 % it might be possible to estimate in the future and acts as a placeholder.
 %
 % If a float does not experience an event, then the fill values are used for
-% all N_CYCLE variables. These non-events do not get a placeholder in the 
+% all N_CYCLE variables. These non-events do not get a placeholder in the
 % N_MEASUREMENT arrays."
 
 
 % ----------------- N_CYCLE dimension fields
 ii = 0;
 for nn = gotcyc
-   % We don't include missing cycles, so should end up with ii=length(gotcyc)
-   ii = ii+1;
-   
-   % If float cycle number starts from zero then this will may need
-   % correction, although normally cycle zero would be in in fpp(1), so
-   % it will work out ok.
-   netcdf.putVar(ncid,NCYCNUMINDID,ii-1,length(fpp(nn).profile_number),fpp(nn).profile_number);
-   
-   if isempty(traj(nn).clockoffset)
-      jcor = j1950;
-      netcdf.putVar(ncid,NDAMOID,ii-1,length('R'),'R');
-   else
-      % Clock correction to applying to times which are not already
-      % intrinsically corrected.
-      jcor = j1950 + traj(nn).clockoffset;
-      netcdf.putVar(ncid,NCLOOFFSID,ii-1,length(traj(nn).clockoffset),traj(nn).clockoffset);
-      netcdf.putVar(ncid,NDAMOID,ii-1,length('A'),'A');
-   end      
-   
-   % Q: Are all variables below to be used for all floats of all types?
-   %
-   % Q: When do we leave _STATUS as fillvalue, and when do we use '9'?
-   %	 
-   %  Assuming STATUS here the same as JULD_STATUS in N_M arrays.
-
-   %    nvnm = {'DESCENT_START','FIRST_STABILIZATION','DESCENT_END','PARK_START',...
-   % 	   'PARK_END','DEEP_DESCENT_END','DEEP_PARK_START','DEEP_ASCENT_START',...
-   % 	   'ASCENT_START','ASCENT_END','TRANSMISSION_START','FIRST_MESSAGE',...
-   % 	   'FIRST_LOCATION','LAST_LOCATION','LAST_MESSAGE','TRANSMISSION_END'};
-   nvnm = {'DESTA','FIRSTAB','DEEND','PARKSTA',...
-       'PARKEND','DEEPDEEND','DEEPPARKSTA','DEEPASSTA',...
-       'ASSTA','ASEND','TRANSSTA','FIRSMESS',...
-       'FIRSLOC','LASTLOC','LASTMESS','TRANSEND'};
-   tvnm = {'DST','FST','DET','PST',...
-       'PET','DDET','DPST','DAST',...
-       'AST','AET','TST','FMT',...
-       'FLT','LLT','LMT','TET'};
-   %    j1950 = julian([1950 1 1 0 0 0]); %%%%%%%%%%%%%%%%%%%%%%%%%20160725Add
-   for jj = 1:length(nvnm)
-      nnm = nvnm{jj};
-      tnm = tvnm{jj};
-      if isfield(traj,tnm) && ~isempty(traj(nn).(tnm).juld)
-	 if ~isnan(traj(nn).(tnm).juld)
-         if traj(nn).(tnm).adj
-             %            cmmd=['netcdf.putAtt(ncid,N' parnm 'ADID,''C_format'',cfmt{ipar});'];
-             cmmd=['netcdf.putVar(ncid,NJULD' nnm 'ID,ii-1,length(traj(nn).(tnm).juld-j1950),traj(nn).(tnm).juld-j1950);'];
-             eval(cmmd);
-             %            netcdf.putVar(ncid,['NJULD_' nnm 'ID'],ii-1,length(traj(nn).(tnm).juld-j1950),traj(nn).(tnm).juld-j1950);
-         else
-             cmmd=['netcdf.putVar(ncid,NJULD' nnm 'ID,ii-1,length(traj(nn).(tnm).juld-jcor),traj(nn).(tnm).juld-j1950);'];
-             eval(cmmd);
-             %            netcdf.putVar(ncid,['NJULD_' nnm 'ID'],ii-1,length(traj(nn).(tnm).juld-jcor),traj(nn).(tnm).juld-jcor);
-         end
-     end
-     cmmd=['netcdf.putVar(ncid,NJULD' nnm 'STID,ii-1,length(char(traj(nn).(tnm).stat)),char(traj(nn).(tnm).stat));'];
-     eval(cmmd);
-     %      netcdf.putVar(ncid,['NJULD_' nnm '_STATUSID'],ii-1,length(traj(nn).(tnm).stat),traj(nn).(tnm).stat);
-      end
-   end
-   
-   netcdf.putVar(ncid,NGROUDID,ii-1,length(fpp(nn).grounded),fpp(nn).grounded);
-   
-   % REPRESENTATIVE_PARK_PRESSURE is only used where values are averaged to
-   % provide one value for whole park period (corresponds to MC=301)   
-
-   % This probably only if adjustment determined in Delayed Mode?
+    % We don't include missing cycles, so should end up with ii=length(gotcyc)
+    ii = ii+1;
+    
+    % If float cycle number starts from zero then this will may need
+    % correction, although normally cycle zero would be in in fpp(1), so
+    % it will work out ok.
+    netcdf.putVar(ncid,NCYCNUMINDID,ii-1,length(fpp(nn).profile_number),fpp(nn).profile_number);
+    
+    if isempty(traj(nn).clockoffset)
+        jcor = j1950;
+        netcdf.putVar(ncid,NDAMOID,ii-1,length('R'),'R');
+    else
+        % Clock correction to applying to times which are not already
+        % intrinsically corrected.
+        jcor = j1950 + traj(nn).clockoffset;
+        netcdf.putVar(ncid,NCLOOFFSID,ii-1,length(traj(nn).clockoffset),traj(nn).clockoffset);
+        netcdf.putVar(ncid,NDAMOID,ii-1,length('A'),'A');
+    end
+    
+    % Q: Are all variables below to be used for all floats of all types?
+    %
+    % Q: When do we leave _STATUS as fillvalue, and when do we use '9'?
+    %
+    %  Assuming STATUS here the same as JULD_STATUS in N_M arrays.
+    
+    %    nvnm = {'DESCENT_START','FIRST_STABILIZATION','DESCENT_END','PARK_START',...
+    % 	   'PARK_END','DEEP_DESCENT_END','DEEP_PARK_START','DEEP_ASCENT_START',...
+    % 	   'ASCENT_START','ASCENT_END','TRANSMISSION_START','FIRST_MESSAGE',...
+    % 	   'FIRST_LOCATION','LAST_LOCATION','LAST_MESSAGE','TRANSMISSION_END'};
+    nvnm = {'DESTA','FIRSTAB','DEEND','PARKSTA',...
+        'PARKEND','DEEPDEEND','DEEPPARKSTA','DEEPASSTA',...
+        'ASSTA','ASEND','TRANSSTA','FIRSMESS',...
+        'FIRSLOC','LASTLOC','LASTMESS','TRANSEND'};
+    tvnm = {'DST','FST','DET','PST',...
+        'PET','DDET','DPST','DAST',...
+        'AST','AET','TST','FMT',...
+        'FLT','LLT','LMT','TET'};
+    %    j1950 = julian([1950 1 1 0 0 0]); %%%%%%%%%%%%%%%%%%%%%%%%%20160725Add
+    for jj = 1:length(nvnm)
+        nnm = nvnm{jj};
+        tnm = tvnm{jj};
+        if isfield(traj,tnm) && ~isempty(traj(nn).(tnm).juld)
+            if ~isnan(traj(nn).(tnm).juld)
+                if traj(nn).(tnm).adj
+                    %            cmmd=['netcdf.putAtt(ncid,N' parnm 'ADID,''C_format'',cfmt{ipar});'];
+                    cmmd=['netcdf.putVar(ncid,NJULD' nnm 'ID,ii-1,length(traj(nn).(tnm).juld-j1950),traj(nn).(tnm).juld-j1950);'];
+                    eval(cmmd);
+                    %            netcdf.putVar(ncid,['NJULD_' nnm 'ID'],ii-1,length(traj(nn).(tnm).juld-j1950),traj(nn).(tnm).juld-j1950);
+                else
+                    cmmd=['netcdf.putVar(ncid,NJULD' nnm 'ID,ii-1,length(traj(nn).(tnm).juld-jcor),traj(nn).(tnm).juld-j1950);'];
+                    eval(cmmd);
+                    %            netcdf.putVar(ncid,['NJULD_' nnm 'ID'],ii-1,length(traj(nn).(tnm).juld-jcor),traj(nn).(tnm).juld-jcor);
+                end
+            end
+            cmmd=['netcdf.putVar(ncid,NJULD' nnm 'STID,ii-1,length(char(traj(nn).(tnm).stat)),char(traj(nn).(tnm).stat));'];
+            eval(cmmd);
+            %      netcdf.putVar(ncid,['NJULD_' nnm '_STATUSID'],ii-1,length(traj(nn).(tnm).stat),traj(nn).(tnm).stat);
+        end
+    end
+    
+    netcdf.putVar(ncid,NGROUDID,ii-1,length(fpp(nn).grounded),fpp(nn).grounded);
+    
+    % REPRESENTATIVE_PARK_PRESSURE is only used where values are averaged to
+    % provide one value for whole park period (corresponds to MC=301)
+    
+    % This probably only if adjustment determined in Delayed Mode?
 end
 
 
@@ -1000,253 +1000,253 @@ end
 % M-CODE to variable name cross-ref
 vnms([100,150,200,250,300,400,450,500,550,600,700,702,704,800]) = ...
     [{'DST'} {'FST'} {'DET'} {'PST'} {'PET'} {'DDET'} {'DPST'} {'AST'} {'DAST'} ...
-     {'AET'} {'TST'} {'FMT'} {'LMT'} {'TET'}];
+    {'AET'} {'TST'} {'FMT'} {'LMT'} {'TET'}];
 
-jfillval = 999999;   
+jfillval = 999999;
 
 numnn=0;
 % Loop on profiles to be written to this file
 for nn = gotcyc
-numnn=numnn+1;    
-
-   % Add variables which have been recently introduced but maybe not yet
-   % loaded for all cycles.    JRD July 2014
-   %if ~isfield(fpp(nn),'jday_qc')
-   %   fpp(nn).jday_qc = ones(size(fpp(nn).jday));
-   %end
-   %if ~isfield(fpp(nn),'position_qc')
-   %   fpp(nn).position_qc = ones(size(fpp(nn).jday));
-   %end
-   
-   for mc = traj_mc_order
-      madd = [];
-      switch mc
-	 
-	case {100,150,200,250,300,400,450,500,550,600,700,702,704,800}
-	  vnm = vnms{mc};
-	  if isfield(traj,vnm)
-	     fv = traj(nn).(vnm);
-	     if ~isempty(fv) && ~isempty(fv.juld)
-		% Assume cannot have multi-valued parameters
-		% Beware: some tricky interacting requirements here. Thoroughly
-		% read Cookbook section 3.2.2 before changing anything.
-		if isnan(fv.juld)
-		   jday = jfillval;
-		   status = '9';
-		else
-		   jday = fv.juld-j1950;
-		   status = fv.stat;
-		end
-		adj = fv.adj;
-		madd = iNM+1;
-		if ~adj
-           netcdf.putVar(ncid,NJULDID,madd(1)-1,length(jday),jday);
-           netcdf.putVar(ncid,NJULDSTID,madd(1)-1,length(status),status);           
-		   if isfield(fv,'qc') && ~isempty(fv.qc)
-              netcdf.putVar(ncid,NJULDQCID,madd(1)-1,length(fv.qc),fv.qc);               
-           else
-              netcdf.putVar(ncid,NJULDQCID,madd(1)-1,length('0'),'0');                
-		   end
-		   if ~isempty(traj(nn).clockoffset)
-		      adj = 1;
-		      jday = jday - traj(nn).clockoffset;
-		   end
-		end
-		if adj
-		   if fv.adj
-              netcdf.putVar(ncid,NJULDSTID,madd(1)-1,length( '9'), '9');
-           end
-           netcdf.putVar(ncid,NJULDADID,madd(1)-1,length(jday),jday);
-           netcdf.putVar(ncid,NJULDADSTID,madd(1)-1,length(status),status);
-		   if isfield(fv,'qc') && ~isempty(fv.qc)
-              netcdf.putVar(ncid,NJULDADQCID,madd(1)-1,length(fv.qc),fv.qc);               
-           else
-              netcdf.putVar(ncid,NJULDADQCID,madd(1)-1,length('0'),'0');                
-		   end
-		end
-	    end
-	  end	     
-	  
-	  
-	case {99,290,296}
-	  % Due to coding in decode_webb, there is presently no floattype-independant 
-	  % relationship between n_parkaverages & p_park_av, and n_parksamps &
-	  % park_p. n_parksamps probably refers to the number of samples
-          % going into the averages? Anyway we ignore those counters and just
-          % store whatever data we find.  
-	  %
-	  % Previous coding here implied may be multi-valued AND size of
-	  % _jday may not match park_p.  That would be rather messy, eh? I
-	  % am going to ignore that possibility
-
-	  if mc==99
-	     % Surface: single measurements made prior to start of descent	  
-	     % Use MC=96 for average surface measurements 	  
-	     % Rethink if we can get surf measurements without surf_Oxy_pressure??
-	     % Oxy measurements should be in B-file anyway! 
-	     ok = isfield(fpp,'surf_Oxy_pressure') && ~isempty(fpp(nn).surf_Oxy_pressure) ...
-		  && ~isnan(fpp(nn).surf_Oxy_pressure);
-	     tmpnm = surfnm;
-	     if ok
-		%jday = fpp(nn).surf_jday(1);      % surf_jday ?? ******		
-		jday = traj(nn).DST.juld;
-		stus = traj(nn).DST.stat;
-	     end	  
-	  elseif mc==290
-	     % Park         
-	     ok = isfield(fpp,'park_p') && ~isempty(fpp(nn).park_p);
-	     tmpnm = parknm;
-	     %jday = fpp(nn).park_jday(1);     % ??
-	     % Here need to find out sample timing scheme and compute juld
-	     % Temporary alternative below:
-	     if ok && isfield(traj,'PET')
-		jday = traj(nn).PET.juld;
-		stus = traj(nn).PET.stat;
-	     else
-		ok = 0;
-	     end
-	  elseif mc==296            
-	     % "aves towards PET"       3.4.1.1.2
-	     % If we have individual samples instead of averages then should
-             % use MC=290. If we have or we create a single average for the Park period
-	     % then should use MC=301 (3.4.3), in which case we should also
-             % provide a value for REPRESENTATIVE_PARK_PRESSURE
-	     ok = isfield(fpp,'p_park_av') && ~isempty(fpp(nn).p_park_av);
-	     tmpnm = pkavnm;
-	     %jday = fpp(nn).park_av_jday(1);   % ??
-	     if ok && isfield(traj,'PET')
-		jday = traj(nn).PET.juld;
-		stus = traj(nn).PET.stat;
-	     else
-		ok = 0;
-	     end
-	  end
-	  
-	  if ok
-	     % There can be multiple values (eg for park_av). ASSUME there
-             % will always be P values if T or S, so determine number of 
-	     % values from number of P (ipar=1) values.
-	     if isfield(fpp(nn),tmpnm{1})
-		nval = length(fpp(nn).(tmpnm{1}));
-	     else
-		nval = 0;
-	     end
-	     
-	     for ij = 1:nval
-             netcdf.putVar(ncid,NJULDID,iNM+ij-1,length(jday-j1950),jday-j1950);
-             netcdf.putVar(ncid,NJULDSTID,iNM+ij-1,length(stus),stus);
-             netcdf.putVar(ncid,NJULDQCID,iNM+ij-1,length('1'),'1');
-	     end
-	     % Use clockoffset to decide whether to use JULD_ADJUSTED ??
-	     
-	     for ipar = params
-		if isfield(fpp(nn),tmpnm{ipar})
-		   tmp = fpp(nn).(tmpnm{ipar});
-		   for ij = 1:min(nval,length(tmp))
-		      if ~isnan(tmp(ij))
-            cmmd=['netcdf.putVar(ncid,N' pars{ipar} 'ID,iNM+ij-1,length(tmp(ij)),tmp(ij));'];
-            eval(cmmd);
-            cmmd=['netcdf.putVar(ncid,N' pars{ipar} 'QCID,iNM+ij-1,length(''0''),''0'');'];
-            eval(cmmd);            
-			 if ~isempty(fpp(nn).surfpres_used)
-			    % Don't know if this can/should apply for surface values 
-			    if ipar==1
-			       tmp(ij) = tmp(ij) - fpp(nn).surfpres_used;
-                   netcdf.putVar(ncid,NDAMOID,numnn-1,length('A'),'A');
+    numnn=numnn+1;
+    
+    % Add variables which have been recently introduced but maybe not yet
+    % loaded for all cycles.    JRD July 2014
+    %if ~isfield(fpp(nn),'jday_qc')
+    %   fpp(nn).jday_qc = ones(size(fpp(nn).jday));
+    %end
+    %if ~isfield(fpp(nn),'position_qc')
+    %   fpp(nn).position_qc = ones(size(fpp(nn).jday));
+    %end
+    
+    for mc = traj_mc_order
+        madd = [];
+        switch mc
+            
+            case {100,150,200,250,300,400,450,500,550,600,700,702,704,800}
+                vnm = vnms{mc};
+                if isfield(traj,vnm)
+                    fv = traj(nn).(vnm);
+                    if ~isempty(fv) && ~isempty(fv.juld)
+                        % Assume cannot have multi-valued parameters
+                        % Beware: some tricky interacting requirements here. Thoroughly
+                        % read Cookbook section 3.2.2 before changing anything.
+                        if isnan(fv.juld)
+                            jday = jfillval;
+                            status = '9';
+                        else
+                            jday = fv.juld-j1950;
+                            status = fv.stat;
+                        end
+                        adj = fv.adj;
+                        madd = iNM+1;
+                        if ~adj
+                            netcdf.putVar(ncid,NJULDID,madd(1)-1,length(jday),jday);
+                            netcdf.putVar(ncid,NJULDSTID,madd(1)-1,length(status),status);
+                            if isfield(fv,'qc') && ~isempty(fv.qc)
+                                netcdf.putVar(ncid,NJULDQCID,madd(1)-1,length(fv.qc),fv.qc);
+                            else
+                                netcdf.putVar(ncid,NJULDQCID,madd(1)-1,length('0'),'0');
+                            end
+                            if ~isempty(traj(nn).clockoffset)
+                                adj = 1;
+                                jday = jday - traj(nn).clockoffset;
+                            end
+                        end
+                        if adj
+                            if fv.adj
+                                netcdf.putVar(ncid,NJULDSTID,madd(1)-1,length( '9'), '9');
+                            end
+                            netcdf.putVar(ncid,NJULDADID,madd(1)-1,length(jday),jday);
+                            netcdf.putVar(ncid,NJULDADSTID,madd(1)-1,length(status),status);
+                            if isfield(fv,'qc') && ~isempty(fv.qc)
+                                netcdf.putVar(ncid,NJULDADQCID,madd(1)-1,length(fv.qc),fv.qc);
+                            else
+                                netcdf.putVar(ncid,NJULDADQCID,madd(1)-1,length('0'),'0');
+                            end
+                        end
+                    end
                 end
-                cmmd=['netcdf.putVar(ncid,N' pars{ipar} 'ADID,iNM+ij-1,length(tmp(ij)),tmp(ij));'];
-                eval(cmmd);
-                cmmd=['netcdf.putVar(ncid,N' pars{ipar} 'ADQCID,iNM+ij-1,length(''0''),''0'');'];
-                eval(cmmd);
-			 elseif ipar==1
-                netcdf.putVar(ncid,NDAMOID,numnn-1,length('R'),'R');
-			 end
-		      end
-		   end
-		end
-	     end
-	     
-	     madd = iNM+(1:nval);	     
-	  end
-	
-	
-	case 703 
-	  % The actual Argos fixes
-	  %
-	  % ### Actually need to get this from traj, not float
-	  %
-	  %
-
-	  %if ~isempty(fpp(nn).jday)
-	  %   % Do we load all, even if NaN, or just good ones? Assume latter.
-	  %   ij = find(~isnan(fpp(nn).jday(:)+fpp(nn).lat(:)+fpp(nn).lon(:)));
-	  %else
-	  %   ij = [];
-	  %end
-	  %if ~isempty(ij)	     
-	  %   madd = iNM + (1:length(ij));
-	  %   nc{'JULD'}(madd) = fpp(nn).jday(ij)-j1950;
-          %   % nc{'JULD_QC'}(madd) = char(fpp(nn).jday_qc(ij));
-	  %   nc{'JULD_QC'}(madd) = repmat('1',(size(fpp(nn).jday_qc(ij))));
-	  %   nc{'JULD_STATUS'}(madd) = '4';  
-	  %   nc{'LATITUDE'}(madd) = fpp(nn).lat(ij);
-	  %   nc{'LONGITUDE'}(madd) = fpp(nn).lon(ij);
-	  %   %nc{'POSITION_QC'}(madd) = char(fpp(nn).position_qc(ij));
-	  %   nc{'POSITION_QC'}(madd) = repmat('1',size(fpp(nn).lon(ij)));
-	  %   nc{'POSITION_ACCURACY'}(madd) = fpp(nn).position_accuracy(ij);
-	  %   if isfield(fpp,'satnam') && ~isempty(fpp(nn).satnam)
-	  %	nc{'SATELLITE_NAME'}(madd) = fpp(nn).satnam(ij);
-	  %   end
-	  %end
-	  
-      if ~isempty(traj(nn).heads) && isfield(traj(nn).heads,'juld')
-          madd = iNM + (1:length(traj(nn).heads.juld));
-          netcdf.putVar(ncid,NJULDID,madd(1)-1,length(traj(nn).heads.juld-j1950),traj(nn).heads.juld-j1950);
-          if isfield(traj(nn).heads,'juld_qc') && ~isempty(traj(nn).heads.juld_qc)
-              netcdf.putVar(ncid,NJULDQCID,madd(1)-1,length(char(traj(nn).heads.juld_qc(:))),char(traj(nn).heads.juld_qc(:)));
-          else
-              netcdf.putVar(ncid,NJULDQCID,madd(1)-1,length('0'),'0');
-          end
-          netcdf.putVar(ncid,NJULDSTID,madd(1)-1,length('4'),'4');
-          netcdf.putVar(ncid,NLATID,madd(1)-1,length(traj(nn).heads.lat),traj(nn).heads.lat);
-          %make sure longitude is +/-180, not 0-360 as stored in mat files:
-          lon = traj(nn).heads.lon;
-          if any(lon > 180)
-              ii = lon>180;
-              lon(ii) = -1*(360-lon(ii));
-          end
-          netcdf.putVar(ncid,NLONGID,madd(1)-1,length(lon),lon);
-          if isfield(traj(nn).heads,'qcflags') && ~isempty(traj(nn).heads.qcflags)
-              netcdf.putVar(ncid,NPOSQCID,madd(1)-1,length(num2str(traj(nn).heads.qcflags)),num2str(traj(nn).heads.qcflags));
-          else
-              netcdf.putVar(ncid,NPOSQCID,madd(1)-1,length('1'),'1');
-          end
-          if isfield(traj(nn).heads,'aclass')
-              netcdf.putVar(ncid,NPOSACCID,madd(1)-1,length(traj(nn).heads.aclass),traj(nn).heads.aclass);
-          end
-          if isfield(traj(nn).heads,'satnam') && ~isempty(traj(nn).heads.satnam)
-              netcdf.putVar(ncid,NSATENAID,madd(1)-1,length(traj(nn).heads.satnam),traj(nn).heads.satnam);
-          end
-	  end
-	  
-	  
-      case 903
-          % Megan S agrees that this is the way to store SPO
-          if ~isempty(fpp(nn).surfpres_used) && ~isnan(fpp(nn).surfpres_used)
-              madd = iNM+1;
-              netcdf.putVar(ncid,NPRESID,madd(1)-1,length(fpp(nn).surfpres_used),fpp(nn).surfpres_used);
-          end
-      end
-      
-      if ~isempty(madd)
-          for jh=1:length(madd)
-              netcdf.putVar(ncid,NCYCNUMID,madd(jh)-1,length(fpp(nn).profile_number),fpp(nn).profile_number);
-              netcdf.putVar(ncid,NMEASCOID,madd(jh)-1,length(mc),mc);
-          end
-          iNM = madd(end);
-      end
-   end          % End of switch mc
-   
+                
+                
+            case {99,290,296}
+                % Due to coding in decode_webb, there is presently no floattype-independant
+                % relationship between n_parkaverages & p_park_av, and n_parksamps &
+                % park_p. n_parksamps probably refers to the number of samples
+                % going into the averages? Anyway we ignore those counters and just
+                % store whatever data we find.
+                %
+                % Previous coding here implied may be multi-valued AND size of
+                % _jday may not match park_p.  That would be rather messy, eh? I
+                % am going to ignore that possibility
+                
+                if mc==99
+                    % Surface: single measurements made prior to start of descent
+                    % Use MC=96 for average surface measurements
+                    % Rethink if we can get surf measurements without surf_Oxy_pressure??
+                    % Oxy measurements should be in B-file anyway!
+                    ok = isfield(fpp,'surf_Oxy_pressure') && ~isempty(fpp(nn).surf_Oxy_pressure) ...
+                        && ~isnan(fpp(nn).surf_Oxy_pressure);
+                    tmpnm = surfnm;
+                    if ok
+                        %jday = fpp(nn).surf_jday(1);      % surf_jday ?? ******
+                        jday = traj(nn).DST.juld;
+                        stus = traj(nn).DST.stat;
+                    end
+                elseif mc==290
+                    % Park
+                    ok = isfield(fpp,'park_p') && ~isempty(fpp(nn).park_p);
+                    tmpnm = parknm;
+                    %jday = fpp(nn).park_jday(1);     % ??
+                    % Here need to find out sample timing scheme and compute juld
+                    % Temporary alternative below:
+                    if ok && isfield(traj,'PET')
+                        jday = traj(nn).PET.juld;
+                        stus = traj(nn).PET.stat;
+                    else
+                        ok = 0;
+                    end
+                elseif mc==296
+                    % "aves towards PET"       3.4.1.1.2
+                    % If we have individual samples instead of averages then should
+                    % use MC=290. If we have or we create a single average for the Park period
+                    % then should use MC=301 (3.4.3), in which case we should also
+                    % provide a value for REPRESENTATIVE_PARK_PRESSURE
+                    ok = isfield(fpp,'p_park_av') && ~isempty(fpp(nn).p_park_av);
+                    tmpnm = pkavnm;
+                    %jday = fpp(nn).park_av_jday(1);   % ??
+                    if ok && isfield(traj,'PET')
+                        jday = traj(nn).PET.juld;
+                        stus = traj(nn).PET.stat;
+                    else
+                        ok = 0;
+                    end
+                end
+                
+                if ok
+                    % There can be multiple values (eg for park_av). ASSUME there
+                    % will always be P values if T or S, so determine number of
+                    % values from number of P (ipar=1) values.
+                    if isfield(fpp(nn),tmpnm{1})
+                        nval = length(fpp(nn).(tmpnm{1}));
+                    else
+                        nval = 0;
+                    end
+                    
+                    for ij = 1:nval
+                        netcdf.putVar(ncid,NJULDID,iNM+ij-1,length(jday-j1950),jday-j1950);
+                        netcdf.putVar(ncid,NJULDSTID,iNM+ij-1,length(stus),stus);
+                        netcdf.putVar(ncid,NJULDQCID,iNM+ij-1,length('1'),'1');
+                    end
+                    % Use clockoffset to decide whether to use JULD_ADJUSTED ??
+                    
+                    for ipar = params
+                        if isfield(fpp(nn),tmpnm{ipar})
+                            tmp = fpp(nn).(tmpnm{ipar});
+                            for ij = 1:min(nval,length(tmp))
+                                if ~isnan(tmp(ij))
+                                    cmmd=['netcdf.putVar(ncid,N' pars{ipar} 'ID,iNM+ij-1,length(tmp(ij)),tmp(ij));'];
+                                    eval(cmmd);
+                                    cmmd=['netcdf.putVar(ncid,N' pars{ipar} 'QCID,iNM+ij-1,length(''0''),''0'');'];
+                                    eval(cmmd);
+                                    if ~isempty(fpp(nn).surfpres_used)
+                                        % Don't know if this can/should apply for surface values
+                                        if ipar==1
+                                            tmp(ij) = tmp(ij) - fpp(nn).surfpres_used;
+                                            netcdf.putVar(ncid,NDAMOID,numnn-1,length('A'),'A');
+                                        end
+                                        cmmd=['netcdf.putVar(ncid,N' pars{ipar} 'ADID,iNM+ij-1,length(tmp(ij)),tmp(ij));'];
+                                        eval(cmmd);
+                                        cmmd=['netcdf.putVar(ncid,N' pars{ipar} 'ADQCID,iNM+ij-1,length(''0''),''0'');'];
+                                        eval(cmmd);
+                                    elseif ipar==1
+                                        netcdf.putVar(ncid,NDAMOID,numnn-1,length('R'),'R');
+                                    end
+                                end
+                            end
+                        end
+                    end
+                    
+                    madd = iNM+(1:nval);
+                end
+                
+                
+            case 703
+                % The actual Argos fixes
+                %
+                % ### Actually need to get this from traj, not float
+                %
+                %
+                
+                %if ~isempty(fpp(nn).jday)
+                %   % Do we load all, even if NaN, or just good ones? Assume latter.
+                %   ij = find(~isnan(fpp(nn).jday(:)+fpp(nn).lat(:)+fpp(nn).lon(:)));
+                %else
+                %   ij = [];
+                %end
+                %if ~isempty(ij)
+                %   madd = iNM + (1:length(ij));
+                %   nc{'JULD'}(madd) = fpp(nn).jday(ij)-j1950;
+                %   % nc{'JULD_QC'}(madd) = char(fpp(nn).jday_qc(ij));
+                %   nc{'JULD_QC'}(madd) = repmat('1',(size(fpp(nn).jday_qc(ij))));
+                %   nc{'JULD_STATUS'}(madd) = '4';
+                %   nc{'LATITUDE'}(madd) = fpp(nn).lat(ij);
+                %   nc{'LONGITUDE'}(madd) = fpp(nn).lon(ij);
+                %   %nc{'POSITION_QC'}(madd) = char(fpp(nn).position_qc(ij));
+                %   nc{'POSITION_QC'}(madd) = repmat('1',size(fpp(nn).lon(ij)));
+                %   nc{'POSITION_ACCURACY'}(madd) = fpp(nn).position_accuracy(ij);
+                %   if isfield(fpp,'satnam') && ~isempty(fpp(nn).satnam)
+                %	nc{'SATELLITE_NAME'}(madd) = fpp(nn).satnam(ij);
+                %   end
+                %end
+                
+                if ~isempty(traj(nn).heads) && isfield(traj(nn).heads,'juld')
+                    madd = iNM + (1:length(traj(nn).heads.juld));
+                    netcdf.putVar(ncid,NJULDID,madd(1)-1,length(traj(nn).heads.juld-j1950),traj(nn).heads.juld-j1950);
+                    if isfield(traj(nn).heads,'juld_qc') && ~isempty(traj(nn).heads.juld_qc)
+                        netcdf.putVar(ncid,NJULDQCID,madd(1)-1,length(char(traj(nn).heads.juld_qc(:))),char(traj(nn).heads.juld_qc(:)));
+                    else
+                        netcdf.putVar(ncid,NJULDQCID,madd(1)-1,length('0'),'0');
+                    end
+                    netcdf.putVar(ncid,NJULDSTID,madd(1)-1,length('4'),'4');
+                    netcdf.putVar(ncid,NLATID,madd(1)-1,length(traj(nn).heads.lat),traj(nn).heads.lat);
+                    %make sure longitude is +/-180, not 0-360 as stored in mat files:
+                    lon = traj(nn).heads.lon;
+                    if any(lon > 180)
+                        ii = lon>180;
+                        lon(ii) = -1*(360-lon(ii));
+                    end
+                    netcdf.putVar(ncid,NLONGID,madd(1)-1,length(lon),lon);
+                    if isfield(traj(nn).heads,'qcflags') && ~isempty(traj(nn).heads.qcflags)
+                        netcdf.putVar(ncid,NPOSQCID,madd(1)-1,length(num2str(traj(nn).heads.qcflags)),num2str(traj(nn).heads.qcflags));
+                    else
+                        netcdf.putVar(ncid,NPOSQCID,madd(1)-1,length('1'),'1');
+                    end
+                    if isfield(traj(nn).heads,'aclass')
+                        netcdf.putVar(ncid,NPOSACCID,madd(1)-1,length(traj(nn).heads.aclass),traj(nn).heads.aclass);
+                    end
+                    if isfield(traj(nn).heads,'satnam') && ~isempty(traj(nn).heads.satnam)
+                        netcdf.putVar(ncid,NSATENAID,madd(1)-1,length(traj(nn).heads.satnam),traj(nn).heads.satnam);
+                    end
+                end
+                
+                
+            case 903
+                % Megan S agrees that this is the way to store SPO
+                if ~isempty(fpp(nn).surfpres_used) && ~isnan(fpp(nn).surfpres_used)
+                    madd = iNM+1;
+                    netcdf.putVar(ncid,NPRESID,madd(1)-1,length(fpp(nn).surfpres_used),fpp(nn).surfpres_used);
+                end
+        end
+        
+        if ~isempty(madd)
+            for jh=1:length(madd)
+                netcdf.putVar(ncid,NCYCNUMID,madd(jh)-1,length(fpp(nn).profile_number),fpp(nn).profile_number);
+                netcdf.putVar(ncid,NMEASCOID,madd(jh)-1,length(mc),mc);
+            end
+            iNM = madd(end);
+        end
+    end          % End of switch mc
+    
 end       % Loop on every cycle
 
 
@@ -1263,10 +1263,10 @@ netcdf.close(ncid);
 %#####
 % started data delivery 30/9/2014: AT
 
-  [status,ww] = system(['cp -f ' fname ' ' ARGO_SYS_PARAM.root_dir 'export']);
-  if status~=0
+[status,ww] = system(['cp -f ' fname ' ' ARGO_SYS_PARAM.root_dir 'export']);
+if status~=0
     logerr(3,['Copy of ' fname ' to export/ failed:' ww]);
-  end
+end
 %###
 
 %-------------------------------------------------------------------------------
