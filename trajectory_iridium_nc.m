@@ -345,7 +345,9 @@ for nn = gotcyc
                 ncwrite(fname,['JULD_' nnm '_STATUS'],fv.(tnm).stat(end),ii)
             else
                 ncwrite(fname,['JULD_' nnm '_STATUS'],fv.(tnm).juld_stat(end),ii)
-            end                
+            end  
+        else %no field, put in 9 in status
+                ncwrite(fname,['JULD_' nnm '_STATUS'],'9',ii)            
         end
     end
     
@@ -370,6 +372,8 @@ for nn = gotcyc
             ncwrite(fname,'REPRESENTATIVE_PARK_PRESSURE_STATUS','1',ii);
             
         end
+    else %zero profile, assume it didn't ground!
+        ncwrite(fname,'GROUNDED','N',ii);
     end
     
     % This probably only if adjustment determined in Delayed Mode?
@@ -449,10 +453,9 @@ for nn = gotcyc
     [adj,lat,lon,pressure,temperature,salinity, ...
         temperatureadj,salinityadj,pressureadj] ... %actual adjsted values
         = deal(repmat(jfillval_5,length(traj_mc_order),1));
-    [pressureqc,temperatureqc,salinityqc] ... 
+    [pressureqc,temperatureqc,salinityqc,temperaturestat,pressurestat,salinitystat] ... 
         = deal(repmat(' ',1,length(traj_mc_order)));
-[juld_qc,temperaturestat,pressurestat,salinitystat] ...
-        = deal(repmat('0',1,length(traj_mc_order)));
+    [juld_qc] = deal(repmat('0',1,length(traj_mc_order)));
         [temperature_adj,salinity_adj,pressure_adj] ...%adjusted flags
             = deal(NaN*zeros(1,length(traj_mc_order)));
     %put 7 in here to identify fill values so we can operate on them, then
@@ -544,6 +547,8 @@ for nn = gotcyc
     if ~isempty(ival)
         pressure(ival) = rpp(nn);
         pressure_adj(ival) = 0;
+        pressurestat(ival) = '3';
+        pressureqc(ival) = '0';
     end
     
     %apply adjustments to pressure: 
@@ -566,8 +571,9 @@ for nn = gotcyc
     if any(ival)
         if ~isempty(fpp(nn).surfpres_used) && ~isnan(fpp(nn).surfpres_used)
             pressure(ival) = fpp(nn).surfpres_used;
-            pressurestat(ival) = 2;
+            pressurestat(ival) = '2';
             pressure_adj(ival) = 0;
+            pressureqc(ival) = '0';
         end
     end
     
@@ -595,7 +601,10 @@ for nn = gotcyc
     ival = strfind(juld_adj_stat,'7');
     juld_adj_stat(ival) = '9';
     juld_qc(ival) = '9';
-   
+    %for juld_qc, if there is a '9' in juld_stat from the traj structure, need to have a '9' in
+    %juld_qc too:
+    ival = strfind(juld_adj_stat,'9');
+    juld_qc(ival) = '9';
         
     %remove empty fields if they are not mandatory. Only mc divisible by
     %100 are mandatory.
