@@ -456,7 +456,7 @@ for nn = gotcyc
     [pressureqc,temperatureqc,salinityqc,temperaturestat,pressurestat,salinitystat] ... 
         = deal(repmat(' ',1,length(traj_mc_order)));
     [juld_qc] = deal(repmat('0',1,length(traj_mc_order)));
-        [temperature_adj,salinity_adj,pressure_adj] ...%adjusted flags
+        [temperature_adj,salinity_adj,pressureadj] ...%adjusted flags
             = deal(NaN*zeros(1,length(traj_mc_order)));
     %put 7 in here to identify fill values so we can operate on them, then
     %replace them with ' ' later
@@ -546,14 +546,14 @@ for nn = gotcyc
     ival = find(traj_mc_order == 301);
     if ~isempty(ival)
         pressure(ival) = rpp(nn);
-        pressure_adj(ival) = 0;
+        pressureadj(ival) = 0;
         pressurestat(ival) = '3';
         pressureqc(ival) = '0';
     end
     
     %apply adjustments to pressure: 
     if nn > 0
-        ival = pressure_adj == 0;
+        ival = pressureadj == 0;
         if ~isempty(fpp(nn).surfpres_used)
             % Don't know if this can/should apply for surface values, but
             % included for all pressure values
@@ -572,7 +572,7 @@ for nn = gotcyc
         if ~isempty(fpp(nn).surfpres_used) && ~isnan(fpp(nn).surfpres_used)
             pressure(ival) = fpp(nn).surfpres_used;
             pressurestat(ival) = '2';
-            pressure_adj(ival) = 0;
+            pressureadj(ival) = 0;
             pressureqc(ival) = '0';
         end
     end
