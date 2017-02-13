@@ -1,6 +1,6 @@
 %edit here:
-[fpp,dbdat] = getargo(5903940);  %float
-j = 180; %profile number
+[fpp,dbdat] = getargo(5901693);  %float
+j = 260; %profile number
 
 %%
 
@@ -53,6 +53,8 @@ vp=qc_apply(fpp(i).t_raw,fpp(i).t_qc);
 plot(vo,vp,'g','linewidth',2)
 grid on
 title('T/S')
+
+figure(2)
 %  end
 %  
 % [fpp(i).p_calibrate' double(fpp(i).p_qc)' fpp(i).t_raw' double(fpp(i).t_qc)' fpp(i).s_calibrate' double(fpp(i).s_qc)']

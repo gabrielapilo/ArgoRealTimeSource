@@ -4,10 +4,10 @@
  getdbase(-1)
  aic=ARGO_ID_CROSSREF;
 % bad = [];
-for i=1:length(aic)
+for i=611:length(aic)
     disp(i)
     [fpp,dbdat]=getargo(aic(i,1));
-    if dbdat.wmo_id ~= 5905023 & dbdat.wmo_id ~= 1901348 & dbdat.wmo_id ~= 5905165
+    if dbdat.wmo_id == 5901667
         continue
     end
     if any([dbdat.flbb,dbdat.flbb2,dbdat.irr, dbdat.irr2, ...
@@ -18,6 +18,7 @@ for i=1:length(aic)
             if ~isempty(fpp(j).lat)
                 try
                     argoprofile_Bfile_nc(dbdat,fpp(j))
+                    % or could run argoprofile_nc here too
                 catch
                     bad = [bad;i,j];
                 end

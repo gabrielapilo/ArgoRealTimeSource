@@ -1,11 +1,15 @@
+% Take salinity calibration off particular profiles and remake the netcdf
+% files.
+% inputs: wmo_id - or group of ids eg [5901963 5902653]
+%         range of profile numbers eg [1:50]
+function uncalibrate_sal(wmo_id,profrange)
 global ARGO_SYS_PARAM
 set_argo_sys_params
 
-wmo_id=[5900845 5901145 5901630]
 
 for i=1:length(wmo_id)
     [fpp,dbdat]=getargo(wmo_id(i));
-    for j=1:length(fpp)
+    for j=profrange
         if fpp(j).c_ratio~=1
             [fpp,cal_rept]=calsal(fpp,j);
             argoprofile_nc(dbdat,fpp(j));

@@ -17,7 +17,7 @@ for ii = 1:length(THE_ARGO_FLOAT_DB)
     if isempty(strmatch('9i',THE_ARGO_FLOAT_DB(ii).controlboardnumstring))
         continue
     end
-    if THE_ARGO_FLOAT_DB(ii).wmo_id ~= 1901146
+    if THE_ARGO_FLOAT_DB(ii).wmo_id ~= 1901160
         
         continue
     end
@@ -116,7 +116,7 @@ for ii = 1:length(THE_ARGO_FLOAT_DB)
     if THE_ARGO_FLOAT_DB(ii).iridium == 1
         continue
     end
-    if THE_ARGO_FLOAT_DB(ii).wmo_id ~= 1901126
+    if THE_ARGO_FLOAT_DB(ii).wmo_id ~= 5901667
         
         continue
     end
