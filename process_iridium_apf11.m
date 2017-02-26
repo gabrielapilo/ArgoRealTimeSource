@@ -394,10 +394,16 @@ if any(stage==1)
         pro.lon = nan;
         if isempty(goodfixes)
             logerr(2,'No good location fixes!');
-            %                 try
-            %                     [latarr,lonarr]=interpolate_locations(dbdat);
-            %                 end
         end
+    end
+    %this is where we should now be doing the position interpolation if
+    %needed.
+    %                 % check for missing profile locations from ice floats and
+    % add to the affected profiles:
+    try
+        [latarr,lonarr]=interpolate_locations(dbdat,pro);
+    catch
+        logerr(5,'Interpolate_locations.m fails for this float')
     end
  
     % now we need to sort out the location information - one position is
@@ -484,7 +490,7 @@ end
     fclose(fid);
     
     % first deal with missing gps locations for a profile: This will allow
-    % us to interpolate positions if necessary
+    % us to interpololate positions if necessary
     if isempty(pro.jday_location)
         pro.jday_location=pro.jday_ascent_end;
         pro.datetime_vec=gregorian(pro.jday_ascent_end);        
@@ -705,10 +711,6 @@ if any(stage>0)
     float(np).proc_status = prec.proc_status;
     % Write float array back to file
     save(fnm,'float','-v6');
-    try
-        [latarr,lonarr]=interpolate_locations(dbdat);
-    end
-
     
     % Stage 2 adds new info to profile page, so generate it at both stages.
     web_profile_plot(float(np),dbdat);

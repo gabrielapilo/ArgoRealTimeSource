@@ -1089,11 +1089,19 @@ end
         pro.lon = nan;
         if isempty(goodfixes)
             logerr(2,'No good location fixes!');
-            %                 try
-            %                     [latarr,lonarr]=interpolate_locations(dbdat);
-            %                 end
         end
     end
+    
+    %this is where we should now be doing the position interpolation if
+    %needed.
+    %                 % check for missing profile locations from ice floats and
+    % add to the affected profiles:
+    try
+        [latarr,lonarr]=interpolate_locations(dbdat,pro);
+    catch
+        logerr(5,'Interpolate_locations.m fails for this float')
+    end
+   
     %         else
     %             logerr(2,'no locations');
     %             goodfixes = [];

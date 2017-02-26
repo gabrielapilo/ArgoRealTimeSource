@@ -89,11 +89,6 @@ if(m>0)
 % %                     mail_out_iridium_log_error([a{i,1}],4);
 %                     crash=1;
 %                 end
-                % check for missing profile locations from ice floats and
-                % add to the affected profiles:
-                if isfloat 
-%                     [latarr,lonarr]=interpolate_locations(dbdat);
-                end
                     
                 if isfloat
                     %after processing, move the files from the delivery directory into the

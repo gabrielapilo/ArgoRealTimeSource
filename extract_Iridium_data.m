@@ -206,7 +206,7 @@ if(m>0)
                 try
                     crash=0;
                     % process iridium - where all the magic happens!!
-                    if(~isempty(strmatch(dbdat.status,'live')) | ~isempty(strmatch(dbdat.status,'suspect')) | opts.redo)
+                    if(~isempty(strmatch(dbdat.status,'live')) | ~isempty(strmatch(dbdat.status,'suspect')))
                         process_iridium(pmeta,dbdat,opts)
                     elseif(~isempty(strmatch(dbdat.status,'expected')))
                         logerr(3,['? New float, Iridium ID=' num2str(argosid)]);
@@ -232,13 +232,6 @@ if(m>0)
                     isfloat=0;
                     mail_out_iridium_log_error([a{i,1}],3);
                     crash=1;
-                end
-                %                 % check for missing profile locations from ice floats and
-                % add to the affected profiles:
-                if isfloat
-                    try
-                        [latarr,lonarr]=interpolate_locations(dbdat);
-                    end
                 end
                 
                 if isfloat

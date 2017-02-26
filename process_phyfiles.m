@@ -319,9 +319,6 @@ if ~isempty(kk) | isempty(pro.lat) | isempty(pro.lon);
 %     pro.jday(kk) = [];
     if isempty(goodfixes)
         logerr(2,'No good location fixes!');
-        %                     try
-        %                         [latarr,lonarr]=interpolate_locations(dbdat);
-        %                     end
     end
 end
 

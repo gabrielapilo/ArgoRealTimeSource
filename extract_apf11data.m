@@ -179,15 +179,7 @@ if m>0   % are there any apf 11data?
                         mail_out_dead_float(dbdat.wmo_id);
                         process_iridium_apf11(pmeta,dbdat,opts)
                     end
-                    
-                    %                 % check for missing profile locations from ice floats and
-                    % add to the affected profiles:
-                    if isfloat
-                        try
-                            [latarr,lonarr]=interpolate_locations(dbdat);
-                        end
-                    end
-                    
+                                        
                     if isfloat
                         %after processing, move the files from the delivery directory into the
                         %individual directories:
