@@ -604,6 +604,21 @@ end
 %diagnostic line:
 disp('Processing Iridium Files ...')
 
+%need to transfer to ftp (only works if CSIRO is processor). Do it once for
+%all iridium files.
+% Does nothing if the ARGO_SYS_PARAM.processor is not set or does not have
+% 'CSIRO' or 'BOM' in the field.
+try
+     BOM_retrieve_Iridium
+catch Me
+    logerr(5,'error in iridium ftp transfer')
+    logerr(5,['Message: ' Me.message ])
+    for jk = 1:length(Me.stack)
+        logerr(5,Me.stack(jk).file)
+        logerr(5,['Line: ' num2str(Me.stack(jk).line)])
+    end
+end
+
 extract_Iridium_data
 
 
