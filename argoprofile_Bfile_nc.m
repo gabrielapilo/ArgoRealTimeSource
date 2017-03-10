@@ -132,7 +132,9 @@ if exist(fname,'file')
 %    hist=attnc(fname,'global','history');
 %    dc=getnc(fname,'DATE_CREATION');
    catch
-       netcdf.close(ncid);
+       if exist('ncid','var') == 1
+           netcdf.close(ncid);
+       end
    end
    ncid=netcdf.create(fname,'CLOBBER');
 else
@@ -3422,7 +3424,7 @@ for ii = 1:nin
                 if ~isempty(fp.ecoBBP700_raw) & any(~isnan(fp.ecoBBP700_raw))
                     oqc(1:nlv)=0;
                     oqc2=get_derived_oqc(oqc,fp.ecoBBP700_raw(irev));
-                    netcdf.putVar(ncid,NBBP7002ID,[0,ii-1],[length(nan2fv(fp.ecoBBP700_raw(irev),fval)),1],nan2fv(fp.BBP700_raw(irev),fval));
+                    netcdf.putVar(ncid,NBBP7002ID,[0,ii-1],[length(nan2fv(fp.ecoBBP700_raw(irev),fval)),1],nan2fv(fp.ecoBBP700_raw(irev),fval));
                     netcdf.putVar(ncid,NBBP7002QCID,[0,ii-1],[length(num2str(oqc2,'%1d')),1],num2str(oqc2,'%1d'));
                     qcflag = overall_qcflag(oqc);
                     if(qcflag=='F')

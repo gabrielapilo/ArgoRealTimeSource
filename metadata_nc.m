@@ -104,6 +104,8 @@ if ~dbdat.iridium | (dbdat.iridium & isempty(missionI))
         end
     end
     numconfigs=j;
+%     numconfigs = sum(cellfun(@isempty,mission.data(6:end)) == 0); ??
+%     probably not sophistocated enough - leave the wonderful loop for now
 else
     
     numconfigs=length(missionI.names);
@@ -894,7 +896,7 @@ if dbdat.flbb
         jj=jj+1;
         aa=s.FLBB.mfg;
         netcdf.putVar(ncid,SENSORMAKERID,[0,jj-1],[length(aa),1],aa);
-        aa='SCATTEROMETER_BBP';
+        aa='BACKSCATTERINGMETER_BBP700';
         netcdf.putVar(ncid,SENSORID,[0,jj-1],[length(aa),1],aa);
         aa=s.FLBB.ModelNo;
         netcdf.putVar(ncid,SENSORMODELID,[0,jj-1],[length(aa),1],aa);
@@ -932,28 +934,28 @@ if dbdat.flbb
             netcdf.putVar(ncid,SENSORID,[0,jj-1],[length(aa),1],aa);
             aa='ECO_BB3';
             netcdf.putVar(ncid,SENSORMODELID,[0,jj-1],[length(aa),1],aa);
-            aa=s.FLBB.SerialNo;
+            aa=s.Eco.SerialNo;
             netcdf.putVar(ncid,SENSORSERNOID,[0,jj-1],[length(aa),1],aa);
             jj=jj+1;
-            aa=s.FLBB.mfg;
+            aa=s.Eco.mfg;
             netcdf.putVar(ncid,SENSORMAKERID,[0,jj-1],[length(aa),1],aa);
             aa='BACKSCATTERINGMETER_BBP532';
             netcdf.putVar(ncid,SENSORID,[0,jj-1],[length(aa),1],aa);
             aa='ECO_BB3';
             netcdf.putVar(ncid,SENSORMODELID,[0,jj-1],[length(aa),1],aa);
-            aa=s.FLBB.SerialNo;
+            aa=s.Eco.SerialNo;
             netcdf.putVar(ncid,SENSORSERNOID,[0,jj-1],[length(aa),1],aa);
             jj=jj+1;
-            aa=s.FLBB.mfg;
+            aa=s.Eco.mfg;
             netcdf.putVar(ncid,SENSORMAKERID,[0,jj-1],[length(aa),1],aa);
             aa='BACKSCATTERINGMETER_BBP470';
             netcdf.putVar(ncid,SENSORID,[0,jj-1],[length(aa),1],aa);
             aa='ECO_BB3';
             netcdf.putVar(ncid,SENSORMODELID,[0,jj-1],[length(aa),1],aa);
-            aa=s.FLBB.SerialNo;
+            aa=s.Eco.SerialNo;
             netcdf.putVar(ncid,SENSORSERNOID,[0,jj-1],[length(aa),1],aa);
             jj=jj+1;
-            aa=s.FLBB.mfg;
+            aa=s.Eco.mfg;
             netcdf.putVar(ncid,SENSORMAKERID,[0,jj-1],[length(aa),1],aa);
             aa='FLUOROMETER_CHLA';
             netcdf.putVar(ncid,SENSORID,[0,jj-1],[length(aa),1],aa);
@@ -1028,7 +1030,7 @@ if dbdat.eco
     jj=jj+1;
     aa=s.Eco.mfg;
     netcdf.putVar(ncid,SENSORMAKERID,[0,jj-1],[length(aa),1],aa);
-    aa='SCATTEROMETER_BBP';
+    aa='BACKSCATTERINGMETER_BBP700';
     netcdf.putVar(ncid,SENSORID,[0,jj-1],[length(aa),1],aa);
     aa=s.Eco.ModelNo;
     netcdf.putVar(ncid,SENSORMODELID,[0,jj-1],[length(aa),1],aa);
@@ -1243,7 +1245,7 @@ if dbdat.flbb
     jj=jj+1;
     aa='BBP700'; %derived
     netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-    aa='SCATTEROMETER_BBP';
+    aa='BACKSCATTERINGMETER_BBP700';
     netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
     aa='m-1';
     netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
@@ -1251,7 +1253,7 @@ if dbdat.flbb
     jj=jj+1;
     aa='BETA_BACKSCATTERING700';  %raw
     netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-    aa='SCATTEROMETER_BBP';
+    aa='BACKSCATTERINGMETER_BBP700';
     netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
     aa='count';
     netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
@@ -1259,7 +1261,7 @@ if dbdat.flbb
     jj=jj+1;
     aa='TEMP_CPU_CHLA';  %raw
     netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-    aa='SCATTEROMETER_BBP';
+    aa='BACKSCATTERINGMETER_BBP700';
     netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
     aa='count';
     netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
@@ -1268,7 +1270,7 @@ if dbdat.flbb
         jj=jj+1;
         aa='BBP532'; %derived
         netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-        aa='SCATTEROMETER_BBP';
+        aa='BACKSCATTERINGMETER_BBP532';
         netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
         aa='m-1';
         netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
@@ -1276,7 +1278,7 @@ if dbdat.flbb
         jj=jj+1;
         aa='BETA_BACKSCATTERING532';  %raw
         netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-        aa='SCATTEROMETER_BBP';
+        aa='BACKSCATTERINGMETER_BBP532';
         netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
         aa='count';
         netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
@@ -1319,11 +1321,11 @@ end
 
 if dbdat.eco
     if dbdat.flbb
-        sensor='SCATTEROMETER_BBP2';
+        sensor='BACKSCATTERINGMETER_BBP700_2';
         parameter700='BBP700_2';
         praw='BETA_BACKSCATTERING700_2';
     else
-        sensor='SCATTEROMETER_BBP';
+        sensor='BACKSCATTERINGMETER_BBP700';
         parameter700='BBP700';
         praw='BETA_BACKSCATTERING700';
     end
@@ -1346,7 +1348,7 @@ if dbdat.eco
     jj=jj+1;
     aa='BBP532'; %derived
     netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-    aa=sensor;
+    aa='BACKSCATTERINGMETER_BBP532';
     netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
     aa='m-1';
     netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
@@ -1354,7 +1356,7 @@ if dbdat.eco
     jj=jj+1;
     aa='BETA_BACKSCATTERING532';  %raw
     netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-    aa=sensor;
+    aa='BACKSCATTERINGMETER_BBP532';
     netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
     aa='count';
     netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
@@ -1362,7 +1364,7 @@ if dbdat.eco
     jj=jj+1;
     aa='BBP470'; %derived
     netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-    aa=sensor;
+    aa='BACKSCATTERINGMETER_BBP470';
     netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
     aa='m-1';
     netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
@@ -1370,7 +1372,7 @@ if dbdat.eco
     jj=jj+1;
     aa='BETA_BACKSCATTERING470';  %raw
     netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-    aa=sensor;
+    aa='BACKSCATTERINGMETER_BBP470';
     netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
     aa='count';
     netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
@@ -1391,7 +1393,7 @@ if dbdat.irr
         jj=jj+1;
         aa='DOWN_IRRADIANCE380'; %derived
         netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-        aa='RADIOMETER_DOWN_IRR';
+        aa='RADIOMETER_DOWN_IRR380';
         netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
         aa='W/m^2/nm';
         netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
@@ -1399,7 +1401,7 @@ if dbdat.irr
         jj=jj+1;
         aa='RAW_DOWNWELLING_IRRADIANCE380'; %derived
         netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-        aa='RADIOMETER_DOWN_IRR';
+        aa='RADIOMETER_DOWN_IRR280';
         netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
         aa='count';
         netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
@@ -1407,7 +1409,7 @@ if dbdat.irr
         jj=jj+1;
         aa='DOWN_IRRADIANCE412'; %derived
         netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-        aa='RADIOMETER_DOWN_IRR';
+        aa='RADIOMETER_DOWN_IRR412';
         netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
         aa='W/m^2/nm';
         netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
@@ -1415,7 +1417,7 @@ if dbdat.irr
         jj=jj+1;
         aa='RAW_DOWNWELLING_IRRADIANCE412'; %raw
         netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-        aa='RADIOMETER_DOWN_IRR';
+        aa='RADIOMETER_DOWN_IRR412';
         netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
         aa='count';
         netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
@@ -1423,7 +1425,7 @@ if dbdat.irr
         jj=jj+1;
         aa='DOWN_IRRADIANCE490'; %derived
         netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-        aa='RADIOMETER_DOWN_IRR';
+        aa='RADIOMETER_DOWN_IRR490';
         netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
         aa='W/m^2/nm';
         netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
@@ -1431,7 +1433,7 @@ if dbdat.irr
         jj=jj+1;
         aa='RAW_DOWNWELLING_IRRADIANCE490'; %derived
         netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-        aa='RADIOMETER_DOWN_IRR';
+        aa='RADIOMETER_DOWN_IRR490';
         netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
         aa='count';
         netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
@@ -1457,7 +1459,7 @@ if dbdat.irr
         jj=jj+1;
         aa='DOWN_IRRADIANCE412'; %derived
         netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-        aa='RADIOMETER_DOWN_IRR';
+        aa='RADIOMETER_DOWN_IRR412';
         netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
         aa='W/m^2/nm';
         netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
@@ -1465,7 +1467,7 @@ if dbdat.irr
         jj=jj+1;
         aa='RAW_DOWNWELLING_IRRADIANCE412'; %raw
         netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-        aa='RADIOMETER_DOWN_IRR';
+        aa='RADIOMETER_DOWN_IRR412';
         netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
         aa='count';
         netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
@@ -1473,7 +1475,7 @@ if dbdat.irr
         jj=jj+1;
         aa='DOWN_IRRADIANCE443'; %derived
         netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-        aa='RADIOMETER_DOWN_IRR';
+        aa='RADIOMETER_DOWN_IRR443';
         netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
         aa='W/m^2/nm';
         netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
@@ -1481,7 +1483,7 @@ if dbdat.irr
         jj=jj+1;
         aa='RAW_DOWNWELLING_IRRADIANCE443'; %derived
         netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-        aa='RADIOMETER_DOWN_IRR';
+        aa='RADIOMETER_DOWN_IRR443';
         netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
         aa='count';
         netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
@@ -1489,7 +1491,7 @@ if dbdat.irr
         jj=jj+1;
         aa='DOWN_IRRADIANCE490'; %derived
         netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-        aa='RADIOMETER_DOWN_IRR';
+        aa='RADIOMETER_DOWN_IRR490';
         netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
         aa='W/m^2/nm';
         netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
@@ -1497,7 +1499,7 @@ if dbdat.irr
         jj=jj+1;
         aa='RAW_DOWNWELLING_IRRADIANCE490'; %derived
         netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-        aa='RADIOMETER_DOWN_IRR';
+        aa='RADIOMETER_DOWN_IRR490';
         netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
         aa='count';
         netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
@@ -1505,7 +1507,7 @@ if dbdat.irr
         jj=jj+1;
         aa='DOWN_IRRADIANCE555'; %derived
         netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-        aa='RADIOMETER_DOWN_IRR';
+        aa='RADIOMETER_DOWN_IRR555';
         netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
         aa='W/m^2/nm';
         netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
@@ -1513,7 +1515,7 @@ if dbdat.irr
         jj=jj+1;
         aa='RAW_DOWNWELLING_IRRADIANCE555'; %derived
         netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-        aa='RADIOMETER_DOWN_IRR';
+        aa='RADIOMETER_DOWN_IRR555';
         netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
         aa='count';
         netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
@@ -1530,7 +1532,7 @@ if dbdat.irr
         jj=jj+1;
         aa='RAW_UPWELLING_RADIANCE412'; %derived
         netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-        aa='RADIOMETER_UP_RAD';
+        aa='RADIOMETER_UP_RAD412';
         netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
         aa='count';
         netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
@@ -1538,7 +1540,7 @@ if dbdat.irr
         jj=jj+1;
         aa='UP_RADIANCE443'; %derived
         netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-        aa='RADIOMETER_UP_RAD';
+        aa='RADIOMETER_UP_RAD443';
         netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
         aa='W/m^2/nm';
         netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
@@ -1546,7 +1548,7 @@ if dbdat.irr
         jj=jj+1;
         aa='RAW_UPWELLING_RADIANCE443'; %derived
         netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-        aa='RADIOMETER_UP_RAD';
+        aa='RADIOMETER_UP_RAD443';
         netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
         aa='count';
         netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
@@ -1554,7 +1556,7 @@ if dbdat.irr
         jj=jj+1;
         aa='UP_RADIANCE490'; %derived
         netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-        aa='RADIOMETER_UP_RAD';
+        aa='RADIOMETER_UP_RAD490';
         netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
         aa='W/m^2/nm';
         netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
@@ -1562,7 +1564,7 @@ if dbdat.irr
         jj=jj+1;
         aa='RAW_UPWELLING_RADIANCE490'; %derived
         netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-        aa='RADIOMETER_UP_RAD';
+        aa='RADIOMETER_UP_RAD490';
         netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
         aa='count';
         netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
@@ -1570,7 +1572,7 @@ if dbdat.irr
         jj=jj+1;
         aa='UP_RADIANCE555'; %derived
         netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-        aa='RADIOMETER_UP_RAD';
+        aa='RADIOMETER_UP_RAD555';
         netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
         aa='W/m^2/nm';
         netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
@@ -1578,7 +1580,7 @@ if dbdat.irr
         jj=jj+1;
         aa='RAW_UPWELLING_RADIANCE555'; %derived
         netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-        aa='RADIOMETER_UP_RAD';
+        aa='RADIOMETER_UP_RAD555';
         netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
         aa='count';
         netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
