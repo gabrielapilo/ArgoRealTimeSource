@@ -286,10 +286,10 @@ if dbdat.suna
 end
 if dbdat.irr
     if dbdat.irr2
-       jj=jj+1;
+       jj=jj+3;
        n_param=n_param+8;
     else
-        jj=jj+2;
+        jj=jj+8;
         n_param=n_param+16;       
     end
 end
@@ -1051,36 +1051,62 @@ if dbdat.suna
 end
 
 if dbdat.irr
-    jj=jj+1;
-    aa=s.Irr.mfg;
-    netcdf.putVar(ncid,SENSORMAKERID,[0,jj-1],[length(aa),1],aa);
-    aa='RADIOMETER_DOWN_IRR';
-    netcdf.putVar(ncid,SENSORID,[0,jj-1],[length(aa),1],aa);
-    aa=s.Irr.ModelNo;
-    netcdf.putVar(ncid,SENSORMODELID,[0,jj-1],[length(aa),1],aa);
-    aa=s.Irr.SerialNo;
-    netcdf.putVar(ncid,SENSORSERNOID,[0,jj-1],[length(aa),1],aa);
-    if dbdat.irr2
+    %OCR540_ICSW, down irradiance at selcted wavelengths
+    pars = {'RADIOMETER_DOWN_IRR412','RADIOMETER_DOWN_IRR490'};
+    for mm = 1:length(pars)
         jj=jj+1;
         aa=s.Irr.mfg;
         netcdf.putVar(ncid,SENSORMAKERID,[0,jj-1],[length(aa),1],aa);
-        aa='RADIOMETER_PAR';
+        aa=pars{mm};
         netcdf.putVar(ncid,SENSORID,[0,jj-1],[length(aa),1],aa);
         aa=s.Irr.ModelNo;
         netcdf.putVar(ncid,SENSORMODELID,[0,jj-1],[length(aa),1],aa);
         aa=s.Irr.SerialNo;
         netcdf.putVar(ncid,SENSORSERNOID,[0,jj-1],[length(aa),1],aa);
     end
+    
+    if dbdat.irr2
+    %OCR540_ICSW, down irradiance at selcted wavelengths, and down par        
+        pars = {'RADIOMETER_DOWN_IRR380','RADIOMETER_PAR'};
+        for mm = 1:length(pars)
+            jj=jj+1;
+            aa=s.Irr.mfg;
+            netcdf.putVar(ncid,SENSORMAKERID,[0,jj-1],[length(aa),1],aa);
+            aa= pars{mm};
+            netcdf.putVar(ncid,SENSORID,[0,jj-1],[length(aa),1],aa);
+            aa=s.Irr.ModelNo;
+            netcdf.putVar(ncid,SENSORMODELID,[0,jj-1],[length(aa),1],aa);
+            aa=s.Irr.SerialNo;
+            netcdf.putVar(ncid,SENSORSERNOID,[0,jj-1],[length(aa),1],aa);
+        end
+    end
     if ~dbdat.irr2
-        jj=jj+1;
-        aa=s.Rad.mfg;
-        netcdf.putVar(ncid,SENSORMAKERID,[0,jj-1],[length(aa),1],aa);
-        aa='RADIOMETER_UP_RAD';
-        netcdf.putVar(ncid,SENSORID,[0,jj-1],[length(aa),1],aa);
-        aa=s.Rad.ModelNo;
-        netcdf.putVar(ncid,SENSORMODELID,[0,jj-1],[length(aa),1],aa);
-        aa=s.Rad.SerialNo;
-        netcdf.putVar(ncid,SENSORSERNOID,[0,jj-1],[length(aa),1],aa);
+        %also has OCR540_R10W, up radiance at selcted wavelengths
+        pars = {'RADIOMETER_DOWN_IRR443','RADIOMETER_DOWN_IRR555'};
+        for mm = 1:length(pars)
+            jj=jj+1;
+            aa=s.Irr.mfg;
+            netcdf.putVar(ncid,SENSORMAKERID,[0,jj-1],[length(aa),1],aa);
+            aa=pars{mm};
+            netcdf.putVar(ncid,SENSORID,[0,jj-1],[length(aa),1],aa);
+            aa=s.Irr.ModelNo;
+            netcdf.putVar(ncid,SENSORMODELID,[0,jj-1],[length(aa),1],aa);
+            aa=s.Irr.SerialNo;
+            netcdf.putVar(ncid,SENSORSERNOID,[0,jj-1],[length(aa),1],aa);
+        end
+        pars = {'RADIOMETER_UP_RAD412','RADIOMETER_UP_RAD443', ...
+            'RADIOMETER_UP_RAD490','RADIOMETER_UP_RAD555'};
+        for mm = 1:length(pars)
+            jj=jj+1;
+            aa=s.Rad.mfg;
+            netcdf.putVar(ncid,SENSORMAKERID,[0,jj-1],[length(aa),1],aa);
+            aa=pars{mm};
+            netcdf.putVar(ncid,SENSORID,[0,jj-1],[length(aa),1],aa);
+            aa=s.Rad.ModelNo;
+            netcdf.putVar(ncid,SENSORMODELID,[0,jj-1],[length(aa),1],aa);
+            aa=s.Rad.SerialNo;
+            netcdf.putVar(ncid,SENSORSERNOID,[0,jj-1],[length(aa),1],aa);
+        end
     end
 end
 
@@ -1441,7 +1467,7 @@ if dbdat.irr
         jj=jj+1;
         aa='DOWNWELLING_PAR'; %derived
         netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-        aa='RADIOMETER_DOWN_IRR';
+        aa='RADIOMETER_PAR';
         netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
         aa='W/m^2/nm';
         netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
@@ -1449,7 +1475,7 @@ if dbdat.irr
         jj=jj+1;
         aa='RAW_DOWNWELLING_PAR'; %derived
         netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-        aa='RADIOMETER_DOWN_IRR';
+        aa='RADIOMETER_PAR';
         netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
         aa='count';
         netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
