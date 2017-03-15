@@ -501,7 +501,7 @@ if ~isempty(fpp(pn).park_p)
         end
     end
     %assign the PTM while we are here:
-    clear PTM
+    PTM = NaN*ones(length(fpp(pn).park_date)+length(npark_samp),4);
     %note that the P/T/S park measurement does not have a date associated
     %with it in the fpp structure, however, in the log file, the time is
     %recorded with 'ParkTerminate', PET value. PTS from end of the park
@@ -511,10 +511,14 @@ if ~isempty(fpp(pn).park_p)
     %log file will have both measurements labelled, so I'm inclined to get
     %them from the log file. The fpp data comes from the unlabelled msg
     %file. The data matches.
-    PTM(:,1) = [datenum(fpp(pn).park_date); NaN*npark_samp];
-    PTM(:,2) = reshape(fpp(pn).park_p(1:end-nAST),[],1);
-    PTM(:,3) = reshape(fpp(pn).park_t(1:end-nAST),[],1);
-    PTM(:,4) = reshape(fpp(pn).park_s(1:end-nAST),[],1);
+    try
+        PTM(:,1) = [datenum(fpp(pn).park_date); NaN*npark_samp];
+        PTM(:,2) = reshape(fpp(pn).park_p(1:end-nAST),[],1);
+        PTM(:,3) = reshape(fpp(pn).park_t(1:end-nAST),[],1);
+        PTM(:,4) = reshape(fpp(pn).park_s(1:end-nAST),[],1);
+    catch
+        disp(['Problem with Park temp/pres/psal for float ' num2str(pmeta.wmo_id)])
+    end
     %make sure DET comes after PST - eg in 5903625 pn 1, park_jday is
     %incorrect, need to fix!
     if PTM(1) < PST
