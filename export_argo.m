@@ -106,14 +106,20 @@ for ii = 1:length(PROC_RECORDS)
                 if ispc
                     fnm = [num2str(pr.wmo_id) '\R' num2str(pr.wmo_id) '_' ...
                         pno '.nc'];
+                    fnmbr = [num2str(pr.wmo_id) '\BR' num2str(pr.wmo_id) '_' ...
+                        pno '.nc'];
                 else
                     fnm = [num2str(pr.wmo_id) '/R' num2str(pr.wmo_id) '_' ...
+                        pno '.nc'];
+                    fnmbr = [num2str(pr.wmo_id) '/BR' num2str(pr.wmo_id) '_' ...
                         pno '.nc'];
                 end
                 %    num2str(pr.profile_number) '.nc'];
                 cc = pr.prof_nc_count;
                 cntmax = ARGO_SYS_PARAM.send_cdf_max;
             else
+                %no traj,meta, nc files for BR files
+                fnmbr = [];
                 if ispc
                     fnm = [num2str(pr.wmo_id) '\' num2str(pr.wmo_id) '_' pp1{ff} '.nc'];
                 else
@@ -124,6 +130,7 @@ for ii = 1:length(PROC_RECORDS)
             end
             
             if cc < cntmax
+                
                 if ~exist([ndir fnm],'file')
                     logerr(2,['Cannot find ' fnm]);
                 elseif isingdac(fnm)~=2
@@ -138,6 +145,21 @@ for ii = 1:length(PROC_RECORDS)
                     else
                         cc = cc + 1;
                         cnts(ff+1) = cnts(ff+1)+1;
+                    end
+                end
+                if ~isempty(fnmbr)
+                    if ~exist([ndir fnmbr],'file')
+                        logerr(2,['Cannot find ' fnmbr]);
+                    elseif isingdac(fnmbr)~=2
+                        %             % Copy the file to export/ to be sent
+                        if ispc
+                            [status,ww] =system(['copy /Y ' ndir fnmbr ' ' edir]);
+                        else
+                            [status,ww] = system(['cp -f ' ndir fnmbr ' ' edir]);
+                        end
+                        if status~=0
+                            logerr(2,['Copy of ' fnmbr ' to export/ failed:' ww]);
+                        end
                     end
                 end
             elseif cc ~= DoneFlag
