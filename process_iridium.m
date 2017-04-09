@@ -179,10 +179,12 @@ if dbdat.subtype==1029
     irr412 = [];
     irr490 = [];
     irrPAR =[];
-    pH = [];
-    pHT = [];
-    Tilt = [];
-    Tilt_sd=[];
+    if dbdat.pH
+        pH = [];
+        pHT = [];
+        Tilt = [];
+        Tilt_sd=[];
+    end
     
 end
    
@@ -235,11 +237,12 @@ if any(stage==1)
     %trust the profile number reported by the float - but check for rollover later!
     pro.profile_number=np;
     
-%     for 5905023 only, initiate mission swapping based on pn:
-if dbdat.wmo_id==5905023    
-    
-    swap_0528_missions(np);
-
+%     for 5905023, 5905193, 5905196, 5905197 BGC floats only, initiate mission swapping based on pn:
+if dbdat.wmo_id==5905023 | dbdat.wmo_id==5905193 | dbdat.wmo_id==5905196 ...
+    | dbdat.wmo_id==5905197 
+    if np > 8
+        swap_missions(np,dbdat.argos_hex_id);
+    end
 end
     pro.position_accuracy='G';
     pro.SN=dbdat.maker_id;
@@ -437,10 +440,12 @@ end
                         pro.park_irr380(j) = parkd(9);
                         pro.park_irr412(j) = parkd(10);
                         pro.park_irr490(j) = parkd(11);
-                        pro.park_irrPAR(j) = parkd(12);                      
-                        pro.park_pHvolts(j)=parkd(13);
-                        pro.park_pHT(j)=parkd(14);
-                        pro.park_Tilt(j)=parkd(15);
+                        pro.park_irrPAR(j) = parkd(12);
+                        if dbdat.pH
+                            pro.park_pHvolts(j)=parkd(13);
+                            pro.park_pHT(j)=parkd(14);
+                            pro.park_Tilt(j)=parkd(15);
+                        end
                      else
                         pro.park_Bphase(j)=parkd(4);
                         pro.parkToptode(j)=parkd(5);
@@ -529,10 +534,12 @@ end
                         irr412(k-1) = parkd(10);
                         irr490(k-1) = parkd(11);
                         irrPAR(k-1) = parkd(12);
-                        pH(k-1) = parkd(13);
-                        pHT(k-1) = parkd(14);
-                        Tilt(k-1) = parkd(15);
-                        Tilt_sd(k-1)=NaN;
+                        if dbdat.pH
+                            pH(k-1) = parkd(13);
+                            pHT(k-1) = parkd(14);
+                            Tilt(k-1) = parkd(15);
+                            Tilt_sd(k-1)=NaN;
+                        end
                     elseif dbdat.subtype==1028 %- don't measure discrete samples except for one park value
 %                         pro.p_oxygen(k-1)=parkd(1);
 %                         pro.t_oxygen(k-1)=parkd(2);
@@ -845,15 +852,16 @@ end
                 pro.irr490(j)=(rawline(ocri3)*1024 + 2013265920); 
                 pro.irrPAR(j)=(rawline(ocri4)*1024 + 2013265920); 
                 
-                pro.pHvolts(j)=(rawline(pHv)/1000000.0 - 2.5); %eco puck data - 3 BB values
-                pro.pHT(j)=(rawline(pHt)/1000.);
-                if pro.pHT(j)>61440
-                    pro.pHT=(rawline(pHt)-65536)/1000.;
+                if dbdat.pH
+                    pro.pHvolts(j)=(rawline(pHv)/1000000.0 - 2.5); %eco puck data - 3 BB values
+                    pro.pHT(j)=(rawline(pHt)/1000.);
+                    if pro.pHT(j)>61440
+                        pro.pHT=(rawline(pHt)-65536)/1000.;
+                    end
+                    
+                    pro.Tilt(j)=(rawline(tilt)/10.0);
+                    pro.Tilt_sd(j)=(rawline(tiltsd)/100.0);
                 end
-                
-                pro.Tilt(j)=(rawline(tilt)/10.0); 
-                pro.Tilt_sd(j)=(rawline(tiltsd)/100.0); 
-
                 pro.nsamps(j)=rawline(4);
            
             else
@@ -890,11 +898,13 @@ end
         pro.irr412=[irr412 pro.irr412];
         pro.irr490=[irr490 pro.irr490];
         pro.irrPAR=[irrPAR pro.irrPAR];
-        pro.pHvolts=[pH pro.pHvolts];
-        pro.pHT=[pHT pro.pHT];
-        
-        pro.Tilt=[Tilt pro.Tilt];
-        pro.Tilt_sd=[Tilt_sd pro.Tilt_sd];
+        if dbdat.pH
+            pro.pHvolts=[pH pro.pHvolts];
+            pro.pHT=[pHT pro.pHT];
+            
+            pro.Tilt=[Tilt pro.Tilt];
+            pro.Tilt_sd=[Tilt_sd pro.Tilt_sd];
+        end
     end
      
     pro.npoints=length(pro.p_raw);
