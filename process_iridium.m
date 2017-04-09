@@ -237,13 +237,17 @@ if any(stage==1)
     %trust the profile number reported by the float - but check for rollover later!
     pro.profile_number=np;
     
-%     for 5905023, 5905193, 5905196, 5905197 BGC floats only, initiate mission swapping based on pn:
-if dbdat.wmo_id==5905023 | dbdat.wmo_id==5905193 | dbdat.wmo_id==5905196 ...
-    | dbdat.wmo_id==5905197 
-    if np > 8
-        swap_missions(np,dbdat.argos_hex_id);
+    %     for 5905023, 5905193, 5905196, 5905197 BGC floats only, initiate mission swapping based on pn:
+    if isfield(ARGO_SYS_PARAM,'processor')
+        if ~isempty(strmatch('CSIRO',ARGO_SYS_PARAM.processor))
+            if dbdat.wmo_id==5905023 | dbdat.wmo_id==5905193 | dbdat.wmo_id==5905196 ...
+                    | dbdat.wmo_id==5905197
+                if np > 8
+                    swap_missions(np,dbdat.argos_hex_id);
+                end
+            end
+        end
     end
-end
     pro.position_accuracy='G';
     pro.SN=dbdat.maker_id;
     ff=0;
