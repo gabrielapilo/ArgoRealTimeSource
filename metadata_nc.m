@@ -1427,7 +1427,7 @@ if dbdat.irr
         jj=jj+1;
         aa='RAW_DOWNWELLING_IRRADIANCE380'; %derived
         netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-        aa='RADIOMETER_DOWN_IRR280';
+        aa='RADIOMETER_DOWN_IRR380';
         netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
         aa='count';
         netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
