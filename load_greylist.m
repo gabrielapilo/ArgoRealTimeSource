@@ -24,8 +24,12 @@ global ARGO_SYS_PARAM
        str = textscan(c{a},'%f%s%f%f%f%s%s','delimiter',',');
        greylist.wmo_id(a) = str{1};
        greylist.var(a) = str{2};
-       greylist.start(a) = str{3};
-       greylist.end(a) = str{4};
+       greylist.start(a) = datenum(num2str(str{3}),'yyyymmdd');
+       if isnan(str{4})
+           greylist.end(a) = datenum(date)+2;
+       else
+           greylist.end(a) = datenum(num2str(str{4}),'yyyymmdd');
+       end
        greylist.flag(a) = str{5};
    end
 end

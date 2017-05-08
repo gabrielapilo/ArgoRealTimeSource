@@ -664,39 +664,43 @@ end
    fp.testsperformed(15) = 0;
    
    if ~isempty(ib) %float is on the greylist
-       %    if(strcmp(dbdat.status,'suspect') | strcmp(dbdat.status,'evil'))
-       fp.testsperformed(15) = 1;
-       fp.testsfailed(15) = 1;
-       vv=1:length(fp.p_raw);
-       newv = repmat(3,1,length(vv));
-       %        if(dbdat.wmo_id==7900325 |... %greylisted for PSAL,suspect
-       %                dbdat.wmo_id==5903700 | ... %greylisted for PSAL,suspect
-       %                dbdat.wmo_id==1901320 | dbdat.wmo_id==5901659 | ... %greylisted for PSAL,suspect
-       %                dbdat.wmo_id==5901683|... %greylist for short time psal. Not suspect now
-       %                dbdat.wmo_id==5903640) %greylisted for PSAL, suspect
-       ii = find(cellfun(@isempty,strfind(glist.var(ib),'PSAL'))==0);
-       ij = find(cellfun(@isempty,strfind(glist.var(ib),'TEMP'))==0);
-       ik = find(cellfun(@isempty,strfind(glist.var(ib),'PRES'))==0);
-       if ~isempty(ii) & isempty(ij) & isempty(ik) %psal only
-           fp.s_qc(vv) = max([fp.s_qc(vv); newv]);
-           vvs = qc_apply(fp.s_raw,fp.s_qc);
-       else
-           if strcmp(dbdat.status,'evil')
-               fp.p_qc(vv) = 4;
-               fp.s_qc(vv) = 4;
-               fp.t_qc(vv) = 4;
-           else
+       %check the date range:
+       if datenum(gregorian(fp.jday)) > glist.start(ib) & ...
+               datenum(gregorian(fp.jday)) < glist.end(ib)
+           
+           fp.testsperformed(15) = 1;
+           fp.testsfailed(15) = 1;
+           vv=1:length(fp.p_raw);
+           newv = repmat(3,1,length(vv));
+           %        if(dbdat.wmo_id==7900325 |... %greylisted for PSAL,suspect
+           %                dbdat.wmo_id==5903700 | ... %greylisted for PSAL,suspect
+           %                dbdat.wmo_id==1901320 | dbdat.wmo_id==5901659 | ... %greylisted for PSAL,suspect
+           %                dbdat.wmo_id==5901683|... %greylist for short time psal. Not suspect now
+           %                dbdat.wmo_id==5903640) %greylisted for PSAL, suspect
+           ii = find(cellfun(@isempty,strfind(glist.var(ib),'PSAL'))==0);
+           ij = find(cellfun(@isempty,strfind(glist.var(ib),'TEMP'))==0);
+           ik = find(cellfun(@isempty,strfind(glist.var(ib),'PRES'))==0);
+           if ~isempty(ii) & isempty(ij) & isempty(ik) %psal only
                fp.s_qc(vv) = max([fp.s_qc(vv); newv]);
-               fp.p_qc(vv) = max([fp.p_qc(vv); newv]);
-               fp.t_qc(vv) = max([fp.t_qc(vv); newv]);
-               %                fp.p_qc(vv) = 3;
-               %                fp.s_qc(vv) = 3;
-               %                fp.t_qc(vv) = 3;
+               vvs = qc_apply(fp.s_raw,fp.s_qc);
+           else
+               if strcmp(dbdat.status,'evil')
+                   fp.p_qc(vv) = 4;
+                   fp.s_qc(vv) = 4;
+                   fp.t_qc(vv) = 4;
+               else
+                   fp.s_qc(vv) = max([fp.s_qc(vv); newv]);
+                   fp.p_qc(vv) = max([fp.p_qc(vv); newv]);
+                   fp.t_qc(vv) = max([fp.t_qc(vv); newv]);
+                   %                fp.p_qc(vv) = 3;
+                   %                fp.s_qc(vv) = 3;
+                   %                fp.t_qc(vv) = 3;
+               end
+               pii = qc_apply(fp.p_calibrate,fp.p_qc);
+               vvt = qc_apply(fp.t_raw,fp.t_qc);
+               vvs = qc_apply(fp.s_raw,fp.s_qc);
            end
-           pii = qc_apply(fp.p_calibrate,fp.p_qc);
-           vvt = qc_apply(fp.t_raw,fp.t_qc);
-           vvs = qc_apply(fp.s_raw,fp.s_qc);
-       end       
+       end
    end
        
     
