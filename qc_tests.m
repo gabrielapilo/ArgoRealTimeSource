@@ -665,8 +665,8 @@ end
    
    if ~isempty(ib) %float is on the greylist
        %check the date range:
-       if datenum(gregorian(fp.jday)) > glist.start(ib) & ...
-               datenum(gregorian(fp.jday)) < glist.end(ib)
+       if datenum(gregorian(fp.jday(1))) > min(glist.start(ib)) & ...
+               datenum(gregorian(fp.jday(1))) < max(glist.end(ib))
            
            fp.testsperformed(15) = 1;
            fp.testsfailed(15) = 1;
@@ -677,10 +677,10 @@ end
            %                dbdat.wmo_id==1901320 | dbdat.wmo_id==5901659 | ... %greylisted for PSAL,suspect
            %                dbdat.wmo_id==5901683|... %greylist for short time psal. Not suspect now
            %                dbdat.wmo_id==5903640) %greylisted for PSAL, suspect
-           ii = find(cellfun(@isempty,strfind(glist.var(ib),'PSAL'))==0);
+           im = find(cellfun(@isempty,strfind(glist.var(ib),'PSAL'))==0);
            ij = find(cellfun(@isempty,strfind(glist.var(ib),'TEMP'))==0);
            ik = find(cellfun(@isempty,strfind(glist.var(ib),'PRES'))==0);
-           if ~isempty(ii) & isempty(ij) & isempty(ik) %psal only
+           if ~isempty(im) & isempty(ij) & isempty(ik) %psal only
                fp.s_qc(vv) = max([fp.s_qc(vv); newv]);
                vvs = qc_apply(fp.s_raw,fp.s_qc);
            else

@@ -152,11 +152,12 @@ for kk = ical(:)'
    %and for 5901707, 5903249 etc because it is in a bad area for calibrating.
 if(fp.wmo_id==1901121 | fp.wmo_id==1901324 | fp.wmo_id==1901321 | ...
         fp.wmo_id==5901707 |fp.wmo_id==5901706 | fp.wmo_id==5903249 | ...
-        fp.wmo_id==5903260 | fp.wmo_id==5901698 | fp.wmo_id==5901693)
+        fp.wmo_id==5903260 | fp.wmo_id==5901698 | fp.wmo_id==5901693)| ...
+        fp.wmo_id==5903252
     calibrate=0;
     %and turn off calibration for these floats because they are in salty
     %water that's triggering calibration wihtout valid cause:
-elseif fp.lat < -65
+elseif any(fp.lat) < -65
     calibrate=0;
 elseif dbdat.RBR   % turn off calibration for these because they're experimental
     calibrate=0;
