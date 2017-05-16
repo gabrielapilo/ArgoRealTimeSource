@@ -501,7 +501,7 @@ if ~isempty(fpp(pn).park_p)
         end
     end
     %assign the PTM while we are here:
-    PTM = NaN*ones(length(fpp(pn).park_date)+length(npark_samp),4);
+    PTM = NaN*ones(size(fpp(pn).park_date,1)+length(npark_samp),4);
     %note that the P/T/S park measurement does not have a date associated
     %with it in the fpp structure, however, in the log file, the time is
     %recorded with 'ParkTerminate', PET value. PTS from end of the park
