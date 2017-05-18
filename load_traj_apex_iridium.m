@@ -329,7 +329,6 @@ if isnan(PST)
     catch
     end
 end
-estpet = 0;
 %if DST is empty, back-calculate from first park pressure time
 estdst = 0;
 if isnan(DST) & ~isnan(PST)
@@ -341,27 +340,31 @@ if isnan(DST) & ~isnan(PST)
     end
 end
 
+estpet = 0;
 if isnan(PET)
     %park end time can be calculated
     %I don't think this algorithm is correct. Included in the APF9i table,
     %but doesn't make sense to me CHECK with Megan
-    PET = DST + floatTech.Mission(pn).DownTime/60/60/24 ...
-        - floatTech.Mission(pn).DeepProfileDescentTime/60/60/24;
-    
+    if ~isempty(floatTech.Mission(pn).DownTime)
+        PET = DST + floatTech.Mission(pn).DownTime/60/60/24 ...
+            - floatTech.Mission(pn).DeepProfileDescentTime/60/60/24;
+        estpet = 1;
+    end
     if ~isempty(fpp(pn).park_date)
         if isnan(PET) | PET < datenum(fpp(pn).park_date(end,:))
             %try using last time from park info in msg file
             try
                 PET = datenum(fpp(pn).park_date(end,:));
+                estpet = 1;
             catch
             end
         end
     end
-    estpet = 1;
 end
 
 %can get DNT from the float technical file:
-if isfield(floatTech.Mission(pn),'TimeOfDay') && isnumeric(floatTech.Mission(pn).TimeOfDay)
+if isfield(floatTech.Mission(pn),'TimeOfDay') && ~isempty(floatTech.Mission(pn).TimeOfDay) ...
+        && isnumeric(floatTech.Mission(pn).TimeOfDay)
     DNT = floatTech.Mission(pn).TimeOfDay/60/60/24;
 end
     
@@ -375,7 +378,7 @@ end
     
 %if AST is empty, we can calculate it:
 estast = 0;
-if isnan(AST(1)) & ~isnan(DST) & ~estdst
+if isnan(AST(1)) & ~isnan(DST) & ~estdst & ~isempty(floatTech.Mission(pn).DownTime) 
     if ~isnan(DNT)
     %downtime is in minutes
         AST(1) = DST + floatTech.Mission(pn).DownTime/60/60/24;
@@ -443,40 +446,20 @@ end
 %use 'Eventual Drift Pressure', ie, not the programmed value
 % In the case of a float that overshoots on descent, DET is the time of the overshoot.
 [npark_samp,ndisc_samp] = deal([]);
-nAST = 0;
 if ~isempty(fpp(pn).park_p)
-    ii = find(strncmp('$ Discrete',msgdata{1},10));
-    iparks = find(cellfun(@isempty,strfind(msgdata{1},'(Park Sample)'))==0);
-    if ~isempty(ii)
-        str = msgdata{1}{ii};
+    idiscrete = find(strncmp('$ Discrete',msgdata{1},10));
+    iparks = length(find(cellfun(@isempty,strfind(msgdata{1},'(Park Sample)'))==0));
+    iparks2 = length(find(cellfun(@isempty,strfind(msgdata{1},'ParkPts'))==0));
+    if ~isempty(idiscrete)
+        str = msgdata{1}{idiscrete};
         ij = findstr(':',str);
         ndisc_samp = str2num(str(ij+1:end));
         if ~isempty(iparks)
-            npark_samp = length(iparks);
+            npark_samp = iparks + iparks2;
         end
-        nAST = ndisc_samp - npark_samp;
-        %Let's make an assumption - if there are more than 2 discrete
-        %samples, this is a bio float.
-        %do not use the second sample as a AST value, these are discrete
-        %samples on the upward profile for BIO values.
-        if nAST > 1
-            disp(['Bio float ' num2str(pmeta.wmo_id)])
-            nAST = 0;
-        end
-        if size(fpp(pn).park_date,1) + nAST + npark_samp ~= ...
-                length(fpp(pn).park_p)
-            disp(['Missing AST in fpp ' num2str(pmeta.wmo_id)])
-            %there is missing information in the fpp(pn) park data
-%             fid = fopen('missing_AST_info_in_FPP.txt','a');
-%             fprintf(fid,'%s\n',[fn ',' num2str(pn)]);
-%             fclose(fid);
-            %need to go back and fix these, nothing will be written for
-            %these cycles
-            return    
-        end 
     end
     
-    pd = fpp(pn).park_p(1:end-nAST);
+    pd = fpp(pn).park_p(1:npark_samp);
     pd = pd(~isnan(pd));
     pd = median(pd);
     if fpp(pn).park_p(1) > pd
@@ -513,9 +496,9 @@ if ~isempty(fpp(pn).park_p)
     %file. The data matches.
     try
         PTM(:,1) = [datenum(fpp(pn).park_date); NaN*npark_samp];
-        PTM(:,2) = reshape(fpp(pn).park_p(1:end-nAST),[],1);
-        PTM(:,3) = reshape(fpp(pn).park_t(1:end-nAST),[],1);
-        PTM(:,4) = reshape(fpp(pn).park_s(1:end-nAST),[],1);
+        PTM(:,2) = reshape(fpp(pn).park_p(1:npark_samp),[],1);
+        PTM(:,3) = reshape(fpp(pn).park_t(1:npark_samp),[],1);
+        PTM(:,4) = reshape(fpp(pn).park_s(1:npark_samp),[],1);
     catch
         disp(['Problem with Park temp/pres/psal for float ' num2str(pmeta.wmo_id)])
     end
@@ -572,7 +555,7 @@ if ~isempty(fpp(pn).park_p)
     end
     
     % Get ACCURATE PTS for AST (mc 500) from fpp if available.
-    if nAST == 1
+    if npark_samp > 1
         ii = abs(fpp(pn).park_p - dbdat.profpres) < 100;
         if sum(ii) > 1
             disp('Too many AST values!')
