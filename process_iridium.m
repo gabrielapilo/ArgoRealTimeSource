@@ -240,8 +240,8 @@ if any(stage==1)
     %     for 5905023, 5905194, 5905197, 5905198 BGC floats only, initiate mission swapping based on pn:
     if isfield(ARGO_SYS_PARAM,'processor')
         if ~isempty(strmatch('CSIRO',ARGO_SYS_PARAM.processor))
-            if dbdat.wmo_id==5905023 | dbdat.wmo_id==5905194 | dbdat.wmo_id==5905197 ...
-                    | dbdat.wmo_id==5905198
+            if dbdat.wmo_id==5905023 | dbdat.wmo_id==5905194 | dbdat.wmo_id==5905197% ...
+                    %| dbdat.wmo_id==5905198
                 if np > 8
                     swap_missions(np,dbdat.argos_hex_id);
                 end
@@ -259,6 +259,13 @@ if any(stage==1)
     
     cullMissions_iridium(dbdat,[idatapath fn]);
     
+%     %before we begin, let's read in the data for biofloats (data only).
+%     %Use this rather than reading in the line-by-line data
+%     if dbdat.subtype >= 1026 & dbdat.subtype <= 1029
+%         biodat = bio_navis_parse(dbdat.maker_id,np,0);
+%     end
+    
+    %open the message file for reading.
     fid=fopen([idatapath fn]);
     c = textscan(fid,'%s','delimiter','\n');
     fclose(fid)
@@ -1495,8 +1502,8 @@ if any(stage==1)
         prec.meta_nc_count = 0;
     end
     
-    %now the trajectory files. Only for iridium Apex at this stage.
-    if ~isempty(strfind(dbdat.controlboardnumstring,'9i'))
+    %now the trajectory files. Only for iridium Apex & Seabird at this stage.
+    if dbdat.maker == 4 || dbdat.maker == 1
         %not the EM floats which have a 9999 subtype but still 9i
         %controllerboard.
         if dbdat.subtype ~= 9999
