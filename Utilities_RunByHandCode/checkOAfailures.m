@@ -1,11 +1,11 @@
 %edit here:
-[fpp,dbdat] = getargo(5901693);  %float
-j = 260; %profile number
-
+[fpp,dbdat] = getargo(7900331);  %float
+j = 158; %profile number
+win = 5; %plot window of adjacent profiles
 %%
 
 figure(1);clf
-for i=max(j-10,1):min(j+20,length(fpp))
+for i=max(j-win,1):min(j+win,length(fpp))
     plot(fpp(i).t_raw,fpp(i).p_calibrate,'b-')
     hold on
     axis ij
@@ -13,17 +13,17 @@ end
 i=j
 plot(fpp(i).t_raw,fpp(i).p_calibrate,'k-', 'linewidth',2)
 vo=qc_apply(fpp(j).t_raw,fpp(j).t_qc);
-vp=qc_apply(fpp(j).p_calibrate,fpp(j).s_qc);
+vp=qc_apply(fpp(j).p_calibrate,fpp(j).p_qc);
 plot(vo,vp,'g','linewidth',2)
 title('Temperature')
 grid
 
 % for j=1:3:length(fpp)
 figure(2);clf
-for i=max(j-20,1):min(j+10,length(fpp))
+for i=max(j-win,1):min(j+win,length(fpp))
     plot(fpp(i).s_raw,fpp(i).p_calibrate,'b')
     vo=qc_apply(fpp(i).s_calibrate,fpp(i).s_qc);
-    vp=qc_apply(fpp(i).p_calibrate,fpp(i).s_qc);
+    vp=qc_apply(fpp(i).p_calibrate,fpp(i).p_qc);
     plot(vo,vp,'r-')
     hold on
     axis ij
@@ -31,7 +31,7 @@ end
 i=j
 plot(fpp(i).s_raw,fpp(i).p_calibrate,'k-','linewidth',2)
 vo=qc_apply(fpp(i).s_calibrate,fpp(i).s_qc);
-vp=qc_apply(fpp(i).p_calibrate,fpp(i).s_qc);
+vp=qc_apply(fpp(i).p_calibrate,fpp(i).p_qc);
 plot(vo,vp,'g','linewidth',2)
 grid on
 title('PSAL')

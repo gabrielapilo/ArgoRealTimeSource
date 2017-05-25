@@ -1,4 +1,4 @@
-%  function [latarr,lonarr]=interpolate_locations(dbdat)
+%  function [latarr,lonarr]=extrapolate_locations(dbdat)
 %
 %  this script takes a float structure and fills forward looking missing 
 %  positions by extrapolation. if the latest positions are missing, 

@@ -75,7 +75,7 @@ tmp.n_or_p  = 0;
 tmp.makewww = 0;
 tmp.rtmode  = 0;
 tmp.tr_now  = 0;
-tmp.savewk =  0:     % Does NOT make sense to overwrite the input files!
+tmp.savewk =  0;     % Does NOT make sense to overwrite the input files!
 tmp.redo = [1 2];
 tmp.prec_fnm = [];   % See below
 

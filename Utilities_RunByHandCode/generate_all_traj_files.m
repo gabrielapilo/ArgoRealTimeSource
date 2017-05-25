@@ -14,13 +14,17 @@ count = 0; %using this to just do 5 floats.
 %% Iridium
 for ii = 1:length(THE_ARGO_FLOAT_DB)
     %testing the creation of iridium traj files
-    if isempty(strmatch('9i',THE_ARGO_FLOAT_DB(ii).controlboardnumstring))
+    if isempty(strfind(THE_ARGO_FLOAT_DB(ii).controlboardnumstring,'i'))
         continue
     end
-    if THE_ARGO_FLOAT_DB(ii).wmo_id ~= 1901160
-        
+    %only webb and seabird iridium floats
+    if THE_ARGO_FLOAT_DB(ii).maker ~= 4
         continue
     end
+%     if THE_ARGO_FLOAT_DB(ii).wmo_id ~= 5904924
+%         
+%         continue
+%     end
     
     clear traj traj_mc_order
     
@@ -47,16 +51,19 @@ for ii = 1:length(THE_ARGO_FLOAT_DB)
             traj = [];
         end
         
-        if length(fpp) - 10 > 0
-            strt = length(fpp) - 10;
-        else
+%         if length(fpp) - 10 > 0
+%             strt = length(fpp) - 10;
+%         else
             strt = 1;
-        end
+%         end
         for j=strt:length(fpp)
             pn = '000';
             pns = num2str(j);
             pn(end-length(pns)+1:end) = pns;
-            pmeta.ftp_fname = [num2str(dbdat.argos_id) '.' pn '.log'];
+            fn = '0000';
+            fns = num2str(dbdat.argos_id);
+            fn(end-length(fns)+1:end) = fns;
+            pmeta.ftp_fname = [fn '.' pn '.log'];
             pmeta.pn = j;
             
             if j == length(fpp)
@@ -116,7 +123,7 @@ for ii = 1:length(THE_ARGO_FLOAT_DB)
     if THE_ARGO_FLOAT_DB(ii).iridium == 1
         continue
     end
-    if THE_ARGO_FLOAT_DB(ii).wmo_id ~= 5901667
+    if THE_ARGO_FLOAT_DB(ii).wmo_id ~= 1901157
         
         continue
     end

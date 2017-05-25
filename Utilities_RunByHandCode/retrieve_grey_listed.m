@@ -8,13 +8,14 @@
 %
 % usage: rerun_grey_listed(dbdat,startprof,endprof)
 
-function retrieve_grey_listed(dbdat,startprof,endprof)
+function retrieve_grey_listed(wmo,startprof,endprof)
 
-[fpp,dbdat]=getargo(dbdat.wmo_id);
+[fpp,dbdat]=getargo(wmo);
 
 for j=startprof:endprof
     if ~isempty(fpp(j))
-        rejectpoints(dbdat.wmo_id,j,{'s' 't' 'p'},0,2500,1)
+        rejectpoints(dbdat.wmo_id,j,{'t' 'p'},0,2500,1)
+%         rejectpoints(dbdat.wmo_id,j,{'s' 't' 'p'},0,2500,1)
 %         rejectpoints(dbdat.wmo_id,j,{'s' },0,2500,1)
     end
 end
