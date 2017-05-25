@@ -6,6 +6,7 @@
 % Includes tilt for CSIRO 528
 
 function [oxtable] = bio_navis_parse(floatid, profnum, doPrint)
+global ARGO_SYS_PARAM
 
 format long g
 
@@ -13,10 +14,16 @@ format long g
 bdate = datenum(1950,01,01, 00,00,00);
 % /DS
 
-load(sprintf('./refDat/coefs_f%04u.mat',floatid));
-srcfile=sprintf('../data/%04d.%03d.msg',floatid,profnum);
+load(sprintf([ARGO_SYS_PARAM.root_dir 'spreadsheet/biofloat_coeffs/coefs_f%04u.mat'],floatid));
+srcfile=sprintf([ARGO_SYS_PARAM.iridium_path '/iridium_processed/5905023/%04d.%03d.msg'],floatid,profnum);
+
 % Read in datafiles
 fid = fopen(srcfile, 'r');
+if fid < 0
+    disp('No file found for bio_navis_parse code')
+    return
+end
+
 cpendstr='Resm';
 cpbegin = 0;
 spotbegin = 0;
