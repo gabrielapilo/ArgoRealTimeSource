@@ -21,6 +21,7 @@ srcfile=sprintf([ARGO_SYS_PARAM.iridium_path '/iridium_processed/5905023/%04d.%0
 fid = fopen(srcfile, 'r');
 if fid < 0
     disp('No file found for bio_navis_parse code')
+    oxtable = [];
     return
 end
 
@@ -130,6 +131,14 @@ while ~feof(fid)
                dtable(line,22) = 1;
                % DS: add date for ease of db
                dtable(line,23) = dnum-bdate;
+               %add crover data
+               dtable(line,24) = rawline(crv)-200; % C Rover data
+               dtable(line,25) = (rawline(crvc)/1000.0)-10.0;
+               %add radiance data
+                dtable(line,26)=(rawline(ocrr1)*1024 + 2013265920); 
+                dtable(line,27)=(rawline(ocrr2)*1024 + 2013265920);
+                dtable(line,28)=(rawline(ocrr3)*1024 + 2013265920);
+                dtable(line,29)=(rawline(ocrr4)*1024 + 2013265920); 
             end
         end
         if ((spotbegin == 1) && (spotend == 0))
@@ -212,7 +221,14 @@ oxmol = ox * umolml ./ (sw_dens(dtable(1:line,3),T68,dtable(1:line,1))/1000);
 %phV    phT   pHinsitu pHtot25C  tilt    tiltsdv  
 
 %28         29        30          31        32       33
-%nBinsPTS   nBinsO2   nBinsMCOMS  nBinsOCR  nBinspH  date
+%nBinsPTS   nBinsO2   nBinsMCOMS  nBinsOCR  nBinspH  O2phase
+
+%34         35      36      37      38      39          40
+%Oxyvolts  FSig     BbSig   CdSig   Crover  croverc   rad1
+%                   BB700   BB532
+
+%41         42      43      44      
+%rad2       rad3    rad4    date
 
 % Compute MCOMS calibrated data using supplied coefs
 FLraw=dtable(1:line,6); FL=sf(1)*(FLraw-dc(1));
@@ -250,7 +266,8 @@ oxtable = [ox, ox.*salc.*pcorr, TO2, T90, dtable(1:line,1), dtable(1:line,3), ox
           FL, BB, BB2,          OCRc1,    OCRc2,    OCRc3,    OCRc4,...
           FLraw, BBraw, BB2raw, OCRc1raw, OCRc2raw, OCRc3raw, OCRc4raw,...
           phV, TPH, phtot, phtot25, tiltd, tiltsd,...          
-          dtable(1:line,17),dtable(1:line,18),dtable(1:line,19),dtable(1:line,20),dtable(1:line,21)];
+          dtable(1:line,17),dtable(1:line,18),dtable(1:line,19),dtable(1:line,20),dtable(1:line,21),...
+          dtable(1:line,4:8),dtable(1:line,24:29)];
 ncol = length(oxtable(1,:));
 nrow = length(oxtable(:,1));
 dvec = ones(nrow,1) * dnum; % Add date column - repeating
