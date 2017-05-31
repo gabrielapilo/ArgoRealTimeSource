@@ -11,7 +11,7 @@ for i=1:length(wmo_id)
     [fpp,dbdat]=getargo(wmo_id(i));
     for j=profrange
         if fpp(j).c_ratio~=1
-            [fpp,cal_rept]=calsal(fpp,j);
+            [fpp,cal_rept]=calsal(fpp,j,0);
             argoprofile_nc(dbdat,fpp(j));
             web_profile_plot(fpp(j),dbdat)
         end
