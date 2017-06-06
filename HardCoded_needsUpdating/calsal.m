@@ -39,32 +39,6 @@ global ARGO_SYS_PARAM
 cal_report = zeros(1,6);
 dbdat=getdbase(float(end).wmo_id);
 
-%if calibrate is not an argument, let's decide what to do:
-if nargin == 2
-    %turn off calibration for 1901121 because of deep spikes in data:
-    %and for 5901707, 5903249 etc because it is in a bad area for calibrating.
-    if(fp.wmo_id==1901121 | fp.wmo_id==1901324 | fp.wmo_id==1901321 | ...
-            fp.wmo_id==5901707 |fp.wmo_id==5901706 | fp.wmo_id==5903249 | ...
-            fp.wmo_id==5903260 | fp.wmo_id==5901698 | fp.wmo_id==5901693)| ...
-            fp.wmo_id==5903252
-        calibrate=0;
-        %and turn off calibration for these floats because they are in salty
-        %water that's triggering calibration wihtout valid cause:
-    elseif any(fp.lat) < -65
-        calibrate=0;
-    elseif dbdat.RBR   % turn off calibration for these because they're experimental
-        calibrate=0;
-    else
-        if(isempty(fp.surfpres))
-            calibrate = (~isempty(icval) && ...
-                fp.lat(1)>CalY0 && fp.lat(1)<CalY(end) && fp.lon(1)<360);
-        else
-            calibrate = (fp.surfpres(1)<100 && ~isempty(icval) && ...
-                fp.lat(1)>CalY0 && fp.lat(1)<CalY(end) && fp.lon(1)<360);
-        end
-    end
-end
-
 if isempty(CalFilNam)
    % First time here for this Matlab session, so load the CTD reference set. 
    % This name could be in sys_params file, but for now hardcode it.
@@ -172,6 +146,31 @@ for kk = ical(:)'
    cal_report(1) = theta;
    cal_report(2) = length(icval);
    
+   %if calibrate is not an argument, let's decide what to do:
+   if nargin == 2
+       %turn off calibration for 1901121 because of deep spikes in data:
+       %and for 5901707, 5903249 etc because it is in a bad area for calibrating.
+       if(fp.wmo_id==1901121 | fp.wmo_id==1901324 | fp.wmo_id==1901321 | ...
+               fp.wmo_id==5901707 |fp.wmo_id==5901706 | fp.wmo_id==5903249 | ...
+               fp.wmo_id==5903260 | fp.wmo_id==5901698 | fp.wmo_id==5901693)| ...
+               fp.wmo_id==5903252
+           calibrate=0;
+           %and turn off calibration for these floats because they are in salty
+           %water that's triggering calibration wihtout valid cause:
+       elseif any(fp.lat) < -65
+           calibrate=0;
+       elseif dbdat.RBR   % turn off calibration for these because they're experimental
+           calibrate=0;
+       else
+           if(isempty(fp.surfpres))
+               calibrate = (~isempty(icval) && ...
+                   fp.lat(1)>CalY0 && fp.lat(1)<CalY(end) && fp.lon(1)<360);
+           else
+               calibrate = (fp.surfpres(1)<100 && ~isempty(icval) && ...
+                   fp.lat(1)>CalY0 && fp.lat(1)<CalY(end) && fp.lon(1)<360);
+           end
+       end
+   end
 
    if calibrate
       % First interp theta levels
