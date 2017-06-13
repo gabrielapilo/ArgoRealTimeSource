@@ -35,17 +35,17 @@ if isfield(ARGO_SYS_PARAM,'processor')
         % CSIRO copies the data to the FTP
         ftp_conn = ftp(ARGO_SYS_PARAM.ftp.ftp,ARGO_SYS_PARAM.ftp.name,ARGO_SYS_PARAM.ftp.pswd);
         cd(ftp_conn,'iridium_data');
-        mput(ftp_conn,'*.000.*')
-        mput(ftp_conn,'*.log')
-        mput(ftp_conn,'*.msg')
-        mput(ftp_conn,'*.isus')
-        mput(ftp_conn,'*.system_log.txt')
-        mput(ftp_conn,'*.vitals_log.bin')
-        mput(ftp_conn,'*.vitals_log.csv')
-        mput(ftp_conn,'*.science_log.bin')
-        mput(ftp_conn,'*.science_log.csv')
-        mput(ftp_conn,'*.rbr_evt_log.bin')
-        mput(ftp_conn,'*.rbr_evt_log.csv')
+        mput(ftp_conn,'*.000.*');
+        mput(ftp_conn,'*.log');
+        mput(ftp_conn,'*.msg');
+        mput(ftp_conn,'*.isus');
+        mput(ftp_conn,'*.system_log.txt');
+        mput(ftp_conn,'*.vitals_log.bin');
+        mput(ftp_conn,'*.vitals_log.csv');
+        mput(ftp_conn,'*.science_log.bin');
+        mput(ftp_conn,'*.science_log.csv');
+        mput(ftp_conn,'*.rbr_evt_log.bin');
+        mput(ftp_conn,'*.rbr_evt_log.csv');
         close(ftp_conn);
     elseif ~isempty(strfind(ARGO_SYS_PARAM.processor,'BOM'))        
         %BOM are retrieving the data from the FTP
@@ -54,7 +54,7 @@ if isfield(ARGO_SYS_PARAM,'processor')
         %now go get the other iridiums
         eval(['cd ' ARGO_SYS_PARAM.iridium_path]);
         cd(ftp_conn,'iridium_data');
-        mget(ftp_conn,'*')
+        mget(ftp_conn,'*');
         cd(ftp_conn,'../');
         
         %now that they have all the data downloaded, move the files to the
@@ -63,7 +63,7 @@ if isfield(ARGO_SYS_PARAM,'processor')
         %moves with wildcards
         fils = dir(ftp_conn,'/iridium_data/*');
         for aa = 1:length(fils)
-            rename(ftp_conn,['./iridium_data/' fils(aa).name],['/hold_iridium_data_sent/' fils(aa).name])
+            rename(ftp_conn,['./iridium_data/' fils(aa).name],['/hold_iridium_data_sent/' fils(aa).name]);
         end
         close(ftp_conn);
     end

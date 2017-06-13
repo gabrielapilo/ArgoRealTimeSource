@@ -107,7 +107,7 @@ end
 
 % open and parse file
 %
-fid=fopen(fn,'r');
+fid=fopen([fn(1:end-3) 'log'],'r');
 if fid > 0
     [tdata] = textscan(fid,'%s','Delimiter','|');
     fclose(fid);
@@ -236,6 +236,10 @@ while row_idx <= length(tdata{1})
         if isnan(DST)
             DST = t_date;
             % this is also the TET value for the previous profile
+            %for Navis floats, the manual suggests using 'logout'. I think
+            %it should be 'TelemetryTerminate'. Both are available in the
+            %apex iridium too. Leave TET=DST until confirmation of other
+            %options.
             TET = DST;
         end
         %now get the surface pressure for the descent pressure values (DSP)
@@ -275,6 +279,11 @@ while row_idx <= length(tdata{1})
             PET(4) = str2num(str(isp(3):end));
         end
     end
+    %Navis floats have GoDeepInit to signify end of the park period.
+    %Replace PET(1) with this if it exists in the file
+    if ~isnan(t_date) & strfind(tdata{1}{row_idx},'GoDeepInit()')
+        PET(1) = t_date;
+    end    
     if ~isnan(t_date) & strfind(tdata{1}{row_idx},'ProfileInit()')
         ii = strfind(tdata{1}{row_idx},'Pressure:');
         if ~isempty(ii)
@@ -297,11 +306,18 @@ while row_idx <= length(tdata{1})
             str = regexp(splitS{1},exp,'match');
             str = str{1};
             isp = strfind(str,' ');
-            ij = strfind(str,'dbar');
-            AST(2) = str2num(str(isp(1):ij(1)-1));
-            ij = strfind(str,'C');
-            AST(3) = str2num(str(isp(2):ij-1));
-            AST(4) = str2num(str(isp(3):end));
+            if length(isp) < 3
+                isp = [isp,strfind(str,',')];
+            end    
+            try
+                ij = strfind(str,'dbar');
+                AST(2) = str2num(str(isp(1):ij(1)-1));
+                ij = strfind(str,'C');
+                AST(3) = str2num(str(isp(2):ij-1));
+                AST(4) = str2num(str(isp(3):end));
+            catch
+                disp(['Not all AST data extracted ' num2str(dbdat.wmo_id)])
+            end
         end
     end
     if ~isnan(t_date) & strfind(tdata{1}{row_idx},'SurfaceDetect()')
@@ -362,11 +378,6 @@ if isnan(PET)
     end
 end
 
-%can get DNT from the float technical file:
-if isfield(floatTech.Mission(pn),'TimeOfDay') && ~isempty(floatTech.Mission(pn).TimeOfDay) ...
-        && isnumeric(floatTech.Mission(pn).TimeOfDay)
-    DNT = floatTech.Mission(pn).TimeOfDay/60/60/24;
-end
     
 % to get DET, we need to get the park CTD
 % information. DET is the time stamp for first PRES/TEMP sample within 3%
@@ -375,18 +386,57 @@ end
 % msg file. For stand-alone function, you would need to read the msg file
 % here.
 
-    
+% if Profile termination value is empty(TST2), we can get it from the msg
+% file (sometimes the log file is truncated and doesn't have the full
+% information). Note that these values are not the same in files where both
+% are available. The time in the msg file is after the time recorded in the
+% log file.
+esttst2 = 0;
+if ~isempty(fpp(pn).jday) & isnan(TST2)
+    TST2 = datenum(gregorian(fpp(pn).jday(1))); %these are the GPS fixes from the msg file
+    esttst2 = 1;
+end
+
 %if AST is empty, we can calculate it:
 estast = 0;
-if isnan(AST(1)) & ~isnan(DST) & ~estdst & ~isempty(floatTech.Mission(pn).DownTime) 
-    if ~isnan(DNT)
+if isnan(AST(1)) & ~isnan(DST)% & ~estdst 
     %downtime is in minutes
-        AST(1) = DST + floatTech.Mission(pn).DownTime/60/60/24;
-    else
-        AST(1) = DST + floatTech.Mission(pn).DownTime/60/60/24/DNT;
+    if ~isempty(floatTech.Mission(pn).DownTime) & ...
+            ~isempty(floatTech.Mission(pn).TimeOfDay) & ...
+            ~isnan(floatTech.Mission(pn).TimeOfDay(1))...
+            & isnumeric(floatTech.Mission(pn).TimeOfDay)
+        dd = floor(DST + floatTech.Mission(pn).DownTime/60/24 + ...
+        floatTech.Mission(pn).DeepProfileDescentTime/60/24);
+        AST(1) = dd + floatTech.Mission(pn).TimeOfDay/60/24;
+    elseif ~isempty(floatTech.Mission(pn).DownTime)
+        AST(1) = DST + floatTech.Mission(pn).DownTime/60/24;
     end
+    %If the time does not make sense relative to actual PET (eg, the float hits
+    %the bottom and times are screwed up), then use PET + DeepProfileDescentTime as the AST estimate.
     estast = 1;
-    %     keyboard
+    if AST(1) < PET(1) | AST(1) > TST2
+        if ~estpet
+            AST(1) = PET(1) + floatTech.Mission(pn).DeepProfileDescentTime/60/24;
+            if AST(1) < PET(1) | AST(1) > TST2
+                AST(1) = NaN;
+                estast = 0;
+            end
+        else
+            AST(1) = NaN;
+            estast = 0;
+        end
+    end
+end
+%DNT is code 501 - it is the [down time end - time of day] .
+%Time of day is in minutes after midnight.
+%can get DNT from the float technical file. Not always set, mostly for bio floats:
+%Time of day after midnight that downtime expires.
+%To me, this is the same as AST. 
+
+if ~isempty(floatTech.Mission(pn).TimeOfDay) & ~isnan(floatTech.Mission(pn).TimeOfDay(1))...
+        & isnumeric(floatTech.Mission(pn).TimeOfDay)
+    %now we have AST, we can assign the DNT
+    DNT = AST(1);
 end
 
 %if the GPS fixes are missing in log file, can be present in msg file
@@ -409,17 +459,6 @@ if isnan(STlat) & ~isempty(msgdata_prev)
             end
         end
     end
-end
-
-% if Profile termination value is empty(TST2), we can get it from the msg
-% file (sometimes the log file is truncated and doesn't have the full
-% information). Note that these values are not the same in files where both
-% are available. The time in the msg file is after the time recorded in the
-% log file.
-esttst2 = 0;
-if ~isempty(fpp(pn).jday) & isnan(TST2)
-    TST2 = datenum(gregorian(fpp(pn).jday(1))); %these are the GPS fixes from the msg file
-    esttst2 = 1;
 end
 
 % % Can get approximate DSP values from the msg file (currently not decoded from
@@ -599,7 +638,9 @@ times_surf = [AET TST2];
 
 times_current = [DST DSP(:,1)' ...
     PST times_park(ij) ...
-    PET(1) DDET AST(1) DNT times_surf(ik) ];
+    PET(1) DDET AST(1) times_surf(ik) ];%remove DNT from the check
+%     for now, need clarity on what it is (a minute value or a time?)
+%     PET(1) DDET AST(1) DNT times_surf(ik) ]; 
 
 times = [times_previous(ii) times_current];
 
@@ -625,12 +666,12 @@ mc_previous = [repmat(703,1,length(ST)), 700, 702, 704, 800];
 traj_float_order = [200, repmat(290,1,size(PTM,1))];
 surf_t = [600, 701];
 mc_current = [100, repmat(190,1,size(DSP,1)), 250, ...
-            traj_float_order(ij), 300, 301, 400, 500, 501, surf_t(ik), 903];
+            traj_float_order(ij), 300, 301, 400, 500, surf_t(ik), 903];%, 501
 %mc order information
 traj(pn).traj_mc_order = mc_current;
 %now the indices:
 traj(pn).traj_mc_index = [1, 1:size(DSP,1), 1, ...
-    tc_ind(ij), ones(1,8)];
+    tc_ind(ij), ones(1,7)];
 %put the satellite information on the previous profile:
 if pn > 1
     traj(pn-1).traj_mc_order = [traj(pn-1).traj_mc_order mc_previous(ii)];
@@ -653,13 +694,13 @@ sub_fld = {'juld','pressure','temperature','salinity'};
 %file. If no number, the default of 9 remains.
 %adj values are used to denote if adjusted for clock time.
 statval_n = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]; %default, not adjusted with RTC
-adj_n = [0,0,0,0,0,0,0,0,0,0,0]; 
+adj_n = [0,0,0,0,0,0,0,0,0,0,0]; %
 statval_nminus1 = [4, 4, 4, 4, 4, 2];
 adj_nminus1 = [0,0,0,0,0,0];
 
 if ~isempty(rtc_skew)
     statval_n = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]; %set to 3 because of adjustment for RTC skew applied
-    adj_n = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+    adj_n = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];%
     statval_nminus1 = [4, 4, 4, 4, 4, 3];
     adj_nminus1 = [0,0,0,0,0,1];
 end
@@ -680,8 +721,8 @@ if esttst2 == 1 %this comes from the GPS now, so flag as 4
     adj_n(end) = 0;
 end
 if estast == 1
-    statval_n(7:8) = 3;
-    adj_n(7:8) = 1; 
+    statval_n(7:9) = 3;
+    adj_n(7:9) = 1; 
 end
 if estpet == 1
     statval_n(6) = 3;

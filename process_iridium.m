@@ -1503,7 +1503,7 @@ if any(stage==1)
     end
     
     %now the trajectory files. Only for iridium Apex & Seabird at this stage.
-    if dbdat.maker == 4 || dbdat.maker == 1
+    if dbdat.maker == 1 || dbdat.maker == 4
         %not the EM floats which have a 9999 subtype but still 9i
         %controllerboard.
         if dbdat.subtype ~= 9999
