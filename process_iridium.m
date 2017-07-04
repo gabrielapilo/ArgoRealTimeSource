@@ -1035,7 +1035,7 @@ if any(stage==1)
     if ~isempty(ii)
         gg = c{ii(1)};
         ll=strfind(gg,'=');
-        pro.surfpres=str2num(gg(ll+1:end));
+        pro.surfpres =str2num(gg(ll+1:end));
         pro.surfpres_qc=0;
         pro.surfpres_used=pro.surfpres;
     end

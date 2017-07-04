@@ -149,7 +149,7 @@ for ii = 1:length(PROC_RECORDS)
                 end
                 if ~isempty(fnmbr)
                     if ~exist([ndir fnmbr],'file')
-                        logerr(2,['Cannot find ' fnmbr]);
+%                         logerr(2,['Cannot find ' fnmbr]);
                     elseif isingdac(fnmbr)~=2
                         %             % Copy the file to export/ to be sent
                         if ispc
