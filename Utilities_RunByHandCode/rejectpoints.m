@@ -51,7 +51,11 @@ for i=1:length(pl)
     if(enddepth>=999999);enddepth=max(p);end
      
     kl = find(p >= startdepth-1 & p <= enddepth+1);
-    kk=kl(1):kl(end);
+    if ~isempty(kl)
+        kk=kl(1):kl(end);
+    else
+        kk = [];
+    end
 if rr<0
     qc(kk) = max(qc(kk),3);
 else

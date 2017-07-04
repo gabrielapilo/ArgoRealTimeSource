@@ -12,7 +12,7 @@ global ARGO_ID_CROSSREF PREC_FNM
 getdbase(-1)
 PREC_FNM = [ARGO_SYS_PARAM.root_dir 'Argo_proc_records'];
 
-kk = [5903252];
+kk = [5904923];
 ipath = ARGO_SYS_PARAM.iridium_path;
 for ii = 1:length(kk)
     disp(ii)
@@ -24,7 +24,7 @@ for ii = 1:length(kk)
         ARGO_SYS_PARAM.iridium_path = [ipath 'iridium_processed/' ...
             num2str(dbdat.wmo_id) '/'];
 %     if dbdat.oxy
-        for j=261:262 %1:length(fpp)
+        for j=1:length(fpp)
             [ii j]
             if ~isempty(fpp(j).lat)
                 try
@@ -34,7 +34,8 @@ for ii = 1:length(kk)
                     pns = num2str(j);
                     pn(end-length(pns)+1:end) = pns;
                     pmeta.ftp_fname = [dbdat.argos_hex_id '.' pn '.msg'];
-                    process_iridium(pmeta,dbdat) %need to recalculate bbp
+                    opts.rtmode = 0;
+                    process_iridium(pmeta,dbdat,opts) %need to recalculate bbp
 %                     argoprofile_Bfile_nc(dbdat,fpp(j))
                     % or could run argoprofile_nc here too
                 catch
