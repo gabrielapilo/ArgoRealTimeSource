@@ -489,6 +489,9 @@ if ~isempty(fpp(pn).park_p)
     idiscrete = find(strncmp('$ Discrete',msgdata{1},10));
     iparks = length(find(cellfun(@isempty,strfind(msgdata{1},'(Park Sample)'))==0));
     iparks2 = length(find(cellfun(@isempty,strfind(msgdata{1},'ParkPts'))==0));
+    if iparks2 == 0 %probably a bio float
+        iparks2 = length(find(cellfun(@isempty,strfind(msgdata{1},'ParkObs:'))==0));
+    end        
     if ~isempty(idiscrete)
         str = msgdata{1}{idiscrete};
         ij = findstr(':',str);
