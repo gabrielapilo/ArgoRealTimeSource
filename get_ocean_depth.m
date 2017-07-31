@@ -11,7 +11,7 @@
 % CALLED BY:  process_profile
 %
 % USAGE: [dep] = get_ocean_depth(lat,lon);
-% 
+% edited 2017 July to use matlab netcdf toolbox. RC.
 
 function [dep] = get_ocean_depth(lat,lon, dist)
 
@@ -23,8 +23,8 @@ fname = ARGO_SYS_PARAM.ocean_depth;
 
 if isempty(XB)
    % First call, so load bathymetry grid coords
-   XB = getnc(fname,'lon');
-   YB = getnc(fname,'lat');
+   XB = ncread(fname,'lon');
+   YB = ncread(fname,'lat');
 end
 
 % If for any reason we can't get depths, then 5000 is a benign fillin.
@@ -54,7 +54,8 @@ for ii = 1:size(lat)
    iy = find(YB >= lat(ii)-dist & YB <= lat(ii)+dist);
 
    if length(union(ix,lx))~=length(ix) | length(union(iy,ly))~=length(iy) 
-      hb = -1*getnc(fname,'height',[min(iy) min(ix)],[max(iy) max(ix)]);
+      hb = -1*getnc(fname,'height');
+      hb = hb(min(iy):max(iy),min(ix):max(ix));
       lx = ix;
       ly = iy;
    end
