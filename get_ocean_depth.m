@@ -54,8 +54,8 @@ for ii = 1:size(lat)
    iy = find(YB >= lat(ii)-dist & YB <= lat(ii)+dist);
 
    if length(union(ix,lx))~=length(ix) | length(union(iy,ly))~=length(iy) 
-      hb = -1*getnc(fname,'height');
-      hb = hb(min(iy):max(iy),min(ix):max(ix));
+      hb = -1*ncread(fname,'height');
+      hb = hb(min(ix):max(ix),min(iy):max(iy));
       lx = ix;
       ly = iy;
    end
