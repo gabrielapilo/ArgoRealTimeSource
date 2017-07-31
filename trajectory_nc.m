@@ -944,11 +944,11 @@ for nn = gotcyc
             if ~isnan(traj(nn).(tnm).juld)
                 if traj(nn).(tnm).adj
                     %            cmmd=['netcdf.putAtt(ncid,N' parnm 'ADID,''C_format'',cfmt{ipar});'];
-                    cmmd=['netcdf.putVar(ncid,NJULD' nnm 'ID,ii-1,length(traj(nn).(tnm).juld-j1950),traj(nn).(tnm).juld-j1950);'];
+                    cmmd=['netcdf.putVar(ncid,NJULD' nnm 'ID,ii-1,length(traj(nn).(tnm).juld),traj(nn).(tnm).juld-j1950);'];
                     eval(cmmd);
                     %            netcdf.putVar(ncid,['NJULD_' nnm 'ID'],ii-1,length(traj(nn).(tnm).juld-j1950),traj(nn).(tnm).juld-j1950);
                 else
-                    cmmd=['netcdf.putVar(ncid,NJULD' nnm 'ID,ii-1,length(traj(nn).(tnm).juld-jcor),traj(nn).(tnm).juld-j1950);'];
+                    cmmd=['netcdf.putVar(ncid,NJULD' nnm 'ID,ii-1,length(traj(nn).(tnm).juld),traj(nn).(tnm).juld-jcor);'];
                     eval(cmmd);
                     %            netcdf.putVar(ncid,['NJULD_' nnm 'ID'],ii-1,length(traj(nn).(tnm).juld-jcor),traj(nn).(tnm).juld-jcor);
                 end
@@ -979,7 +979,7 @@ if dbdat.iridium
 else
     % Simple for non-Iridiun floats
     for jk=1:length(gotcyc)
-        jk
+%         jk
         netcdf.putVar(ncid,NCONFMISNUMID,jk-1,1,1);
     end
 end
@@ -1146,7 +1146,7 @@ for nn = gotcyc
                                 if ~isnan(tmp(ij))
                                     cmmd=['netcdf.putVar(ncid,N' pars{ipar} 'ID,iNM+ij-1,length(tmp(ij)),tmp(ij));'];
                                     eval(cmmd);
-                                    cmmd=['netcdf.putVar(ncid,N' pars{ipar} 'QCID,iNM+ij-1,length(''0''),''0'');'];
+                                    cmmd=['netcdf.putVar(ncid,N' pars{ipar} 'QCID,iNM+ij-1,1,''0'');'];
                                     eval(cmmd);
                                     if ~isempty(fpp(nn).surfpres_used)
                                         % Don't know if this can/should apply for surface values
@@ -1156,7 +1156,7 @@ for nn = gotcyc
                                         end
                                         cmmd=['netcdf.putVar(ncid,N' pars{ipar} 'ADID,iNM+ij-1,length(tmp(ij)),tmp(ij));'];
                                         eval(cmmd);
-                                        cmmd=['netcdf.putVar(ncid,N' pars{ipar} 'ADQCID,iNM+ij-1,length(''0''),''0'');'];
+                                        cmmd=['netcdf.putVar(ncid,N' pars{ipar} 'ADQCID,iNM+ij-1,1,''0'');'];
                                         eval(cmmd);
                                     elseif ipar==1
                                         netcdf.putVar(ncid,NDAMOID,numnn-1,length('R'),'R');
