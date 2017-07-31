@@ -243,21 +243,21 @@ clear beta90sw;
 clear bsw
 for j=1:length(ECOBB1raw)
     [betasw(j), beta90sw(j), bsw(j)] = betasw_ZHH2009(eco_wl(1), ...
-      T90(j), mcomms_theta, PSAL(j));
+      T90(j), eco_theta, PSAL(j));
 end
 ECOBB1 = 2*pi()*eco_chi*((ECOBB1raw-ecodc(1))*ecosf(1) - betasw');
 ECOBB2raw=dtable(1:line,18);
 %ECOBB2=ecosf(2)*(ECOBB2raw-ecodc(2))*2*pi()*ecochi;
 for j=1:length(ECOBB2raw)
     [betasw(j), beta90sw(j), bsw(j)] = betasw_ZHH2009(eco_wl(2), ...
-      T90(j), mcomms_theta, PSAL(j));
+      T90(j), eco_theta, PSAL(j));
 end
 ECOBB2 = 2*pi()*eco_chi*((ECOBB2raw-ecodc(2))*ecosf(2) - betasw');
 ECOBB3raw=dtable(1:line,19);
 %ECOBB3=ecosf(3)*(ECOBB3raw-ecodc(3))*2*pi()*ecochi;
 for j=1:length(ECOBB2raw)
     [betasw(j), beta90sw(j), bsw(j)] = betasw_ZHH2009(eco_wl(3), ...
-      T90(j), mcomms_theta, PSAL(j));
+      T90(j), eco_theta, PSAL(j));
 end
 ECOBB3 = 2*pi()*eco_chi*((ECOBB3raw-ecodc(3))*ecosf(3) - betasw');
 
@@ -306,7 +306,63 @@ ncol = length(oxtable(1,:));
 nrow = length(oxtable(:,1));
 dvec = ones(nrow,1) * dnum; % Add date column - repeating
 oxtable(:,ncol+1) = dvec;
-%Write 'em out to 'csv
+%% Add for RT processing
+%assign to the profile structure and return to calling program:
+%match up the depths before assigning to the structure:
+[~,ia,ib]= intersect(pro.p_raw,oxtable(:,5),'stable');
+
+pro.O2phase_raw=dtable(ib,4)';
+pro.t_oxygen_volts=dtable(ib,5)';
+
+pro.Fsig=FLraw(ib)'; % FLTNU data
+pro.Bbsig=BBraw(ib)';
+
+pro.nsamps=oxtable(ib,38)';
+
+pro.tm_counts=CRVcnts(ib)'; % C Rover data
+pro.BeamC=CRVbeamC(ib)';
+
+%data straight from the files
+pro.irr412=Ed412raw(ib)'; % upward and downwelling radiances
+pro.irr443=Ed444raw(ib)';
+pro.irr490=Ed490raw(ib)';
+pro.irr555=Ed555raw(ib)';
+pro.rad412=LU412raw(ib)';
+pro.rad443=LU444raw(ib)';
+pro.rad490=LU490raw(ib)';
+pro.rad555=LU555raw(ib)';
+%calculated:
+pro.dn_irr412_raw=Ed412(ib)'; % upward and downwelling radiances
+pro.dn_irr443_raw=Ed444(ib)';
+pro.dn_irr490_raw=Ed490(ib)';
+pro.dn_irr555_raw=Ed555(ib)';
+pro.up_rad412_raw=LU412(ib)';
+pro.up_rad443_raw=LU444(ib)';
+pro.up_rad490_raw=LU490(ib)';
+pro.up_rad555_raw=LU555(ib)';
+
+pro.ecoBbsig470=ECOBB1raw(ib)'; %eco puck data - 3 BB values
+pro.ecoBbsig532=ECOBB2raw(ib)';
+pro.ecoBbsig700=ECOBB3raw(ib)';
+%calculated:
+pro.ecoBBP470_raw=ECOBB1(ib)'; %eco puck data - 3 BB values
+pro.ecoBBP532_raw=ECOBB2(ib)';
+pro.ecoBBP700_raw=ECOBB3(ib)';
+
+%add qc flags of zero
+pro.dn_irr412_raw_qc=zeros(size(pro.dn_irr412_raw)); % upward and downwelling radiances
+pro.dn_irr443_raw_qc=zeros(size(pro.dn_irr443_raw));
+pro.dn_irr490_raw_qc=zeros(size(pro.dn_irr490_raw));
+pro.dn_irr555_raw_qc=zeros(size(pro.dn_irr555_raw));
+pro.up_rad412_raw_qc=zeros(size(pro.up_rad412_raw));
+pro.up_rad443_raw_qc=zeros(size(pro.up_rad443_raw));
+pro.up_rad490_raw_qc=zeros(size(pro.up_rad490_raw));
+pro.up_rad555_raw_qc=zeros(size(pro.up_rad555_raw));
+pro.ecoBBP470_raw_qc=zeros(size(pro.ecoBBP470_raw)); %eco puck data - 3 BB values
+pro.ecoBBP532_raw_qc=zeros(size(pro.ecoBBP532_raw));
+pro.ecoBBP700_raw_qc=zeros(size(pro.ecoBBP700_raw));
+
+%% Write 'em out to 'csv
 if(doPrint)
    fid = fopen(sprintf('../csv/%04d.%03d.csv',floatid,profnum),'w');
    fprintf(fid,'%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n',oxtable');
@@ -348,3 +404,4 @@ if(doPrint)
    fprintf(fid,'%0.1f,%0.3f,%0.3f,%d,%0.5g,%0.5g,%0.5g,%d,%0.5g,%0.5g,%0.5g,%d,%0.2f,%d,%0.5g,%0.5g,%0.5g,%0.5g,%d,%0.5g,%0.5g,%0.5g,%0.5g,%d,%d,%0.6g,%d,%f\n',ptable');
    fclose(fid);
 end
+

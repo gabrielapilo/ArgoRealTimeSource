@@ -272,6 +272,84 @@ ncol = length(oxtable(1,:));
 nrow = length(oxtable(:,1));
 dvec = ones(nrow,1) * dnum; % Add date column - repeating
 oxtable(:,ncol+1) = dvec;
+
+%% add to pro structure
+%assign to the profile structure and return to calling program:
+%match up the depths before assigning to the structure:
+[~,ia,ib]= intersect(pro.p_raw,oxtable(:,5),'stable');
+
+pro.Bbsig532=CDraw(ib)';
+pro.O2phase_raw=dtable(ib,4)';
+pro.t_oxygen_volts=dtable(ib,5)';
+
+pro.Fsig=FLraw(ib)'; % FLTNU data
+pro.Bbsig=BBraw(ib)';
+
+pro.nsamps=oxtable(ib,38)';
+
+pro.tm_counts=CRVcnts(ib)'; % C Rover data
+pro.BeamC=CRVbeamC(ib)';
+
+%data straight from the files
+pro.irr412=Ed412raw(ib)'; % upward and downwelling radiances
+pro.irr443=Ed444raw(ib)';
+pro.irr490=Ed490raw(ib)';
+pro.irr555=Ed555raw(ib)';
+pro.rad412=LU412raw(ib)';
+pro.rad443=LU444raw(ib)';
+pro.rad490=LU490raw(ib)';
+pro.rad555=LU555raw(ib)';
+%calculated:
+pro.dn_irr412_raw=Ed412(ib)'; % upward and downwelling radiances
+pro.dn_irr443_raw=Ed444(ib)';
+pro.dn_irr490_raw=Ed490(ib)';
+pro.dn_irr555_raw=Ed555(ib)';
+pro.up_rad412_raw=LU412(ib)';
+pro.up_rad443_raw=LU444(ib)';
+pro.up_rad490_raw=LU490(ib)';
+pro.up_rad555_raw=LU555(ib)';
+
+pro.ecoBbsig470=ECOBB1raw(ib)'; %eco puck data - 3 BB values
+pro.ecoBbsig532=ECOBB2raw(ib)';
+pro.ecoBbsig700=ECOBB3raw(ib)';
+%calculated:
+pro.ecoBBP470_raw=ECOBB1(ib)'; %eco puck data - 3 BB values
+pro.ecoBBP532_raw=ECOBB2(ib)';
+pro.ecoBBP700_raw=ECOBB3(ib)';
+
+%add qc flags of zero
+pro.dn_irr412_raw_qc=zeros(size(pro.dn_irr412_raw)); % upward and downwelling radiances
+pro.dn_irr443_raw_qc=zeros(size(pro.dn_irr443_raw));
+pro.dn_irr490_raw_qc=zeros(size(pro.dn_irr490_raw));
+pro.dn_irr555_raw_qc=zeros(size(pro.dn_irr555_raw));
+pro.up_rad412_raw_qc=zeros(size(pro.up_rad412_raw));
+pro.up_rad443_raw_qc=zeros(size(pro.up_rad443_raw));
+pro.up_rad490_raw_qc=zeros(size(pro.up_rad490_raw));
+pro.up_rad555_raw_qc=zeros(size(pro.up_rad555_raw));
+pro.ecoBBP470_raw_qc=zeros(size(pro.ecoBBP470_raw)); %eco puck data - 3 BB values
+pro.ecoBBP532_raw_qc=zeros(size(pro.ecoBBP532_raw));
+pro.ecoBBP700_raw_qc=zeros(size(pro.ecoBBP700_raw));
+        if dbdat.subtype == 1029
+            pro.Bbsig532=biodat(ib,37);
+            
+            pro.irr380(j)=(rawline(ocri2)*1024 + 2013265920);
+            pro.irr412(j)=(rawline(ocri1)*1024 + 2013265920); % upward and downwelling radiances
+            pro.irr490(j)=(rawline(ocri3)*1024 + 2013265920);
+            pro.irrPAR(j)=(rawline(ocri4)*1024 + 2013265920);
+            
+            if dbdat.pH
+                pro.pHvolts(j)=(rawline(pHv)/1000000.0 - 2.5); %eco puck data - 3 BB values
+                pro.pHT(j)=(rawline(pHt)/1000.);
+                if pro.pHT(j)>61440
+                    pro.pHT=(rawline(pHt)-65536)/1000.;
+                end
+                
+                pro.Tilt(j)=(rawline(tilt)/10.0);
+                pro.Tilt_sd(j)=(rawline(tiltsd)/100.0);
+            end
+        end
+
+%%
 %Write 'em out to 'csv
 if(doPrint)
    fid = fopen(sprintf('../csv/%04d.%03d.csv',floatid,profnum),'w');
