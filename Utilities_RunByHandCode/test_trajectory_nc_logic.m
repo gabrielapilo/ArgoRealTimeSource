@@ -10,7 +10,7 @@ for bb =1:length(fns)
     if strfind(fns(bb).name,'.')
         continue
     end
-    if isempty(strfind(fns(bb).name,'5901667'))
+    if isempty(strfind(fns(bb).name,'5905022'))
         continue
     end
     fln = fns(bb).name;
@@ -22,6 +22,7 @@ for bb =1:length(fns)
     %these are the N_MEASUREMENT items
     mc = ncread(fn,'MEASUREMENT_CODE');
     cyc = ncread(fn,'CYCLE_NUMBER');
+    press = ncread(fn,'PRES');
     jd = ncread(fn,'JULD');
     jd_adj = ncread(fn,'JULD_ADJUSTED');
     stat = ncread(fn,'JULD_STATUS');
@@ -268,4 +269,12 @@ for bb =1:length(fns)
     else
         pause(0.2)
     end
+    
+    %park pressures
+    figure(6);clf
+    hold on
+    ipr = mc == 290;
+    plot(cyc(ipr),press(ipr),'-x')
+    title('Park pressures')
+    
 end
