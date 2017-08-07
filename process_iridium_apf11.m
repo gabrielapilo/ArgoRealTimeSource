@@ -251,7 +251,12 @@ if any(stage==1)
             pro.jday_location(gps)=pts(gg);
             pro.GPSfixtime(gps)=pro.jday_location(gps);
             pro.lat(gps)=str2num(gg(comma(2)+1:comma(3)-1));
-            pro.lon(gps)=str2num(gg(comma(3)+1:end));
+            if length(comma) == 4
+                pro.lon(gps)=str2num(gg(comma(3)+1:comma(4)-1));
+                pro.GPSsatellites = str2num(gg(comma(4)+1:end));
+            else
+                pro.lon(gps)=str2num(gg(comma(3)+1:end));
+            end
             pro.datetime_vec(gps,:)=gregorian(pro.jday_location(gps));
             if numlines<10
                 previouslocation=[previouslocation gps];

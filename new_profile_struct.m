@@ -703,7 +703,7 @@ if dbdat.maker==1 | dbdat.maker==4  %Webb of Seabird - similar formats
             fp.nsamps =                    [];
             fp.GPSfixtime =                [];
             fp.jday_location =             [];
-%             fp.GPSsatellites =             [];
+            fp.GPSsatellites =             [];
 %             fp.buoyancypumpcurrent =       [];
 %             fp.buoyancypumpvoltage =       [];
             fp.maxpistonpos =              [];
