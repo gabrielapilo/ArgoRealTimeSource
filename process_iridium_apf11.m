@@ -307,32 +307,40 @@ if any(stage==1)
                         [pro.descent_jday(ddm),pro.descent_p(ddm)]=pts(gg);  %descent to profile
                     end
                 case 4  % profile mission - note this is more complicated because there are spot sampled values as well as cp values:
-                    if strfind(gg,'CTD_PTSC')  % spot sampled format 1023 RBR
+                    % spot sampled format 1023 RBR & new APF11 (2017 &
+                    % later models)
+                    if ~isempty(strfind(gg,'CTD_PTSC')) | ~isempty(strfind(gg,'CTD_PTS'))
                         prospot=prospot+1;
-            [pro.jday_ascent_to_surface_spotsamp(prospot),pro.P_ascent_to_surface_spotsamp(prospot), ...
-                pro.T_ascent_to_surface_spotsamp(prospot),pro.S_ascent_to_surface_spotsamp(prospot)] = pts(gg);
-
+                        [pro.jday_ascent_to_surface_spotsamp(prospot),pro.P_ascent_to_surface_spotsamp(prospot), ...
+                            pro.T_ascent_to_surface_spotsamp(prospot),pro.S_ascent_to_surface_spotsamp(prospot)] = pts(gg);
+                        
                     elseif strfind(gg,'CTD_CP')  %format 1023 and 1019, non RBR floats
                         prom=prom+1;
-               [jday_ascent_to_surface,pro.p_raw(prom),pro.t_raw(prom),pro.s_raw(prom),pro.nsamps(prom)]=pts(gg);
-            [jday_ascent_to_surface,p_raw(prom),t_raw(prom),s_raw(prom),ns(prom)]=pts(gg);
+                        [jday_ascent_to_surface,pro.p_raw(prom),pro.t_raw(prom),pro.s_raw(prom),pro.nsamps(prom)]=pts(gg);
+                        [jday_ascent_to_surface,p_raw(prom),t_raw(prom),s_raw(prom),ns(prom)]=pts(gg);
                     elseif strfind(gg,'CTD,')  % spot sampled original APF11 format - 1019
                         prospot=prospot+1;
-            [pro.jday_ascent_to_surface_spotsamp(prospot),pro.P_ascent_to_surface_spotsamp(prospot), ...
-                pro.T_ascent_to_surface_spotsamp(prospot),pro.S_ascent_to_surface_spotsamp(prospot)] = pts(gg);
+                        [pro.jday_ascent_to_surface_spotsamp(prospot),pro.P_ascent_to_surface_spotsamp(prospot), ...
+                            pro.T_ascent_to_surface_spotsamp(prospot),pro.S_ascent_to_surface_spotsamp(prospot)] = pts(gg);
                         
                     end
                     
-                case 5  %surface pressure offset report
-                    if ~dbdat.RBR
-                        [pro.jday_surfpres,pro.surfpres]=pts(gg);
-                    elseif strfind(gg,'CTD_PTSC')
+                case 5  %surface pressure offset report. Here is where the continuous profiling information is recorded
+                    % note that the time is not the time of the data, but
+                    % the time the data was recorded.
+                    if strfind(gg,'CTD_PTSC')
                         surfD=surfD+1;
                         [pro.jday_surfpres(surfD),pro.surfpres(surfD),pro.surfT(surfD),pro.surfS(surfD),pro.surfC(surfD)]=pts(gg);
-                    elseif strfind(gg,'CTD_CP+')
+                    elseif ~isempty(strfind(gg,'CTD_CP+'))
                         prom=prom+1;
-               [pro.jday_ascent_to_surface(prom),pro.p_raw(prom),pro.t_raw(prom),pro.s_raw(prom),pro.cndc_raw(prom),...
-                   pro.nsamps(prom)]=pts(gg);
+                        [pro.jday_ascent_to_surface(prom),pro.p_raw(prom),pro.t_raw(prom),pro.s_raw(prom),pro.cndc_raw(prom),...
+                            pro.nsamps(prom)]=pts(gg);
+                    elseif ~isempty(strfind(gg,'CTD_CP')) %add CP for new APF11 (>2017 models)
+                        prom=prom+1;
+                        [pro.jday_ascent_to_surface(prom),p_raw(prom),t_raw(prom),s_raw(prom),...
+                            ns(prom)]=pts(gg);
+                    elseif ~dbdat.RBR %all other old APF11
+                        [pro.jday_surfpres,pro.surfpres]=pts(gg);
                     end
                        
             end
@@ -773,45 +781,24 @@ bb = (256*dd(1) + dd(2)).*sc;
 %         ttjd=julian([str2num(tt(1:4)) str2num(tt(5:6)) str2num(tt(7:8)) ...
 %              str2num(tt(10:11)) str2num(tt(12:13)) str2num(tt(14:15))]);
 %--------------------------------------------------------------------
-                        
-    function [juld,p,t,s,nsamps,nsamps2]=pts(gg)  % this takes the line from the science log 
-%         and turns it into physical variables
-
-        p=[];
-        t=[];
-        s=[];
-        samps=[];
-        juld=[];
-        gg=[gg ','];  %add comma to delimit last data variable and make it more general
-        
-        comma=strfind(gg,',');
-        tt=gg(comma(1)+1:comma(2)-1);
-        
-        juld=julian([str2num(tt(1:4)) str2num(tt(5:6)) str2num(tt(7:8)) ...
-            str2num(tt(10:11)) str2num(tt(12:13)) str2num(tt(14:15))]);
-        
-        if nargout>1  % we want more than just time...
+        function [varargout]=pts(gg)  % this takes the line from the science log
+            %         and turns it into physical variables
             
-            p=str2num(gg(comma(2)+1:comma(3)-1));
-            
-            if nargout>2
-                t=str2num(gg(comma(3)+1:comma(4)-1));
-                
-                if nargout>3
-                       s=str2num(gg(comma(4)+1:comma(5)-1));
-                     
-                    if nargout>4
-                        nsamps=str2num(gg(comma(5)+1:comma(6)-1));
-                        
-                        if nargout>5
-                            nsamps2=str2num(gg(comma(6)+1:comma(7)-1));
-                        end         
-                        
-                    end
+            out = textscan(gg,'%s','delimiter',',');
+            out = out{:};
+            %skip the first code part in this context
+            varargout = cell(1,length(out)-1);
+            b=1;
+            for a = 2:length(out)
+                varargout{b} = out{a};
+                if a > 2
+                    varargout{b} = str2num(varargout{b});
                 end
+                b = b+1;
             end
-        end
-        
+            tt = out{2};
+            varargout{1}=julian([str2num(tt(1:4)) str2num(tt(5:6)) str2num(tt(7:8)) ...
+                str2num(tt(10:11)) str2num(tt(12:13)) str2num(tt(14:15))]);
         
 %--------------------------------------------------------------------
                         

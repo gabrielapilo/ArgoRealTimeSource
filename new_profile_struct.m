@@ -693,7 +693,7 @@ if dbdat.maker==1 | dbdat.maker==4  %Webb of Seabird - similar formats
         end
         if dbdat.subtype==1019 | dbdat.subtype==1023 %Webb APF11 floats
             fp.jday_ascent_start =         [];
-%             fp.jday_ascent_to_surface =   [];  when the sample was
+            fp.jday_ascent_to_surface =   [];  %when the sample was
 %             STORED, not when it was COLLECTED!!
             fp.jday_surfpres =            [];
             fp.ftptime =                   [];
