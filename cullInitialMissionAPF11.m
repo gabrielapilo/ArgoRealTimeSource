@@ -21,7 +21,7 @@ fn= [ARGO_SYS_PARAM.root_dir 'matfiles/float' num2str(wmo_id) 'aux.mat'];
 % if (aic(kk,2)<1000)
 %     fnm000=[ARGO_SYS_PARAM.root_dir 'iridium_data/iridium_processed/000files/0' num2str(aic(kk,2)) '.000.log']
 % else
-    fnm000=dirc([ARGO_SYS_PARAM.root_dir 'iridium_data/iridium_processed/apf11000files/f' num2str(aic(kk,2)) '.000.*.system_log.txt']);
+    fnm000=dirc([ARGO_SYS_PARAM.root_dir 'iridium_data/iridium_processed/000files/f' num2str(aic(kk,2)) '.000.*.system_log.txt']);
 % end
  
 fnm000=fnm000{end,1};
@@ -32,7 +32,7 @@ fnm000=fnm000{end,1};
 % fnm000=fnm;
 % fclose(fid)
 
-fid2=fopen([ARGO_SYS_PARAM.root_dir 'iridium_data/iridium_processed/apf11000files/' fnm000]);
+fid2=fopen([ARGO_SYS_PARAM.root_dir 'iridium_data/iridium_processed/000files/' fnm000]);
 if fid2==-1
     'Move file to 000files directory! '
     input([' Look in iridium_processed/ ' num2str(wmo_id) ' Done?'],'s')
