@@ -55,7 +55,7 @@ fprintf(fid,'<table align="center" width="80%%" bgcolor="#ccccff"><tr>\n');
 fprintf(fid,'<td><a href="../../index.html">Back to Aus Argo</a></td>\n');
 fprintf(fid,'<td><a href="floatsummary.html">Summary for this Float</a></td>\n');
 
-a=['<td><a href="' ARGO_SYS_PARAM.web_pages num2str(db.maker_id),'/Hull_',num2str(db.maker_id),'.html"> Technical Pages</a></td>\n'];
+a=['<td><a href="' ARGO_SYS_PARAM.www_root '/tech/',num2str(db.wmoid),'/overview.html"> Technical Pages</a></td>\n'];
 fprintf(fid,a);
 
 if pn>1

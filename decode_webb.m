@@ -129,7 +129,13 @@ pro.profile_number = p1(6)-dbdat.np0;    %DEV Formerly np
 
 % if this is the first profile for a float, add it to the web-tables
 
-if(pro.profile_number==1);web_select_float;end
+if(pro.profile_number==1);
+    web_select_float;
+    if ~isempty(strmatch('CSIRO',ARGO_SYS_PARAM.processor))
+        web_select_float_tech;
+        make_tech_webpages %makes first instance of the technical pages
+    end
+end
 
 pro.npoints = p1(7);       %DEV Formerly lp
                       %DEV In Ann's 'loadfloat', lp is corrected by +1 

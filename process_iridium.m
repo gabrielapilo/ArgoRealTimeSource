@@ -1460,10 +1460,6 @@ if any(stage==1)
     % Clear counts so that these files are exported.
     if(length(float(np).p_raw)>0)
         argoprofile_nc(dbdat,float(np));
-        if(np==1)
-            metadata_nc(dbdat,float)
-            web_select_float
-        end
     end
     
     if(pro.npoints>0)  %do we have data?!
@@ -1499,6 +1495,10 @@ if any(stage==1)
     if np==1
         metadata_nc(dbdat,float);
         web_select_float
+        if ~isempty(strmatch('CSIRO',ARGO_SYS_PARAM.processor))
+            web_select_float_tech % updates the tech index pages
+            make_tech_webpages %makes first instance of the technical pages
+        end
         prec.meta_nc_count = 0;
     end
     

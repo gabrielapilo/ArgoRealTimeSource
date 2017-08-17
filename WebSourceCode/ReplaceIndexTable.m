@@ -54,10 +54,10 @@ function strout = ReplaceIndexTable(strin,Data)
     lc=lc+1;
     for j=1:nc  
         href='';
-        if (j==1)  href=[ARGO_SYS_PARAM.web_pages(1:length(ARGO_SYS_PARAM.web_pages)-3) 'IndexAU_DepOrder.html'];          end;
-        if (j==2)  href=[ARGO_SYS_PARAM.web_pages(1:length(ARGO_SYS_PARAM.web_pages)-3) 'IndexAU_HullID.html'];          end;
-        if (j==3)  href=[ARGO_SYS_PARAM.web_pages(1:length(ARGO_SYS_PARAM.web_pages)-3) 'IndexAU_ArgosID.html'];         end;
-        if (j==4)  href=[ARGO_SYS_PARAM.web_pages(1:length(ARGO_SYS_PARAM.web_pages)-3) 'IndexAU_WmoID.html'];           end;
+        if (j==1)  href=[ARGO_SYS_PARAM.www_root 'tech/IndexAU_DepOrder.html'];          end;
+        if (j==2)  href=[ARGO_SYS_PARAM.www_root 'tech/IndexAU_HullID.html'];          end;
+        if (j==3)  href=[ARGO_SYS_PARAM.www_root 'tech/IndexAU_ArgosID.html'];         end;
+        if (j==4)  href=[ARGO_SYS_PARAM.www_root 'tech/IndexAU_WmoID.html'];           end;
         Table1(lc) = {AddCell(cell2mat(header(j)), 4, Red, href)};
         lc         = lc+1;
     end
@@ -73,7 +73,7 @@ function strout = ReplaceIndexTable(strin,Data)
         %hyperlink for HullID technical page:
         s1     = num2str(Data(j).maker_id);
         s2     = num2str(Data(j).wmo_id);
-        href1  = [ARGO_SYS_PARAM.web_pages s1, '/Hull_', s1, '.html'];
+        href1  = [ARGO_SYS_PARAM.www_root 'tech/' s2 '/overview.html'];
         href2  = [ARGO_SYS_PARAM.www_root 'floats/', s2, '/floatsummary.html'];
         
         %insert individual row cells
