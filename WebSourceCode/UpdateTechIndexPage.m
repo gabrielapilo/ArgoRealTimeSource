@@ -41,16 +41,16 @@ function UpdateTechIndexPage(SortBy)
              destfile = [ARGO_SYS_PARAM.web_dir, '/tech/IndexAU_DepOrder.html'];
         case {'HULLID'};        %   fprintf(' [01] Constructing Index Table.....:  Sort By Hull ID \n');
             Data = sortstruc(db, 'maker_id');
-             destfile = [ARGO_SYS_PARAM.webdir, '/tech/index.html'];
-             destfile2 = [ARGO_SYS_PARAM.webdir, '/tech/IndexAU_HullID.html'];
+             destfile = [ARGO_SYS_PARAM.web_dir, '/tech/index_detail.html'];
+             destfile2 = [ARGO_SYS_PARAM.web_dir, '/tech/IndexAU_HullID.html'];
              
         case {'ARGOSID'};       %   fprintf(' [02] Constructing Index Table.....:  Sort By Argos ID \n');
             Data = sortstruc(db, 'argos_id');
-            destfile = [ARGO_SYS_PARAM.webdir, '/tech/IndexAU_ArgosID.html'];
+            destfile = [ARGO_SYS_PARAM.web_dir, '/tech/IndexAU_ArgosID.html'];
             
         case {'WMOID'};          %  fprintf(' [03] Constructing Index Table.....:  Sort By WMO ID \n');
             Data = sortstruc(db, 'wmo_id');
-            destfile = [ARGO_SYS_PARAM.webdir, '/tech/IndexAU_WmoID.html'];
+            destfile = [ARGO_SYS_PARAM.web_dir, '/tech/IndexAU_WmoID.html'];
             
 %         case {'LAUNCHDATE'};     %  fprintf(' [04] Constructing Index Table.....:  Sort By Deployment Date \n');
 %                                    Data = sortstruc(IndexPageInfo, 'LaunchDate');
