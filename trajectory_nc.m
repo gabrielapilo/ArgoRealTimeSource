@@ -1262,10 +1262,12 @@ netcdf.close(ncid);
 %   logerr(3,['NOT Copying ' fname ' to export/ until GDAC ready for them!']);
 %#####
 % started data delivery 30/9/2014: AT
-
-[status,ww] = system(['cp -f ' fname ' ' ARGO_SYS_PARAM.root_dir 'export']);
-if status~=0
-    logerr(3,['Copy of ' fname ' to export/ failed:' ww]);
+if(~strcmp('evil',dbdat.status) & ~dbdat.RBR)
+    
+    [status,ww] = system(['cp -f ' fname ' ' ARGO_SYS_PARAM.root_dir 'export']);
+    if status~=0
+        logerr(3,['Copy of ' fname ' to export/ failed:' ww]);
+    end
 end
 %###
 

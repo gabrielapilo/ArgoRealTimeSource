@@ -603,7 +603,7 @@ netcdf.putVar(ncid,TECHNID,[0,0],[128,n_tech_F],tn')
 
 netcdf.close(ncid)
 
-if ~dbdat.RBR
+if ~dbdat.RBR & ~strcmp('evil',dbdat.status)
     if ispc
         [status,ww] = system(['copy /Y ' fname ' ' ARGO_SYS_PARAM.root_dir 'export']);
     else

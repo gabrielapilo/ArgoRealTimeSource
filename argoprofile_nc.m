@@ -1139,7 +1139,7 @@ end
     netcdf.close(ncid)
     
     if exist('isingdac')==2
-        if isingdac(fname)~=2 & ~dbdat.RBR %DON'T DELIVER YET!!!!!
+        if isingdac(fname)~=2 & ~strcmp('evil',dbdat.status) & ~dbdat.RBR %DON'T DELIVER YET!!!!!
             if ispc
                 [status,ww] = system(['copy /Y ' fname ' ' ARGO_SYS_PARAM.root_dir 'export']);
             else

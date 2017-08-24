@@ -715,9 +715,9 @@ if ~isempty(strfind('dead',dbdat.status)) & (isempty(opts.redo) | ~opts.redo)
    mail_out_dead_float(pmeta.wmo_id);
 elseif ~isempty(strfind('expected',dbdat.status))
    logerr(3,['LOOK - "expected" float transmitting: ' num2str(pmeta.wmo_id)]);
-elseif ~isempty(strfind('evil',dbdat.status)) & (isempty(opts.redo) | ~opts.redo)
-   logerr(3,['evil float still alive...:' num2str(pmeta.wmo_id)]);
-   % Ignore this bad float (wish it would die!)
+% elseif ~isempty(strfind('evil',dbdat.status)) & (isempty(opts.redo) | ~opts.redo)
+%    logerr(3,['evil float still alive...:' num2str(pmeta.wmo_id)]);
+%    % Ignore this bad float (wish it would die!)
 else
    % Trim array of unused space, and save for testing ('expected' floats)
    % or process ('live' floats) 

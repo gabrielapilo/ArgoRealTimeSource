@@ -586,7 +586,7 @@ if any(stage>=1)
 	 if any(float(np).testsfailed(rejtests))
 	    % Will not transmit this profile because of failing critical tests	 
 	    logerr(3,'Failed critical QC, so no TESAC msg sent!'); 
-	 elseif opts.rtmode && ~strcmp('suspect',dbdat.status) && ~any(stage==2) && ~opts.redo
+	 elseif ~strcmp('evil',dbdat.status) & opts.rtmode && ~strcmp('suspect',dbdat.status) && ~any(stage==2) && ~opts.redo
 	    % If not reprocessing, and not a "suspect" float, create tesac file
 	    write_tesac(dbdat,float(np));	 
 	    prec.gts_count = 0;

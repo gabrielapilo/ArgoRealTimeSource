@@ -21,7 +21,7 @@ function write_BUFR(dbdat,fp)
 
 global ARGO_SYS_PARAM
 
-if(isnan(fp.lat(1)))
+if(isnan(fp.lat(1))) | strcmp('evil',dbdat.status)
     return
 end
 
