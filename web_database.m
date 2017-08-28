@@ -77,6 +77,8 @@ for jj = 1:length(THE_ARGO_FLOAT_DB)
 
    if strcmp(DB.status,'dead')
       fprintf(fid,'<tr bgcolor="999999">\n');
+   elseif strcmp(DB.status,'exhausted')
+      fprintf(fid,'<tr bgcolor="5eff33">\n');
    elseif strcmp(DB.status,'evil')
       fprintf(fid,'<tr bgcolor="ff7777">\n');
    elseif strcmp(DB.status,'suspect')

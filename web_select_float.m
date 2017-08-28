@@ -56,7 +56,7 @@ for mm = 1:2
    
 
    fprintf(fid,'<table border="1" align="center" width="95%%" cols="10"><tr>\n');
-   fprintf(fid,'<caption><b>ARGO REAL_TIME PROCESSING: yellow floats are "dead"</b></caption>\n\n');
+   fprintf(fid,'<caption><b>ARGO REAL_TIME PROCESSING: yellow floats are "dead", green floats are probably dead.</b></caption>\n\n');
 
    nn = 0;
    for ii = ij(:)'
@@ -64,13 +64,15 @@ for mm = 1:2
       if nn==1
 	 fprintf(fid,'<tr>\n'); 
       end
-	 
-      if isempty(strfind(DB(ii).status,'dead'))
-	 tdstr = '<td>';
+      
+      if strfind(DB(ii).status,'exhausted') == 1
+          tdstr = '<td bgcolor="5eff33">';
+      elseif strfind(DB(ii).status,'dead') == 1
+          tdstr = '<td bgcolor="ffff00">';
       else
-	 tdstr = '<td bgcolor="ffff00">';
+          tdstr = '<td>';
       end
-
+      
       idw = DB(ii).wmo_id;
 
       if mm==1

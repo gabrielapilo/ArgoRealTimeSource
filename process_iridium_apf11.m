@@ -658,7 +658,7 @@ end
             BOM_write_BUFR;
             
             prec.gts_count = 0;
-        elseif strcmp('dead',dbdat.status)
+        elseif strcmp('dead',dbdat.status) | strcmp('exhausted',dbdat.status)
             % dead float returned - send email to alert operator -
             mail_out_dead_float(dbdat.wmo_id);
         end

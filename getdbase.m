@@ -232,11 +232,12 @@ if isempty(THE_ARGO_FLOAT_DB)
       end
       if ~isempty(T(ii).status)
 	 % 0="dead" float, 1=not a "dead" float
-	 ARGO_ID_CROSSREF(ii,4) = isempty(strfind(T(ii).status,'dead'));
+	 ARGO_ID_CROSSREF(ii,4) = isempty(strfind(T(ii).status,'dead')) | isempty(strfind(T(ii).status,'exhausted'));
       end   
       if ~isempty(T(ii).status)
 	 % 0="dead" float, 1="live" float (suspects are eliminated)
-	 ARGO_ID_CROSSREF(ii,6) = (isempty(strfind(T(ii).status,'dead')) && isempty(strfind(T(ii).status,'suspect')));
+	 ARGO_ID_CROSSREF(ii,6) = ((isempty(strfind(T(ii).status,'dead')) | isempty(strfind(T(ii).status,'exhausted')))...
+         && isempty(strfind(T(ii).status,'suspect')));
       end         
       if ~isempty(T(ii).maker_id)
 	 ARGO_ID_CROSSREF(ii,5) = T(ii).maker_id;

@@ -58,7 +58,8 @@ for mm = 1:2
     fprintf(fid,'<article>\n');
     fprintf(fid,'<p>\n');
     
-   fprintf(fid,'<table align="center" width="80%%"><tr>\n');
+     fprintf(fid,'<caption><b>ARGO REAL_TIME PROCESSING: yellow floats are "dead", green floats are probably dead.</b></caption>\n\n');
+ fprintf(fid,'<table align="center" width="80%%"><tr>\n');
    fprintf(fid,'Select float by %s\n\n',idstr{mm});
    fprintf(fid,'<td><a href="index_%s.html">Select by %s</a></td>\n',...
 	   idstr{3-mm},idstr{3-mm});
@@ -75,11 +76,13 @@ for mm = 1:2
             fprintf(fid,'<tr>');
         end
         
-        if isempty(strfind(DB(ii).status,'dead'))
-            tdstr = '<td>';
-        else
-            tdstr = '<td bgcolor="ffff00">';
-        end
+      if strfind(DB(ii).status,'exhausted') == 1
+          tdstr = '<td bgcolor="5eff33">';
+      elseif strfind(DB(ii).status,'dead') == 1
+          tdstr = '<td bgcolor="ffff00">';
+      else
+          tdstr = '<td>';
+      end
         
         idw = DB(ii).wmo_id;
         

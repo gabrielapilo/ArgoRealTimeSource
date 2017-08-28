@@ -205,7 +205,7 @@ if(m>0)
                             PROC_RECORDS(nprec) = new_proc_rec_struct(dbdat,1);
                         end
                         isfloat=0;
-                    elseif ~isempty(strmatch(dbdat.status,'dead'))
+                    elseif ~isempty(strmatch(dbdat.status,'dead')) | ~isempty(strmatch(dbdat.status,'exhausted'))
                         mail_out_dead_float(dbdat.wmo_id);
                         process_iridium(pmeta,dbdat,opts)
                     end
