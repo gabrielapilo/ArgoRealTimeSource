@@ -1526,7 +1526,6 @@ if any(stage==1)
 
     % Update float summary plots and web page
     prec.proc_status(2) = 1;
-    logerr(5,['Successful stage 2, np=' num2str(float(np).profile_number)]);
     
     if opts.rtmode
         try

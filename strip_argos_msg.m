@@ -711,7 +711,7 @@ return
 function npro = process_one(rawdat,heads,b1tim,pmeta,dbdat,opts,npro)
 
 if (~isempty(strfind('exhausted',dbdat.status)) | ~isempty(strfind('dead',dbdat.status)))...
-        & (isempty(opts.redo) | ~opts.redo)
+        & (isempty(opts.redo))
    logerr(3,['Hey - "dead" float talking: ' num2str(pmeta.wmo_id)]);
    mail_out_dead_float(pmeta.wmo_id);
 elseif ~isempty(strfind('expected',dbdat.status))

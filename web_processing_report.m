@@ -218,7 +218,7 @@ for jj = find(new(ij)==0 & (j0-jday(ij))>10.0)
    pr = prec(ij(jj));
    [fpp,dbdat]=getargo(pwmo(ij(jj)));
 %   dbdat = getdbase(pr.wmo_id);
-   if ~isempty(strfind('dead evil expected',dbdat.status)) 
+   if ~isempty(strfind('dead evil expected exhausted',dbdat.status)) 
       % Don't do anything - we do not expect to see this float again
    else      
       fpth = [ARGO_SYS_PARAM.www_root 'floats/' int2str(pr.wmo_id)];
