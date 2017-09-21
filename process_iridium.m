@@ -999,7 +999,11 @@ if any(stage==1)
         if ~isempty(ii)
             gg = c{ii(1)};
             ll=strfind(gg,'=');
-            pro.(str2{a})=(str2num(gg(ll+1:end)) * 4.052) - 3.606;
+            if dbdat.maker == 4
+                pro.(str2{a})= calc_current_navis(str2num(gg(ll+1:end)));
+            else
+                pro.(str2{a})=(str2num(gg(ll+1:end)) * 4.052) - 3.606;
+            end
         end
     end
     %volts
@@ -1012,7 +1016,11 @@ if any(stage==1)
         if ~isempty(ii)
             gg = c{ii(1)};
             ll=strfind(gg,'=');
-            pro.(str2{a})=calc_volt9a(str2num(gg(ll+1:end)));
+            if dbdat.maker == 4
+                pro.(str2{a})=calc_volt_navis(str2num(gg(ll+1:end)));
+            else
+                pro.(str2{a})=calc_volt9a(str2num(gg(ll+1:end)));
+            end
         end
     end
     %we are not decoding these yet:
@@ -1043,7 +1051,11 @@ if any(stage==1)
     if ~isempty(ii)
         gg = c{ii(1)};
         ll=strfind(gg,'=');
-        pro.p_internal=(0.293 * str2num(gg(ll+1:end)) - 29.767);
+        if dbdat.maker == 4
+            pro.p_internal = str2num(gg(ll+1:end))*0.2878 - 29.8571;
+        else
+            pro.p_internal=(0.293 * str2num(gg(ll+1:end)) - 29.767);
+        end
     end
     ii = find(strncmp('# GPS fix',c,9));
     if ~isempty(ii)
@@ -1407,6 +1419,7 @@ if any(stage==1)
                 end
             end
         end
+        %this is picking up the second pump, or nothing at all - why?? RC
         ii = find(cellfun(@isempty,strfind(c,'Continuous profile started'))==0);
         for a = 1:length(ii)
             gg = c{ii(a)};
@@ -1566,6 +1579,11 @@ if opts.rtmode
 else
     float(np).stg1_desc = ['reprocess V' ARGO_SYS_PARAM.version];
 end
+prec.jday_ascent_end = float(np).jday_ascent_end;
+if abs(float(np).jday_ascent_end-float(np).jday(1))>=.9
+    float(np).jday_ascent_end=float(np).jday(1);
+end
+
 % ---- Web page update and Save data (both stage 1 & 2)
 if any(stage>0)
     float(np).proc_stage = max(stage);
@@ -1618,4 +1636,10 @@ return
                         
                         v = dd*.077 + .486;
                         %--------------------------------------------------------------------
-
+                        function v = calc_volt_navis(dd)
+                            v = dd*0.004825 + 0.00197; 
+                        %--------------------------------------------------------------------
+                            
+                            function cur = calc_current_navis(dd)
+                                cur = (dd*1.1546 - 0.1454)/1000;
+                                
