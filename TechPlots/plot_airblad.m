@@ -26,10 +26,11 @@ if isfield(document.float,'airbladderpres')
     xlabel('Cycle');
     ylabel('Air bladder pressure');
     figure(H2)
-    plot(airbl,'--^','MarkerEdgeColor',markcolor,'color',markcolor);
-    title('Air bladder');
-    xlabel('Cycle');
-    ylabel('Air bladder pressure');
+    plot(airbl,'--^','MarkerEdgeColor',markcolor,'color',markcolor,'markersize',12);
+    title('Air bladder','fontsize',18);
+    xlabel('Cycle','fontsize',18);
+    ylabel('Air bladder pressure','fontsize',18);
+    set(gca,'fontsize',16)
     my_save_fig([fnm '/airbladder'],'clobber')
     clf
 end

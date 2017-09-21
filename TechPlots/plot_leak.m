@@ -35,10 +35,11 @@ if isfield(document.float,'p_internal')
     xlabel('Cycle');
     ylabel('Internal pressure');
     figure(H2)
-    plot(axisX , internal_pressure,'--^','MarkerEdgeColor',markcolor,'color',markcolor);
-    title('Internal pressure evolution');
-    xlabel('Cycle');
-    ylabel('Internal pressure');
+    plot(axisX , internal_pressure,'--^','MarkerEdgeColor',markcolor,'color',markcolor,'markersize',12);
+    title('Internal pressure evolution','fontsize',18);
+    xlabel('Cycle','fontsize',18);
+    ylabel('Internal pressure','fontsize',18);
+    set(gca,'fontsize',16)
 my_save_fig([fnm '/pressure'],'clobber')
 clf
 end
@@ -57,10 +58,11 @@ title('Inside volume evolution');
 xlabel('Cycle');
 ylabel('Inside volume');
 figure(H2)
-plot(volume,'--^' , 'color' , markcolor , 'MarkerEdgeColor' , markcolor);
-title('Inside volume evolution');
-xlabel('Cycle');
-ylabel('Inside volume');
+plot(volume,'--^' , 'color' , markcolor , 'MarkerEdgeColor' , markcolor,'markersize',12);
+title('Inside volume evolution','fontsize',18);
+xlabel('Cycle','fontsize',18);
+ylabel('Inside volume','fontsize',18);
+set(gca,'fontsize',12)
 
 my_save_fig([fnm '/insidevolume'],'clobber')
 clf
@@ -78,10 +80,11 @@ figure(H);subplot('Position',[lft(4) bot(3) wid hgt]);
     xlabel('External density');
     ylabel('Parking piston position');
     figure(H2)
-    plot(density,parkpis,'--^' , 'color' , markcolor , 'MarkerEdgeColor' , markcolor);
-    title('Parking piston position evolution') ;
-    xlabel('External density');
-    ylabel('Parking piston position');
+    plot(density,parkpis,'--^' , 'color' , markcolor , 'MarkerEdgeColor' , markcolor,'markersize',12);
+    title('Parking piston position evolution','fontsize',18) ;
+    xlabel('External density','fontsize',18);
+    ylabel('Parking piston position','fontsize',18);
+    set(gca,'fontsize',16)
 my_save_fig([fnm '/parkpis_compres'],'clobber')
 clf
 end
@@ -100,10 +103,11 @@ figure(H);subplot('Position',[lft(5) bot(3) wid hgt]);
     xlabel('DeltaV for ascent');
     ylabel('Piston differentiate');
     figure(H2)
-    plot(deltaV,pispos,'--^' , 'color' , markcolor , 'MarkerEdgeColor' , markcolor);
-    title('Piston position evolution') ;
-    xlabel('DeltaV for ascent');
-    ylabel('Piston differentiate');
+    plot(deltaV,pispos,'--^' , 'color' , markcolor , 'MarkerEdgeColor' , markcolor,'markersize',12);
+    title('Piston position evolution','fontsize',18) ;
+    xlabel('DeltaV for ascent','fontsize',18);
+    ylabel('Piston differentiate','fontsize',18);
+    set(gca,'fontsize',12)
 my_save_fig([fnm '/pis_deltaV'],'clobber')
 clf
 end

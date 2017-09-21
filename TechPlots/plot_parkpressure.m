@@ -26,10 +26,11 @@ if isfield(document.float,'park_p')
     xlabel('Cycle');
     ylabel('Parking pressure');
     figure(H2)
-     plot(parkpressure,'--^','MarkerEdgeColor',markcolor,'color',markcolor);
-    title('Parking pressure');
-    xlabel('Cycle');
-    ylabel('Parking pressure');
+     plot(parkpressure,'--^','MarkerEdgeColor',markcolor,'color',markcolor,'markersize',12);
+    title('Parking pressure','fontsize',18);
+    xlabel('Cycle','fontsize',18);
+    ylabel('Parking pressure','fontsize',18);
+    set(gca,'fontsize',16)
    my_save_fig([fnm '/parkpressure'],'clobber')
     clf
 

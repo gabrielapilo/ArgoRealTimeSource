@@ -27,10 +27,11 @@ title('Weight evolution');
 xlabel('Cycle');
 ylabel('Weight');
 figure(H2);
-plot(weight,'--^','MarkerEdgeColor',markcolor,'color',markcolor);
-title('Weight evolution');
-xlabel('Cycle');
-ylabel('Weight');
+plot(weight,'-^','MarkerEdgeColor',markcolor,'color',markcolor,'markersize',12);
+title('Weight evolution','fontsize',18);
+xlabel('Cycle','fontsize',18);
+ylabel('Weight','fontsize',18);
+set(gca,'fontsize',16)
 my_save_fig([fnm '/weight'],'clobber')
 clf
 
@@ -89,9 +90,10 @@ if isfield(document.float,'pistonpos')
     xlabel('Cycle');
     ylabel('Surface piston position');
     figure(H2)
-    title('Surface piston position');
-    xlabel('Cycle');
-    ylabel('Surface piston position');
+    title('Surface piston position','fontsize',18);
+    xlabel('Cycle','fontsize',18);
+    ylabel('Surface piston position','fontsize',18);
+    set(gca,'fontsize',16)
 my_save_fig([fnm '/surfpispos'],'clobber')
 clf
 end
@@ -148,7 +150,7 @@ if isfield(document.float,'parkpistonpos')
         figure(H2)
         hold on
         scatter(prof , position,'+','blue')
-        plot(prof(ground),position(ground),'m+')
+        plot(prof(ground),position(ground),'m+','markersize',12)
         
 %     end
     

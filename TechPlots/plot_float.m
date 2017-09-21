@@ -17,6 +17,7 @@ end
 H = figure('Position',[10,100,1600,900]);
 hold on
 H2 = figure('Position',[10,100,900,900]);
+set(gca,'fontsize',16);
 plot_battery(nbfloat , document, H, H2,fnm) ;
 ground = plot_bathymetry(nbfloat , document, H, H2,fnm);
 plot_weight(nbfloat , document, H, H2, ground,fnm ) ;
@@ -29,6 +30,7 @@ plot_qc(nbfloat , document, H, H2,fnm) ;
 
 figure(H)
 plot_information(nbfloat , document , floatnum , floatbatt , typebatt);
+
 
 my_save_fig([fnm '/overall'],'clobber')
 

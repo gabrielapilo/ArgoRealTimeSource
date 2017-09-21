@@ -33,10 +33,11 @@ if isfield(document.float,'surfpres_used')
     xlabel('Cycle');
     ylabel('Surface pressure');
     figure(H2)
-    plot(surfpres,'--^','MarkerEdgeColor',markcolorpres,'color',markcolorpres);
-    title('Surface pressure sensor');
-    xlabel('Cycle');
-    ylabel('Surface pressure');
+    plot(surfpres,'--^','MarkerEdgeColor',markcolorpres,'color',markcolorpres,'markersize',12);
+    title('Surface pressure sensor','fontsize',18);
+    xlabel('Cycle','fontsize',18);
+    ylabel('Surface pressure','fontsize',18);
+    set(gca,'fontsize',16)
     my_save_fig([fnm '/pres_sensor'],'clobber')
     clf
 

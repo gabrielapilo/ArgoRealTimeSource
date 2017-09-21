@@ -13,14 +13,15 @@ pressure = nan(1,lg);
 parkpis = nan(1,lg);
 
 
-if isfield(document.float,'park_s') & isfield(document.float,'park_t') & isfield(document.float,'park_p') & isfield(document.float,'pistonpos')
+if isfield(document.float,'park_s') & isfield(document.float,'park_t') & ...
+        isfield(document.float,'park_p') & isfield(document.float,'parkpistonpos')
     
     % Create the list of each important parameters.
     for k=1:lg
         salinity(k) = mean(document.float(k).park_s) ;
         temperature(k) = mean(document.float(k).park_t) ;
         pressure(k) = mean(document.float(k).park_p) ;
-        parkpis(k) = mean(document.float(k).pistonpos) ;
+        parkpis(k) = mean(document.float(k).parkpistonpos) ;
     end
     
     % Determine the density of the water through the CTD profile.

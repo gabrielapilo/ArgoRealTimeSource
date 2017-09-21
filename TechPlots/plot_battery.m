@@ -72,15 +72,16 @@ if isfield(document.float,'voltage')
 %         else
 markcolor = flag_battery(volt1) ;
 figure(H);subplot('Position',[lft(1) bot(1) wid hgt]);
-plot(axisX , volt1,'--^','MarkerEdgeColor',markcolor,'color',markcolor);
+plot(axisX , volt1,'-^','MarkerEdgeColor',markcolor,'color',markcolor);
 xlabel('Cycle');
 title('Main battery');
 ylabel('Voltage');
 figure(H2);
-plot(axisX , volt1,'--^','MarkerEdgeColor',markcolor,'color',markcolor);
-xlabel('Cycle');
-title('Main battery');
-ylabel('Voltage');
+plot(axisX , volt1,'-^','MarkerEdgeColor',markcolor,'color',markcolor,'markersize',12);
+xlabel('Cycle','Fontsize',18);
+title('Main battery','Fontsize',18);
+ylabel('Voltage','Fontsize',18);
+set(gca,'FontSize',16)
 my_save_fig([fnm '/main_battery'],'clobber')
 clf
 %         end
@@ -129,15 +130,16 @@ if isfield(document.float,'parkbatteryvoltage')
 %         else
             markcolor = flag_battery(volt2) ;
             figure(H);subplot('Position',[lft(2) bot(1) wid hgt]);
-            plot(axisX,volt2,'--^','MarkerEdgeColor',markcolor,'color',markcolor);
+            plot(axisX,volt2,'-^','MarkerEdgeColor',markcolor,'color',markcolor);
             xlabel('Cycle');
             ylabel('Voltage');
             title('Park battery');
             figure(H2);
-            plot(axisX,volt2,'--^','MarkerEdgeColor',markcolor,'color',markcolor);
-            xlabel('Cycle');
-            ylabel('Voltage');
-            title('Park battery');
+            plot(axisX,volt2,'-^','MarkerEdgeColor',markcolor,'color',markcolor,'markersize',12);
+            xlabel('Cycle','fontsize',18);
+            ylabel('Voltage','fontsize',18);
+            title('Park battery','fontsize',18);
+            set(gca,'fontsize',16)
 my_save_fig([fnm '/park_battery'],'clobber')
 clf
 %         end
@@ -183,15 +185,16 @@ if isfield(document.float,'SBEpumpvoltage')
 %         else
             markcolor = flag_battery(volt3) ;
             figure(H);subplot('Position',[lft(3) bot(1) wid hgt]);
-            plot(axisX,volt3,'--^','MarkerEdgeColor',markcolor,'color',markcolor);
+            plot(axisX,volt3,'-^','MarkerEdgeColor',markcolor,'color',markcolor);
             xlabel('Cycle');
             ylabel('Voltage');
             title('SBE pump');
             figure(H2)
-            plot(axisX,volt3,'--^','MarkerEdgeColor',markcolor,'color',markcolor);
-            xlabel('Cycle');
-            ylabel('Voltage');
-            title('SBE pump');
+            plot(axisX,volt3,'-^','MarkerEdgeColor',markcolor,'color',markcolor,'markersize',12);
+            xlabel('Cycle','fontsize',18);
+            ylabel('Voltage','fontsize',18);
+            title('SBE pump','fontsize',18);
+            set(gca,'fontsize',16)
 my_save_fig([fnm '/SBEpump_battery'],'clobber')
 
 clf
@@ -299,10 +302,11 @@ if isfield(document.float,'buoyancypumpvoltage')
             ylabel('Voltage');
             title('Buoyancy pump');
             figure(H2)
-            plot(axisX,volt5,'--^','MarkerEdgeColor',markcolor,'color',markcolor);
-            xlabel('Cycle');
-            ylabel('Voltage');
-            title('Buoyancy pump');
+            plot(axisX,volt5,'--^','MarkerEdgeColor',markcolor,'color',markcolor,'markersize',12);
+            xlabel('Cycle','fontsize',18);
+            ylabel('Voltage','fontsize',18);
+            title('Buoyancy pump','fontsize',18);
+            set(gca,'fontsize',16)
 my_save_fig([fnm '/buoyancy_battery'],'clobber')
 clf
 %         end

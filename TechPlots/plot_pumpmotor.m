@@ -26,11 +26,13 @@ if isfield(document.float,'pumpmotortime')
     xlabel('Cycle');
     ylabel('Pump motor time');
     figure(H2)
-    plot(pumptime,'--^','MarkerEdgeColor',markcolor,'color',markcolor);
-    title('Pump motor evolution');
-    xlabel('Cycle');
-    ylabel('Pump motor time');
+    plot(pumptime,'--^','MarkerEdgeColor',markcolor,'color',markcolor,'markersize',12);
+    title('Pump motor evolution','fontsize',18);
+    xlabel('Cycle','fontsize',18);
+    ylabel('Pump motor time','fontsize',18);
+    set(gca,'fontsize',12)
     my_save_fig([fnm '/pumpmotor'],'clobber')
+    set(gca,'fontsize',16)
     clf
     
 end

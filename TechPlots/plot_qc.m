@@ -23,10 +23,11 @@ if isfield(document.float,'s_qc')
     % Plot the previous information:
     figure(H)
     subplot('Position',[lft(2) bot(5) wid hgt]);
-    plot(salinity_test,'--^','DisplayName','Salinity');
+    plot(salinity_test,'-^','DisplayName','Salinity');
     hold on
     figure(H2)
-    plot(salinity_test,'--^','DisplayName','Salinity');
+    plot(salinity_test,'--^','DisplayName','Salinity','markersize',12);
+    set(gca,'fontsize',16)
     hold on
 end
 
@@ -47,7 +48,7 @@ if isfield(document.float,'t_qc')
     subplot('Position',[lft(2) bot(5) wid hgt]);
     h = plot(temperature_test,'--^','DisplayName','Temperature');
     figure(H2)
-    h = plot(temperature_test,'--^','DisplayName','Temperature');
+    h = plot(temperature_test,'-^','DisplayName','Temperature','markersize',12);
 end
 
 %% Pressure part
@@ -66,7 +67,7 @@ if isfield(document.float,'p_qc')
     subplot('Position',[lft(2) bot(5) wid hgt]);
     plot(pressure_test,'--^','DisplayName','Pressure');
     figure(H2)
-    plot(pressure_test,'--^','DisplayName','Pressure');
+    plot(pressure_test,'-^','DisplayName','Pressure','markersize',12);
 end
 
 
@@ -86,7 +87,7 @@ if isfield(document.float,'cndc_qc')
     subplot('Position',[lft(2) bot(5) wid hgt]);
     plot(conductivity_test,'--^','DisplayName','Conductivity');
     figure(H2)
-    plot(conductivity_test,'--^','DisplayName','Conductivity');
+    plot(conductivity_test,'--^','DisplayName','Conductivity','markersize',12);
 end
 
 
@@ -128,7 +129,7 @@ if isfield(document.float,'pos_qc')
     subplot('Position',[lft(2) bot(5) wid hgt]);
     h = plot(position_test,'--^','DisplayName','Position');
     figure(H2)
-    h = plot(position_test,'--^','DisplayName','Position');
+    h = plot(position_test,'--^','DisplayName','Position','markersize',12);
     
 end
 
@@ -145,13 +146,14 @@ if exist('h','var')
 end
     figure(H2)
 
-title('Quality control test');
-xlabel('Cycle');
-ylabel('Quality');
+title('Quality control test','fontsize',18);
+xlabel('Cycle','fontsize',18);
+ylabel('Quality','fontsize',18);
 ylim([0.5 6.5]);
 if exist('h','var')
     set(get(h,'Parent'),'YTickLabel',{'A' 'B' 'C' 'D' 'E','F'});
 end
+set(gca,'fontsize',16)
 my_save_fig([fnm '/quality_control'],'clobber')
 clf    
 end
