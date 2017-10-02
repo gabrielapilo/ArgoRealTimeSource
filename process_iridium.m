@@ -1580,7 +1580,7 @@ else
     float(np).stg1_desc = ['reprocess V' ARGO_SYS_PARAM.version];
 end
 prec.jday_ascent_end = float(np).jday_ascent_end;
-if abs(float(np).jday_ascent_end-float(np).jday(1))>=.9
+if ~isempty(float(np).jday) && abs(float(np).jday_ascent_end-float(np).jday(1))>=.9
     float(np).jday_ascent_end=float(np).jday(1);
 end
 

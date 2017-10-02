@@ -161,6 +161,7 @@ contourf(xb2(1:4:end),yb2(1:4:end),hb(1:4:end,1:4:end)',[0:100:2000],'k');
 % Inverse the colormap in order to have the water in blue!
 caxis([0,2000]);
 colormap(flipud(colormap))
+colorbar
 
 % Adding information about the evolution of the float.
 xlabel('Longitude');
