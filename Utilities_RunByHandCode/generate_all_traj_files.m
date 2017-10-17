@@ -21,11 +21,11 @@ for ii = 1:length(THE_ARGO_FLOAT_DB)
     if THE_ARGO_FLOAT_DB(ii).maker ~= 4
         continue
     end
-%     if THE_ARGO_FLOAT_DB(ii).wmo_id ~= 5904924
+%     if THE_ARGO_FLOAT_DB(ii).wmo_id ~= 5905022
 %         
 %         continue
 %     end
-    
+%     
     clear traj traj_mc_order
     
     [fpp,dbdat] = getargo(THE_ARGO_FLOAT_DB(ii).wmo_id);
@@ -159,15 +159,15 @@ return
 %and copy to Lisa
 clear
 
-fldn = dir('/home/argo/ArgoRT/netcdf_test')
+fldn = dir('/home/argo/ArgoRT/exporttest/')
 matdir = '/home/argo/ArgoRT/trajfiles/';
 
-for a = 1:length(fldn)
-    if fldn(a).isdir == 0 | fldn(a).name(1) == '.'
-        continue
-    end
+for a = 3:length(fldn)
+%     if fldn(a).isdir == 0 | fldn(a).name(1) == '.'
+%         continue
+%     end
 %     system(['cp /home/argo/ArgoRT/netcdf_test/' fldn(a).name '/*.nc /home/argo/ArgoRT/exporttest/'])
-    system(['cp ' matdir 'T' fldn(a).name '.mat /home/argo/ArgoRT/exporttest/'])
+    system(['cp ' matdir 'T' fldn(a).name(1:7) '.mat /home/argo/ArgoRT/exporttest/'])
     
 end
 %then ran writeGDAC manually to transfer the files to ifremer only.

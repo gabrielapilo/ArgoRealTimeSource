@@ -10,12 +10,12 @@
 %
 % usage: rerun_grey_listed(dbdat,startprof,endprof,[retrieve])
 
-function rerun_grey_listed(dbdat,startprof,endprof,retrieve)
+function rerun_grey_listed(wmo_id, startprof,endprof,retrieve)
 
 if nargin<=3
     retrieve=-1;
 end
-[fpp,dbdat]=getargo(dbdat.wmo_id);
+[fpp,dbdat]=getargo(wmo_id);
 
 for j=startprof:endprof
     if ~isempty(fpp(j))

@@ -27,7 +27,8 @@ opts.redo=1;
 [fpp,dbdat]=getargo(wmo_id);
 load ([ARGO_SYS_PARAM.root_dir 'matfiles/float' num2str(wmo_id) '.mat']);
 
-for i=209%:length(float)
+for i=257:320%length(float)
+        disp(num2str(i))
         file=find_argos_download(wmo_id,i);
 
 % now re-run the specified profiles:

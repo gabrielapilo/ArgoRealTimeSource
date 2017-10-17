@@ -25,9 +25,11 @@ for ii =1:length(THE_ARGO_FLOAT_DB)
 %                web_plot_generation(fp,dbdat);
 % if(~isempty(fpp))
 %                web_profile_plot(fp,dbdat);
-%                   web_float_summary(fpp,dbdat,1);
+                  web_float_summary(fpp,dbdat,1);
 
-        webUpdatePages(dbdat.wmo_id,1);
+%         webUpdatePages(dbdat.wmo_id,1);
+%         make_tech_webpage(num2str(dbdat.wmo_id));
+%         plot_tech(num2str(dbdat.wmo_id));
 
 % end
 %             end

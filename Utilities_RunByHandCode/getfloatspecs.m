@@ -1,6 +1,6 @@
 %run with mypark_depths2
 clear
-fn = '/home/argo/ArgoRT/Deployment_Planning/deploymentplan_2016_17_2.csv';
+fn = '/home/argo/ArgoRT/Deployment_Planning/deploymentplan_2017_18.csv';
 K = load(fn);
 
 %holddepy=-45.92;
@@ -94,8 +94,8 @@ save(fnm2,'-mat','holddepx','holddepy');
 %data2(ifl(k),6)=spark(k);
 %end
 
-title(['Float deployment planning to date ' date ' 2016-17 floats'])
-save_fig (['Float_deployment_planning_16-17.gif'])
+title(['Float deployment planning to date ' date ' 2017-18 floats'])
+save_fig (['Float_deployment_planning_17-8.gif'])
 
 
 

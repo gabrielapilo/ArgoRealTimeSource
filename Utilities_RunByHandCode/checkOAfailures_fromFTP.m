@@ -1,7 +1,7 @@
 %edit here:
 win = 20; %plot window of adjacent profiles
-fns = ('*201706*.csv');
-download = 0;
+fns = ('*201708*.csv');
+download = 1;
 %% retrieve the warning CSV files from ifremer
 if download
 cd /home/argo/ArgoRT/OAwarnings
@@ -115,7 +115,8 @@ for a = 1:length(ia)
     
     figure(2)
     %need to make decisions now
-    yn = input('reject these points?','s');
+%     yn = input('reject these points?','s');
+pause
     % rejectpoints(5903955,273,{'s'},280,473)
 end
 %  
