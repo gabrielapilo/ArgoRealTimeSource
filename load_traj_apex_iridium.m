@@ -64,8 +64,12 @@ fldnms = {'clockoffset','DST','DSP' 'DET','PST','PTM','PET','DDET','AST',...
 %     times out trying to find the profile pressure. Need to find a float
 %     that does this before I can code it in.
 %     TST2 = TST code 701
+fld_n = {'DST','DSP' 'DET','PST','PTM','PET','DDET','AST',...
+    'DNT','AET','TST2'};
+fld_nminus1 = {'ST','TST','FMT','FLT','LLT','LMT','TET'};
 
 %set up empty fldnms:
+%set all fields as new - new report
 for a = 1:length(fldnms)
     eval([fldnms{a} '= NaN;'])
 end
@@ -75,14 +79,31 @@ end
 % do this for all profiles, even if re-running.
 %
 traj(pn).clockoffset = 0; %Rtc skew value in each msg file
-for a = 1:length(fldnms)
+if length(traj) < pn
     %set up empty fields to indicate no data yet.
+    for a = 1:length(fldnms)
         traj(pn).(fldnms{a}) = [];
-    % now need to get substructure associated with each field:
+    end
+else
+    for a = 1:length(fld_n)
+        %set up empty fields to indicate no data yet.
+        traj(pn).(fld_n{a}) = [];
+    end
+    for a = 1:length(fld_nminus1)
+        if pn > 1
+            %keep data from n+1 and delete data in n-1
+            traj(pn-1).(fld_nminus1{a}) = [];
+        else
+            %keep data from n+1 and delete data in n-1
+            traj(pn).on_deployment.(fld_nminus1{a}) = [];
+        end
+    end
+end
+% now need to get substructure associated with each field:
 %     for b = 1:length(subfldnms)
 %         traj(pn).(fldnms{a}).(subfldnms{b}) = defaultval{b};
 %     end
-end
+
 
 %put in the on_deployment structure too
 if pn == 1
@@ -92,7 +113,7 @@ end
 rtc_skew = 0;
 sat_count = 0;
 gps_count = 0;
-ST = NaN; STlat = NaN; STlon = NaN; %holding vars for FMT, LMT, ST
+STlat = NaN; STlon = NaN;
 
 % Floats which profile on ascent must provide
 %  DST, DET, PET, DDET, AST, AET and all surface times (Cookbook 3.2)
@@ -677,6 +698,12 @@ traj(pn).traj_mc_index = [1, 1:size(DSP,1), 1, ...
     tc_ind(ij), ones(1,7)];
 %put the satellite information on the previous profile:
 if pn > 1
+    %if this is a re-process, remove the existing indices first
+    if length(traj) ~= pn
+        iclear = find(traj(pn-1).traj_mc_order == 703);
+        traj(pn-1).traj_mc_order(iclear:end) = [];
+        traj(pn-1).traj_mc_index(iclear:end) = [];
+    end
     traj(pn-1).traj_mc_order = [traj(pn-1).traj_mc_order mc_previous(ii)];
     traj(pn-1).traj_mc_index = [traj(pn-1).traj_mc_index tp_ind(ii)];
 else
