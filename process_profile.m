@@ -469,7 +469,7 @@ if any(stage>=1)
 	 fp = decode_provor(prof,dbdat,pos);
       else
           %need lat for oxygen processing:
-	 fp = decode_webb(prof,dbdat,head(gdhed(1),7));
+	 fp = decode_webb(prof,dbdat,head(gdhed(1),7),ARGO_SYS_PARAM.processor);
       end
    end
    

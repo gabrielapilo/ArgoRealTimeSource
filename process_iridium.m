@@ -1510,7 +1510,7 @@ if any(stage==1)
         web_select_float
         if ~isempty(strmatch('CSIRO',ARGO_SYS_PARAM.processor))
             web_select_float_tech % updates the tech index pages
-            make_tech_webpages %makes first instance of the technical pages
+            make_tech_webpage(pro.wmo_id); %makes first instance of the technical pages
         end
         prec.meta_nc_count = 0;
     end

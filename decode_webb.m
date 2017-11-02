@@ -11,7 +11,7 @@
 %
 % USAGE: fp = decode_webb(prof,dbdat);
 
-function fp = decode_webb(prof,dbdat,lat)
+function fp = decode_webb(prof,dbdat,lat,processor)
 
 % Create a generic blank profile struct
 pro = new_profile_struct(dbdat);
@@ -131,9 +131,9 @@ pro.profile_number = p1(6)-dbdat.np0;    %DEV Formerly np
 
 if(pro.profile_number==1);
     web_select_float;
-    if ~isempty(strmatch('CSIRO',ARGO_SYS_PARAM.processor))
+    if ~isempty(strmatch('CSIRO',processor))
         web_select_float_tech;
-        make_tech_webpages %makes first instance of the technical pages
+        make_tech_webpage(pro.wmo_id); %makes first instance of the technical pages
     end
 end
 
