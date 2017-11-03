@@ -370,7 +370,7 @@ end
 estdst = 0;
 if isnan(DST) & ~isnan(PST)
     try
-        DST = PST(1) - floatTech.Mission(pn).ParkDescentTime/24/60/60;
+        DST = PST(1) - floatTech.Mission(pn).ParkDescentTime/24/60;
         TET = DST;
         estdst = 1;
     catch
@@ -383,8 +383,8 @@ if isnan(PET)
     %I don't think this algorithm is correct. Included in the APF9i table,
     %but doesn't make sense to me CHECK with Megan
     if ~isempty(floatTech.Mission(pn).DownTime)
-        PET = DST + floatTech.Mission(pn).DownTime/60/60/24 ...
-            - floatTech.Mission(pn).DeepProfileDescentTime/60/60/24;
+        PET = DST + floatTech.Mission(pn).DownTime/60/24 ...
+            - floatTech.Mission(pn).DeepProfileDescentTime/60/24;
         estpet = 1;
     end
     if ~isempty(fpp(pn).park_date)
@@ -422,13 +422,14 @@ end
 estast = 0;
 if isnan(AST(1)) & ~isnan(DST)% & ~estdst 
     %downtime is in minutes
-    if ~isempty(floatTech.Mission(pn).DownTime) & ...
-            ~isempty(floatTech.Mission(pn).TimeOfDay) & ...
-            ~isnan(floatTech.Mission(pn).TimeOfDay(1))...
-            & isnumeric(floatTech.Mission(pn).TimeOfDay)
-        dd = floor(DST + floatTech.Mission(pn).DownTime/60/24 + ...
-        floatTech.Mission(pn).DeepProfileDescentTime/60/24);
-        AST(1) = dd + floatTech.Mission(pn).TimeOfDay/60/24;
+    if isfield(floatTech.Mission(pn),'TimeOfDay')
+        if ~isempty(floatTech.Mission(pn).DownTime) && ...
+                ~isempty(floatTech.Mission(pn).TimeOfDay) && ...
+                ~isnan(floatTech.Mission(pn).TimeOfDay(1))...
+                && isnumeric(floatTech.Mission(pn).TimeOfDay)
+            dd = DST + floatTech.Mission(pn).DownTime/60/24;
+            AST(1) = dd + floatTech.Mission(pn).TimeOfDay/60/24;
+        end
     elseif ~isempty(floatTech.Mission(pn).DownTime)
         AST(1) = DST + floatTech.Mission(pn).DownTime/60/24;
     end
@@ -452,12 +453,14 @@ end
 %Time of day is in minutes after midnight.
 %can get DNT from the float technical file. Not always set, mostly for bio floats:
 %Time of day after midnight that downtime expires.
-%To me, this is the same as AST. 
+%To me, this is the same as AST.
 
-if ~isempty(floatTech.Mission(pn).TimeOfDay) & ~isnan(floatTech.Mission(pn).TimeOfDay(1))...
-        & isnumeric(floatTech.Mission(pn).TimeOfDay)
-    %now we have AST, we can assign the DNT
-    DNT = AST(1);
+if isfield(floatTech.Mission(pn),'TimeOfDay')
+    if ~isempty(floatTech.Mission(pn).TimeOfDay) & ~isnan(floatTech.Mission(pn).TimeOfDay(1))...
+            & isnumeric(floatTech.Mission(pn).TimeOfDay)
+        %now we have AST, we can assign the DNT
+        DNT = AST(1);
+    end
 end
 
 %if the GPS fixes are missing in log file, can be present in msg file
@@ -617,22 +620,31 @@ if ~isempty(fpp(pn).park_p)
 %         keyboard
     end
     
-    % Get ACCURATE PTS for AST (mc 500) from fpp if available.
-    if npark_samp > 1
-        ii = abs(fpp(pn).park_p - dbdat.profpres) < 100;
-        if sum(ii) > 1
-            disp('Too many AST values!')
-            AST(2) = fpp(pn).park_p(ii(end));
-            AST(3) = fpp(pn).park_t(ii(end));
-            AST(4) = fpp(pn).park_s(ii(end));
-        elseif sum(ii) == 1
-            AST(2) = fpp(pn).park_p(ii);
-            AST(3) = fpp(pn).park_t(ii);
-            AST(4) = fpp(pn).park_s(ii);
+    % Get PTS for mc 503 - PTS of deepest bin in ascending profile float.
+    % is not being recorded as 503 at the moment, but as 500 PTS.
+    if length(AST)<2
+        if ~isempty(fpp(pn).p_calibrate)
+            AST(2) = fpp(pn).p_calibrate(1);
+        elseif ~isempty(fpp(pn).p_raw)
+            AST(2) = fpp(pn).p_raw(1);
+        end
+    end
+    if length(AST)<3
+        
+        if ~isempty(fpp(pn).t_calibrate)
+            AST(3) = fpp(pn).t_calibrate(1);
+        elseif ~isempty(fpp(pn).t_raw)
+            AST(3) = fpp(pn).t_raw(1);
+        end
+    end
+    if length(AST)<4
+        if ~isempty(fpp(pn).s_calibrate)
+            AST(4) = fpp(pn).s_calibrate(1);
+        elseif ~isempty(fpp(pn).s_raw)
+            AST(4) = fpp(pn).s_raw(1);
         end
     end
 end
-
 %assign some more times and pressures and positions as required.
 FMT = min(ST);FLT = min(ST);
 TST = FMT; %these are the same for iridiums
