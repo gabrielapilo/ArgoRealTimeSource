@@ -6,7 +6,7 @@
 %  then generates the tesac and netcdf files for the float for delivery to
 %  the GDACs and GTS.
 
-function [latarr,lonarr]=interpolate_locations(dbdat,pro)
+function [float,pro]=interpolate_locations(dbdat,float,pro)
 
 global ARGO_SYS_PARAM
 
@@ -22,13 +22,12 @@ if isnan(pro.lat)
     return
 end
 
-[fpp]=getargo(dbdat.wmo_id);
-%update with this profile information!!
-fpp(pro.profile_number) = pro;
+%assign all the data so far:
+float(pro.profile_number) = pro;
 
 %get all the nans in lat:
-ii = find(cellfun(@any,cellfun(@isnan,{fpp.lat},'uniformoutput',0))==1);
-ij = find(cellfun(@isempty,{fpp.lat}));
+ii = find(cellfun(@any,cellfun(@isnan,{float.lat},'uniformoutput',0))==1);
+ij = find(cellfun(@isempty,{float.lat}));
 ik = sort([ii,ij]);
 if isempty(ik)
     %no missing position info
@@ -38,9 +37,9 @@ end
 %look for different groups of missing postions:
 iid = find(diff(ik)>1);
 if isempty(iid)
-    %more than one group
-    iid = 1;
+    iid = length(ik);
 else
+    %more than one group
     iid = [iid,length(ik)];
 end
 
@@ -56,14 +55,14 @@ for a = 1:length(iid)
             str2num(dbdat.launchdate(9:10)) str2num(dbdat.launchdate(11:12)) str2num(dbdat.launchdate(13:14))])
     else
         %use last postion fix
-        startlat=fpp(ii(1)-1).lat(end);
-        startlon=fpp(ii(1)-1).lon(end);
-        startjday = fpp(ii(1)-1).jday_location(end);
+        startlat=float(ii(1)-1).lat(end);
+        startlon=float(ii(1)-1).lon(end);
+        startjday = float(ii(1)-1).jday_location(end);
     end
     %use first postion fix of this profile
-    endlat = fpp(ii(end)+1).lat(1);
-    endlon = fpp(ii(end)+1).lon(1);
-    endjday = fpp(ii(end)+1).jday_location(1);
+    endlat = float(ii(end)+1).lat(1);
+    endlon = float(ii(end)+1).lon(1);
+    endjday = float(ii(end)+1).jday_location(1);
     
     %now need to calculate the approximate jdays for missing profiles
     xq = 1:length(ii)+2;
@@ -97,30 +96,34 @@ for a = 1:length(iid)
         % now regenerate and save mat files:
         
         for g=1:length(ii)
-            fpp(ii(g)).jday = needpos(g);
-            fpp(ii(g)).lat = latarr(g);
-            fpp(ii(g)).lon = lonarr(g);
-            fpp(ii(g)).position_accuracy='8';
-            fpp(ii(g)).pos_qc=8;
+            float(ii(g)).jday = needpos(g);
+            float(ii(g)).lat = str2num(sprintf(('%5.3f'),latarr(g)));
+            float(ii(g)).lon = str2num(sprintf(('%5.3f'),lonarr(g)));
+            float(ii(g)).position_accuracy='8';
+            float(ii(g)).pos_qc=8;
         end
-        float = fpp;
-        fnm = [ARGO_SYS_PARAM.root_dir 'matfiles/float' num2str(dbdat.wmo_id)]
+        
+        fnm = [ARGO_SYS_PARAM.root_dir 'matfiles/float' num2str(dbdat.wmo_id)];
         
         save(fnm,'float','-v6');
         
         % now re-generate netcdf files:
         
         for g=1:length(ii)
-            if ~isempty(fpp(ii(g)).jday) & ~isempty(fpp(ii(g)).wmo_id)
-                argoprofile_nc(dbdat,fpp(ii(g)));
-                write_tesac(dbdat,fpp(ii(g)));
-                web_profile_plot(fpp(ii(g)),dbdat);
+            if ~isempty(float(ii(g)).jday) & ~isempty(float(ii(g)).wmo_id)
+                argoprofile_nc(dbdat,float(ii(g)));
+                write_tesac(dbdat,float(ii(g)));
+                web_profile_plot(float(ii(g)),dbdat);
             end
         end
-        web_float_summary(fpp,dbdat,1);
-        locationplots(fpp);
+        web_float_summary(float,dbdat,1);
+        locationplots(float);
         % done!
     end
     st = iid(a)+1;
 end
+
+%now assign the interpolated values back to pro.
+pro = float(pro.profile_number);
+
 return
