@@ -151,10 +151,11 @@ end
 np = '000';
 nps = num2str(pn-1);
 np(end-length(nps)+1:end) = nps;
-fn_p = [ARGO_SYS_PARAM.iridium_path 'iridium_processed/' num2str(pmeta.wmo_id) '/' pmeta.ftp_fname];
-if exist([fn_p(1:end-7) np '.msg'],'file') == 0
+if pn == 1
     %look in 000files dir
     fn_p = [ARGO_SYS_PARAM.iridium_path 'iridium_processed/000files/' pmeta.ftp_fname];
+else
+    fn_p = [ARGO_SYS_PARAM.iridium_path 'iridium_processed/' num2str(pmeta.wmo_id) '/' pmeta.ftp_fname];
 end
 fid = fopen([fn_p(1:end-7) np '.msg'],'r');
 if fid < 0
