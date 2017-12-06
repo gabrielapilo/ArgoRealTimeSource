@@ -1,4 +1,4 @@
-function [ ] = plot_pressensor( nbfloat , document,H,H2,fnm)
+function [ ] = plot_pressensor( float ,H,H2,fnm)
 % This function permits to characterize a problem of pressure sensor.
 lft = [0.05:1/5:0.95];
 bot = 0.8:-.1872:0.05 ;
@@ -6,14 +6,14 @@ wid = 0.13;
 hgt = 0.12;
 
 % Initialization:
-lg = length(document.float);
+lg = length(float);
 surfpres = nan(1,lg);
 
-if isfield(document.float,'surfpres_used')
+if isfield(float,'surfpres_used')
     
     % Extract the evolution of the surface pressure.
     for ind = 1:lg
-        surfpres(ind) = mean(document.float(ind).surfpres_used);
+        surfpres(ind) = mean(float(ind).surfpres_used);
     end
 
     % Get a markcolor relevant with the problem under study.

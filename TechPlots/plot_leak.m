@@ -1,4 +1,4 @@
-function [ ] = plot_leak( nbfloat , document, H, H2, fnm)
+function [ ] = plot_leak( float , H, H2, fnm)
 % This function permits to plot several information on the piston
 % positionning system:
 %
@@ -16,15 +16,15 @@ hgt = 0.12;
 %% Plot 1: evolution of internal pressure with time.
 
 % Initialization:
-lg = length(document.float);
+lg = length(float);
 axisX = [1:lg];
 
-if isfield(document.float,'p_internal')
+if isfield(float,'p_internal')
     
     % Extraction of the internal pressure of the float.
     internal_pressure = nan(1,lg);
     for ind = 1:lg
-        internal_pressure(ind) = mean(document.float(ind).p_internal);
+        internal_pressure(ind) = mean(float(ind).p_internal);
     end
 
     % Plot of the result.
@@ -50,7 +50,7 @@ end
 % Extraction of the density and the evolution of volume from another
 % program.
 
-[volume] = get_volume_float(nbfloat , document);
+[volume] = get_volume_float(float);
 markcolor = usual_test(volume) ;
 figure(H);subplot('Position',[lft(3) bot(3) wid hgt]);
 plot(volume,'--^' , 'color' , markcolor , 'MarkerEdgeColor' , markcolor);
@@ -72,7 +72,7 @@ clf
 % Extraction of the density and the parking piston position
 % from another program.
 
-[density , parkpis , markcolor] = pistonpos_density (nbfloat, document);
+[density , parkpis , markcolor] = pistonpos_density (float);
 if length(density) == length(parkpis)
 figure(H);subplot('Position',[lft(4) bot(3) wid hgt]);
     plot(density,parkpis,'--^' , 'color' , markcolor , 'MarkerEdgeColor' , markcolor);
@@ -95,7 +95,7 @@ end
 % Extraction of the deltaV and the surface piston position
 % from another program.
 
-[deltaV , pispos , markcolor] = pistonpos_compressibility (nbfloat, document);
+[deltaV , pispos , markcolor] = pistonpos_compressibility (float);
 if length(deltaV) == length(pispos)
 figure(H);subplot('Position',[lft(5) bot(3) wid hgt]);
     plot(deltaV,pispos,'--^' , 'color' , markcolor , 'MarkerEdgeColor' , markcolor);

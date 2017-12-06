@@ -1,4 +1,4 @@
-function [ ] = plot_float ( nbfloat , document , floatnum , floatbatt , typebatt )
+function [ ] = plot_float ( float,dbdat , floatnum , floatbatt , typebatt )
 % Created by Benjamin Briat, for CSIRO.
 % This function permits to plot useful information about the float.
 %
@@ -8,7 +8,7 @@ function [ ] = plot_float ( nbfloat , document , floatnum , floatbatt , typebatt
 %
 %
 global ARGO_SYS_PARAM;
-fnm = strcat(ARGO_SYS_PARAM.web_dir, '/tech/img/',nbfloat);
+fnm = strcat(ARGO_SYS_PARAM.web_dir, '/tech/img/',num2str(float(1).wmo_id));
 
 if ~isdir(fnm)
     mkdir(fnm)
@@ -18,18 +18,18 @@ H = figure('Position',[10,100,1600,900]);
 hold on
 H2 = figure('Position',[10,100,900,900]);
 set(gca,'fontsize',16);
-plot_battery(nbfloat , document, H, H2,fnm) ;
-ground = plot_bathymetry(nbfloat , document, H, H2,fnm);
-plot_weight(nbfloat , document, H, H2, ground,fnm ) ;
-plot_leak(nbfloat , document, H, H2,fnm) ;
-plot_pumpmotor(nbfloat , document, H, H2,fnm );
-plot_pressensor(nbfloat , document, H, H2,fnm );
-plot_airblad(nbfloat , document, H, H2,fnm );
-plot_parkpressure( nbfloat , document, H, H2,fnm)
-plot_qc(nbfloat , document, H, H2,fnm) ;
+plot_battery(float , H, H2,fnm) ;
+ground = plot_bathymetry(float , H, H2,fnm);
+plot_weight(float , H, H2, ground,fnm ) ;
+plot_leak(float , H, H2,fnm) ;
+plot_pumpmotor(float , H, H2,fnm );
+plot_pressensor(float , H, H2,fnm );
+plot_airblad(float , H, H2,fnm );
+plot_parkpressure( float , H, H2,fnm)
+plot_qc(float , H, H2,fnm) ;
 
 figure(H)
-plot_information(nbfloat , document , floatnum , floatbatt , typebatt);
+plot_information(float ,dbdat , floatnum , floatbatt , typebatt);
 
 
 my_save_fig([fnm '/overall'],'clobber')

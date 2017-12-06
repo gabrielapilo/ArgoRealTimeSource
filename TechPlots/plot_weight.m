@@ -1,4 +1,4 @@
-function [ ] = plot_weight( nbfloat , document, H, H2, ground,fnm)
+function [ ] = plot_weight( float , H, H2, ground,fnm)
 %
 % This function permits to plot 3 different things in order to detect a
 % gain of weight:
@@ -16,7 +16,7 @@ hgt = 0.12;
 %% Plot 1: evolution of the weight.
 
 % Determine the weight of the float through another program.
-[weight] = get_weight_float(nbfloat , document) ;
+[weight] = get_weight_float(float) ;
 
 % Plot the result with the usual test markcolor.
 markcolor = usual_test(weight(3:end)) ;
@@ -37,23 +37,23 @@ clf
 
 %% Plot 2: evolution of surface piston position with ice detection.
 
-% Load the document
-lg = length(document.float);
+
+lg = length(float);
 prof = 1:lg;
 
 figure(H);subplot('Position',[lft(4) bot(2) wid hgt]);
 hold on
 
-if isfield(document.float,'pistonpos')
+if isfield(float,'pistonpos')
     
-    if isfield(document.float,'icedetection') 
+    if isfield(float,'icedetection') 
         
         % Extraction of the relevant parameters
         ice = nan(1,lg);
         position = nan(1,lg);
         for ind = 1:lg
-            ice(ind) = mean(document.float(ind).icedetection);
-            position(ind) = mean(document.float(ind).pistonpos);
+            ice(ind) = mean(float(ind).icedetection);
+            position(ind) = mean(float(ind).pistonpos);
         % Plotting of this information with a code of colour precise:
         % 
         % Green : ice has been detected.
@@ -75,7 +75,7 @@ if isfield(document.float,'pistonpos')
     else
         position = nan(1,lg);
         for ind = 1:lg
-            position(ind) = mean(document.float(ind).pistonpos);
+            position(ind) = mean(float(ind).pistonpos);
         end
         figure(H);subplot('Position',[lft(4) bot(2) wid hgt]);
         scatter(1:lg , position,'+','blue')
@@ -102,18 +102,18 @@ end
 %% Plot 3: evolution of parking piston position with grounding detection.
 
 
-if isfield(document.float,'parkpistonpos')
+if isfield(float,'parkpistonpos')
     
-%     if isfield(document.float,'grounded')
+%     if isfield(float,'grounded')
 
 %         % Extract relevant parameters
 %         ground = zeros(1,lg);
 %         position = nan(1,lg);
 %         for ind = 1:lg
-%             if ~isempty(strmatch(document.float(ind).grounded,'Y'))
+%             if ~isempty(strmatch(float(ind).grounded,'Y'))
 %                 ground(ind) = 1;
 %             end
-%             position(ind) = mean(document.float(ind).parkpistonpos);
+%             position(ind) = mean(float(ind).parkpistonpos);
 %         % Plotting of this information with a code of colour precise:
 %         % 
 %         % Magenta : ground has been detected.
@@ -141,7 +141,7 @@ if isfield(document.float,'parkpistonpos')
 %     else
         position = nan(1,lg);
         for ind = 1:lg
-            position(ind) = mean(document.float(ind).parkpistonpos);
+            position(ind) = mean(float(ind).parkpistonpos);
         end
         figure(H);subplot('Position',[lft(5) bot(2) wid hgt]);
         hold on

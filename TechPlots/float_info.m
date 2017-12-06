@@ -1,4 +1,4 @@
-function [ status , typepres , bgc , typefloat , batterytype , last_date,  hull] = float_info( nbfloat , document , floatnum , floatbatt , typebatt )
+function [ status , typepres , bgc , typefloat , batterytype , last_date,  hull] = float_info( float,floatnum , floatbatt , typebatt )
 
 %% Comments
 %
@@ -40,7 +40,7 @@ fclose(fid);
 %% Argomaster spreadsheet
 
 % Focus on the information from the line of the float under study.
-index = find(floatnum == str2num(nbfloat));
+index = find(floatnum == float(1).wmo_id);
 % rowdet = strcat('A',num2str(index),':AE',num2str(index)) ;
 % [numinfo , textinfo ] = xlsread ('argomaster.csv',rowdet) ;
 
@@ -53,7 +53,7 @@ hull = textinfo{8}(index);
 %% Argomaster sensor info spreasheet
 
 % Focus on the information from the line of the float under study
-index2 = find(floatbatt == str2num(nbfloat));
+index2 = find(floatbatt == float(1).wmo_id);
 batterytype = typebatt(index2).battery;
 
 
@@ -66,9 +66,9 @@ batterytype = typebatt(index2).battery;
 % resfloat = 4 : Sea Bird
 % resfloat = 5 : Sololl
 
-if isfield(document.float , 'maker')
+if isfield(float , 'maker')
 
-    resfloat = document.float.maker ;
+    resfloat = float.maker ;
     if resfloat == 1
         typefloat = 'APEX';
     end
@@ -90,10 +90,10 @@ end
 
 % Last report date:
 
-if length(document.float) > 0
-    if isfield(document.float , 'datetime_vec')
-        if size(document.float(end).datetime_vec,2) == 6
-            last_report = document.float(end).datetime_vec(end,:);
+if length(float) > 0
+    if isfield(float , 'datetime_vec')
+        if size(float(end).datetime_vec,2) == 6
+            last_report = float(end).datetime_vec(end,:);
             last_report = last_report(1:3);
             last_date = mat2str(last_report);
             last_date = last_date(2 : end - 1);

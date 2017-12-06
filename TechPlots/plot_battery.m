@@ -1,4 +1,4 @@
-function [ ] = plot_battery( nbfloat , document, H, H2,fnm)
+function [ ] = plot_battery( float , H, H2,fnm)
 % This function permits to plot every data around battery in order to get
 % easily an failure of it.
 %
@@ -16,7 +16,7 @@ bot = 0.8:-.1872:0.05 ;
 wid = 0.13;
 hgt = 0.12;
 
-lg = length(document.float);
+lg = length(float);
 axisX = [1:lg];
 
 % The strucuture of the program is the same for each plot.
@@ -38,11 +38,11 @@ flds = {'voltage','batterycurrent';'parkbatteryvoltage','parkbatterycurrent';...
 
 for ind = 1:lg
     for b = 1:size(flds,1)
-        if isfield(document.float,flds{b,1})
-            eval(['volt' num2str(b) '(ind) = nanmean(document.float(ind).(flds{b,1}));'])
+        if isfield(float,flds{b,1})
+            eval(['volt' num2str(b) '(ind) = nanmean(float(ind).(flds{b,1}));'])
         end
-        if isfield(document.float,flds{b,2})        
-            eval(['int' num2str(b) '(ind) = nanmean(document.float(ind).(flds{b,2}));'])
+        if isfield(float,flds{b,2})        
+            eval(['int' num2str(b) '(ind) = nanmean(float(ind).(flds{b,2}));'])
         end
     end
 end
@@ -52,9 +52,9 @@ end
 
 % Consider both voltage an battery current, because sometimes there is no
 % information about the current, two assets are required:
-if isfield(document.float,'voltage')
+if isfield(float,'voltage')
     
-%     if isfield(document.float,'batterycurrent')
+%     if isfield(float,'batterycurrent')
         
         % If the current information are relevant, consider the power of
         % the float:
@@ -92,7 +92,7 @@ clf
 %         % Extract the list of voltage from the matfile.
 %         volt1 = nan(1,lg);
 %         for ind = 1:lg
-%             volt1(ind) = mean(document.float(ind).voltage);
+%             volt1(ind) = mean(float(ind).voltage);
 %         end
 %         
 %         markcolor = flag_battery(volt1) ;
@@ -109,9 +109,9 @@ end
 
 % Consider both voltage an battery current, because sometimes there is no
 % information about the current, two assets are required:
-if isfield(document.float,'parkbatteryvoltage')
+if isfield(float,'parkbatteryvoltage')
     
-%     if isfield(document.float,'parkbatterycurrent')
+%     if isfield(float,'parkbatterycurrent')
                 
         % If the current information are relevant, consider the power of
         % the float:
@@ -149,7 +149,7 @@ clf
 %         % Extract the list of voltage from the matfile.
 %         volt2 = nan(1,lg);
 %         for ind = 1:lg
-%             volt2(ind) = mean(document.float(ind).parkbatteryvoltage);
+%             volt2(ind) = mean(float(ind).parkbatteryvoltage);
 %         end
 %         markcolor = flag_battery(volt2) ;
 %         subplot(5,5,2);
@@ -164,9 +164,9 @@ end
 
 % Consider both voltage an battery current, because sometimes there is no
 % information about the current, two assets are required:
-if isfield(document.float,'SBEpumpvoltage')
+if isfield(float,'SBEpumpvoltage')
     
-%     if isfield(document.float,'SBEpumpcurrent')
+%     if isfield(float,'SBEpumpcurrent')
 
         % If the current information are relevant, consider the power of
         % the float:
@@ -205,7 +205,7 @@ clf
 %         % Extract the list of voltage from the matfile.
 %         volt5 = nan(1,lg);
 %         for ind = 1:lg
-%             volt5(ind) = mean(document.float(ind).SBEpumpvoltage);
+%             volt5(ind) = mean(float(ind).SBEpumpvoltage);
 %         end
 %         markcolor = flag_battery(volt5) ;
 %         subplot(5,5,3);
@@ -222,9 +222,9 @@ end
 
 % Consider both voltage an battery current, because sometimes there is no
 % information about the current, two assets are required:
-if isfield(document.float,'airpumpvoltage')
+if isfield(float,'airpumpvoltage')
     
-%      if isfield(document.float,'airpumpcurrent')
+%      if isfield(float,'airpumpcurrent')
                 
         % If the current information are relevant, consider the power of
         % the float:
@@ -261,7 +261,7 @@ clf
 %         % Extract the list of voltage from the matfile.
 %         volt3 = nan(1,lg);
 %         for ind = 1:lg
-%             volt3(ind) = mean(document.float(ind).airpumpvoltage);
+%             volt3(ind) = mean(float(ind).airpumpvoltage);
 %         end
 %         markcolor = flag_battery(volt3) ;
 %         subplot(5,5,4);
@@ -275,9 +275,9 @@ end
 
 %% BUoyancy pump:
 
-if isfield(document.float,'buoyancypumpvoltage')
+if isfield(float,'buoyancypumpvoltage')
     
-%     if isfield(document.float,'buoyancypumpcurrent')
+%     if isfield(float,'buoyancypumpcurrent')
         
         % If the current information are relevant, consider the power of
         % the float:
@@ -315,7 +315,7 @@ clf
 %     else
 %         volt4 = nan(1,lg);
 %         for ind = 1:lg
-%             volt4(ind) = mean(document.float(ind).buoyancypumpvoltage);
+%             volt4(ind) = mean(float(ind).buoyancypumpvoltage);
 %         end
 %         markcolor = flag_battery(volt4) ;
 %         subplot(5,5,5);

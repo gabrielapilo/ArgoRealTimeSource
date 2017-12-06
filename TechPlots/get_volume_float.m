@@ -1,4 +1,4 @@
-function [ result ] = get_volume_float( nbfloat , document )
+function [ result ] = get_volume_float( float )
 % This function permits to determine an estimation of the volume of a float
 % at each cycle.
 %
@@ -6,25 +6,25 @@ function [ result ] = get_volume_float( nbfloat , document )
 
 % Load the document
  
-if isfield(document.float,'p_internal') & isfield(document.float,'t_raw')
+if isfield(float,'p_internal') & isfield(float,'t_raw')
     
     % Initialization
-    pressure = nan ( 1 , length(document.float)) ;
+    pressure = nan ( 1 , length(float)) ;
     temperature = nan( 1 , length(pressure) ) ;  
     
     for indice = 1 : length(pressure)
         
         % Extract the temperature of the water outside, we assume the
         % permanent regime has been reached and t(int) = t(ext)
-        if length(document.float(indice).t_raw) > 0
-            temperature(indice) = document.float(indice).t_raw(1) ;
+        if length(float(indice).t_raw) > 0
+            temperature(indice) = float(indice).t_raw(1) ;
         else
             temperature(indice) = nan ;
         end
         
         % Extract the pressure at parking
-        if length(document.float(indice).p_internal) > 0
-            pressure(indice) = mean(document.float(indice).p_internal) ;
+        if length(float(indice).p_internal) > 0
+            pressure(indice) = mean(float(indice).p_internal) ;
         else
             pressure(indice) = nan ;
         end

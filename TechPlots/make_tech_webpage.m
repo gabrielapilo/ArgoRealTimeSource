@@ -3,6 +3,7 @@ function make_tech_webpage(nbfloat)
 % based on Ben Briat's code.
 
 global ARGO_SYS_PARAM;
+nbfloat = num2str(nbfloat);
 fnm = strcat(ARGO_SYS_PARAM.web_dir, 'tech/',nbfloat);
 fnmi = strcat(ARGO_SYS_PARAM.web_dir, 'tech/img/',nbfloat);
 fnmf =  strcat(ARGO_SYS_PARAM.web_dir, 'tech/nbfloat');

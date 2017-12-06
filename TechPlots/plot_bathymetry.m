@@ -1,4 +1,4 @@
-function ground = plot_bathymetry( nbfloat , document, H, H2,fnm)
+function ground = plot_bathymetry( float, H, H2,fnm)
 global ARGO_SYS_PARAM;
 
 %
@@ -24,7 +24,7 @@ wid = 0.13;
 hgt = 0.12;
 
 % Initialization of the important parameters:
-lg = length(document.float);
+lg = length(float);
 latitude = nan(1,lg);
 longitude = nan(1,lg);
 pressure = nan(1,lg);
@@ -32,14 +32,14 @@ ground = nan(1,lg);
 
 % Extraction of important parameters:
 for index=1:lg
-    latitude(index) = mean(document.float(index).lat);
-    longitude(index) = mean(document.float(index).lon);
-    if isfield(document.float,'ground')
-        ground(index) = mean(document.float(index).grounded);
+    latitude(index) = mean(float(index).lat);
+    longitude(index) = mean(float(index).lon);
+    if isfield(float,'ground')
+        ground(index) = mean(float(index).grounded);
     end
-    if length(max(document.float(index).p_raw)) > 0
+    if length(max(float(index).p_raw)) > 0
         % Get the maximum pressure reached by the float.
-        pressure(index) = max(document.float(index).p_raw);
+        pressure(index) = max(float(index).p_raw);
     end
 end
 

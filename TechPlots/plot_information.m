@@ -1,4 +1,4 @@
-function [ ] = plot_information( nbfloat , document , floatnum , floatbatt , typebatt, hull)
+function [ ] = plot_information( float ,dbdat, floatnum , floatbatt , typebatt)
 % This function permits to plot information about the float.
 lft = [0.05:1/5:0.95];
 bot = 0.8:-.1872:0.05 ;
@@ -6,12 +6,12 @@ wid = 0.13;
 hgt = 0.3;
 
 % Extract the information from another program:
-[ status , typepres , bgc , typefloat , batterytype , last_date, hull ] = float_info( nbfloat , document , floatnum , floatbatt , typebatt );
+[ status , typepres , bgc , typefloat , batterytype , last_date, hull ] = float_info( float , floatnum , floatbatt , typebatt );
 
 % Determine the position of the information:
 subplot('Position',[lft(1) bot(5) wid hgt]);
 axis off
-title(nbfloat);
+title(num2str(dbdat.wmo_id));
 
 % Status of the float (dead or alive).
 t = text(0.1 , 0.97 , 'Status : ');
@@ -21,7 +21,7 @@ text(0.5 , 0.97 , status );
 % Number of profile done by the float.
 t = text(0.1 , 0.87 , 'Nb prof : ');
 t.FontWeight = 'bold';
-text(0.5 , 0.87 , int2str(length(document.float)));
+text(0.5 , 0.87 , int2str(length(float)));
 
 % last report date of the float
 t = text(0.1 , 0.77 , 'Last date : ');
@@ -29,7 +29,12 @@ t.FontWeight = 'bold';
 text(0.5 , 0.77 , last_date);
 
 
-[ res ] = argo_irid( nbfloat , document );
+if dbdat.iridium == 1
+    res = 'Iridium';
+else
+    res = 'Argos';
+end
+    
 % System of satellite (ARGOs or Iridium).
 t = text(0.1 , 0.62 , 'Satellite : ');
 t.FontWeight = 'bold';

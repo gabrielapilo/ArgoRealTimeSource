@@ -288,7 +288,7 @@ st = system(['mv -f ' file2 ' ' file1]);
 
 % now regenerate tech web pages:
 if ~isempty(strmatch('CSIRO',ARGO_SYS_PARAM.processor))
-    if(~isempty(float)); plot_tech(dbdat.wmo_id);end
+    if(~isempty(float)); plot_tech(float,dbdat);end
 end
 
 

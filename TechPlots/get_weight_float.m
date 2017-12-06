@@ -1,10 +1,10 @@
-function [ weight ] = get_weight_float(nbfloat , document)
+function [ weight ] = get_weight_float(float)
 %
 % This function permits to get the weight evolution of a float through the
 % CTD profile and the position of the piston at parking.
 
 % Load the document and considering the number of cycles.
-lg = length(document.float);
+lg = length(float);
 
 % Initialization of each important parameter.
 salinity = nan(1,lg);
@@ -13,15 +13,15 @@ pressure = nan(1,lg);
 parkpis = nan(1,lg);
 
 
-if isfield(document.float,'park_s') & isfield(document.float,'park_t') & ...
-        isfield(document.float,'park_p') & isfield(document.float,'parkpistonpos')
+if isfield(float,'park_s') & isfield(float,'park_t') & ...
+        isfield(float,'park_p') & isfield(float,'parkpistonpos')
     
     % Create the list of each important parameters.
     for k=1:lg
-        salinity(k) = mean(document.float(k).park_s) ;
-        temperature(k) = mean(document.float(k).park_t) ;
-        pressure(k) = mean(document.float(k).park_p) ;
-        parkpis(k) = mean(document.float(k).parkpistonpos) ;
+        salinity(k) = mean(float(k).park_s) ;
+        temperature(k) = mean(float(k).park_t) ;
+        pressure(k) = mean(float(k).park_p) ;
+        parkpis(k) = mean(float(k).parkpistonpos) ;
     end
     
     % Determine the density of the water through the CTD profile.

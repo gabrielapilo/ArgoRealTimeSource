@@ -1,4 +1,4 @@
-function [ ] = plot_airblad( nbfloat , document,H,H2,fnm)
+function [ ] = plot_airblad( float ,H,H2,fnm)
 % This function permits to characterize a problem of air bladder.
 lft = [0.05:1/5:0.95];
 bot = 0.8:-.1872:0.05 ;
@@ -6,14 +6,14 @@ wid = 0.13;
 hgt = 0.12;
 
 % Initialization
-lg = length(document.float);
+lg = length(float);
 airbl = nan(1,lg);
 
-if isfield(document.float,'airbladderpres')
+if isfield(float,'airbladderpres')
     
     % Extract the evolution of the air bladder pressure through time.
     for ind = 1:lg
-        airbl(ind) = mean(document.float(ind).airbladderpres);
+        airbl(ind) = mean(float(ind).airbladderpres);
     end
     
     

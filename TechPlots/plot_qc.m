@@ -1,4 +1,4 @@
-function [ ] = plot_qc( nbfloat , document,H,H2,fnm)
+function [ ] = plot_qc( float ,H,H2,fnm)
 % This function permits to characterize a problem of air bladder.
 lft = [0.05:1/5:0.95];
 bot = 0.8:-.1872:0.05 ;
@@ -7,16 +7,16 @@ hgt = 0.12;
 
 %% Initialization
 
-lg = length(document.float);
+lg = length(float);
 
 %% Salinity part
 
 salinity_test = nan(1,lg);
 
-if isfield(document.float,'s_qc')
+if isfield(float,'s_qc')
     
     for ind = 1:lg
-        sal_element = document.float(ind).s_qc ;
+        sal_element = float(ind).s_qc ;
         salinity_test(ind) = overall_qcflag_tech(sal_element) ;
     end
     
@@ -36,10 +36,10 @@ end
 
 temperature_test = nan(1,lg);
 
-if isfield(document.float,'t_qc')
+if isfield(float,'t_qc')
     
     for ind = 1:lg
-        sal_element = document.float(ind).t_qc ;
+        sal_element = float(ind).t_qc ;
         temperature_test(ind) = overall_qcflag_tech(sal_element) ;
     end
     
@@ -55,10 +55,10 @@ end
 
 pressure_test = nan(1,lg);
 
-if isfield(document.float,'p_qc')
+if isfield(float,'p_qc')
     
     for ind = 1:lg
-        sal_element = document.float(ind).p_qc ;
+        sal_element = float(ind).p_qc ;
         pressure_test(ind) = overall_qcflag_tech(sal_element) ;
     end
     
@@ -75,10 +75,10 @@ end
 
 conductivity_test = nan(1,lg);
 
-if isfield(document.float,'cndc_qc')
+if isfield(float,'cndc_qc')
     
     for ind = 1:lg
-        sal_element = document.float(ind).cndc_qc ;
+        sal_element = float(ind).cndc_qc ;
         conductivity_test(ind) = overall_qcflag_tech(sal_element) ;
     end
     
@@ -97,10 +97,10 @@ end
 
 oxygen_test = nan(1,lg);
 
-if isfield(document.float,'oxy_qc')
+if isfield(float,'oxy_qc')
     
     for ind = 1:lg
-        sal_element = document.float(ind).oxy_qc ;
+        sal_element = float(ind).oxy_qc ;
         oxygen_test(ind) = overall_qcflag_tech(sal_element) ;
     end
     
@@ -117,10 +117,10 @@ end
 
 position_test = nan(1,lg);
 
-if isfield(document.float,'pos_qc')
+if isfield(float,'pos_qc')
     
     for ind = 1:lg
-        sal_element = document.float(ind).pos_qc ;
+        sal_element = float(ind).pos_qc ;
         position_test(ind) = overall_qcflag_tech(sal_element) ;
     end
     
