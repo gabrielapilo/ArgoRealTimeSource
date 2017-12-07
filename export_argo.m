@@ -59,7 +59,7 @@ for ii = 1:length(PROC_RECORDS)
     pr = PROC_RECORDS(ii);
     
     [fpp,dbdat]=getargo(pr.wmo_id);
-    if(~strcmp('evil',dbdat.status) & ~dbdat.RBR)
+    if ~strcmp('evil',dbdat.status) & ~strcmp('hold',dbdat.status)
         % GTS message
         pnum = pr.profile_number;
         pno=sprintf('%3.3i',pnum);

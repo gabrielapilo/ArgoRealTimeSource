@@ -1994,7 +1994,7 @@ end
 
 netcdf.close(ncid);
 
-if ~dbdat.RBR & ~strcmp('evil',dbdat.status)
+if ~strcmp('hold',dbdat.status) & ~strcmp('evil',dbdat.status)
     [status,ww] = system(['cp -f ' fnm ' ' ARGO_SYS_PARAM.root_dir 'export']);
     if status~=0
         logerr(3,['Copy of ' fnm ' to export/ failed:' ww]);
