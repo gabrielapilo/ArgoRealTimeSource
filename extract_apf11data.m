@@ -163,7 +163,8 @@ if m>0   % are there any apf 11data?
                     %                 try
                     crash=0;
                     % process iridium - where all the magic happens!!
-                    if(~isempty(strmatch(dbdat.status,'live')) | ~isempty(strmatch(dbdat.status,'suspect')))
+                    if ~isempty(strmatch(dbdat.status,'live')) | ~isempty(strmatch(dbdat.status,'suspect')) ...
+                             | ~isempty(strmatch(dbdat.status,'hold'))
                         process_iridium_apf11(pmeta,dbdat,opts);
                     elseif(~isempty(strmatch(dbdat.status,'expected')))
                         logerr(3,['? New float, Iridium ID=' num2str(argosid)]);
