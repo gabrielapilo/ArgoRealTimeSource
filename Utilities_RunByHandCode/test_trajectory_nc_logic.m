@@ -10,7 +10,7 @@ for bb =1:length(fns)
     if strfind(fns(bb).name,'.')
         continue
     end
-    if isempty(strfind(fns(bb).name,'5905022'))
+    if isempty(strfind(fns(bb).name,'5901627'))
         continue
     end
     fln = fns(bb).name;

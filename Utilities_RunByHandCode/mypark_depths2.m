@@ -184,7 +184,7 @@ for j2= 1:length(x_fl);
         if ~isempty(special_text)
             title([special_text,'   Float ',num2str(j),' at ',num2str(abs(y_fl(j))),'S,',num2str(x_fl(j)),'E'],'color','r','fontsize',14,'hor','left')
             if iprint == 1
-                eval(['print -dpsc park_depths_',num2str(j),'.ps'])
+%                 eval(['print -dpsc park_depths_',num2str(j),'.ps'])
                 eval(['print -dtiff park_depths_',num2str(j),'.tif'])
                 disp(['Printed park_depths_',num2str(j)])
             end
@@ -217,7 +217,7 @@ for j2= 1:length(x_fl);
             ylabel('number of occurences')
             
             if iprint == 1
-                eval(['print -dpsc park_depths_',num2str(j),'.ps'])
+%                 eval(['print -dpsc park_depths_',num2str(j),'.ps'])
                 eval(['print -dtiff park_depths_',num2str(j),'.tif'])
                 disp(['Printed park_depths_',num2str(j)])
             end

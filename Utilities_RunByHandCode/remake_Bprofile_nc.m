@@ -173,7 +173,7 @@ kk = [  5904924 %from p=27:183 Just copy over
             pns = num2str(p);
             pn(end-length(pns)+1:end) = pns;
             fnm = [ddir num2str(kk(ii)) '/DFILES/BD'  num2str(kk(ii)) '_' pn '.nc'];
-            rfnm = [rdir num2str(dbdat.wmo_id) '/BR'  num2str(dbdat.wmo_id) '_' pn '.nc'];
+            rfnedm = [rdir num2str(dbdat.wmo_id) '/BR'  num2str(dbdat.wmo_id) '_' pn '.nc'];
             pro = float(p);
             argoprofile_Bfile_nc(dbdat,pro);
             if exist(fnm,'file') == 2

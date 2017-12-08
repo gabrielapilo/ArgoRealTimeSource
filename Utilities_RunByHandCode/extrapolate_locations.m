@@ -40,9 +40,15 @@ end
 
 for jj=j-10:j
     l=l+1;
-    startjday(l)=fpp(jj).jday(1);
-    startlat(l)=fpp(jj).lat(1);
-    startlon(l)=fpp(jj).lon(1);
+    if ~isempty(fpp(jj).jday)
+        startjday(l)=fpp(jj).jday(1);
+        startlat(l)=fpp(jj).lat(1);
+        startlon(l)=fpp(jj).lon(1);
+    else
+        startjday(l)=NaN;
+        startlat(l)=NaN;
+        startlon(l)=NaN;
+    end        
 end
 
 
@@ -54,10 +60,10 @@ for jj=j+1:length(fpp)
     %         endlon(kk)=fpp(jj).lon(1);
 end
 
+ig = ~isnan(startjday);
 
-
-latarr=interp1([startjday],[startlat],[endjday],[],'extrap')
-lonarr=interp1([startjday],[startlon],[endjday],[],'extrap')
+latarr=interp1([startjday(ig)],[startlat(ig)],[endjday],[],'extrap')
+lonarr=interp1([startjday(ig)],[startlon(ig)],[endjday],[],'extrap')
     
     
 % now regenerate and save mat files:

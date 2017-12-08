@@ -12,7 +12,7 @@ end
 getdbase(-1)
 PREC_FNM = [ARGO_SYS_PARAM.root_dir 'Argo_proc_records'];
 
-kk = [5905043];
+kk = [5901165];
 ipath = ARGO_SYS_PARAM.iridium_path;
 for ii = 1:length(kk)
     disp(ii)
@@ -24,9 +24,9 @@ for ii = 1:length(kk)
         ARGO_SYS_PARAM.iridium_path = [ipath 'iridium_processed/' ...
             num2str(dbdat.wmo_id) '/'];
 %     if dbdat.oxy
-        for j=37%1:length(fpp)
+        for j=21%:length(fpp)
 %             [ii j]
-            if ~isempty(fpp(j).lat)
+%             if ~isempty(fpp(j).lat)
 %                 try
                     pmeta.wmo_id = dbdat.wmo_id;
                     pmeta.ftptime = fpp(j).ftp_download_jday(1);
@@ -35,14 +35,16 @@ for ii = 1:length(kk)
                     pn(end-length(pns)+1:end) = pns;
                     pmeta.ftp_fname = [dbdat.argos_hex_id '.' pn '.msg'];
                     opts.rtmode = 0;
-                      process_iridium(pmeta,dbdat,opts) %need to recalculate bbp
+%                       process_iridium(pmeta,dbdat,opts) %need to recalculate bbp
 %                     argoprofile_nc(dbdat,fpp(j))
-%                     argoprofile_Bfile_nc(dbdat,fpp(j))
+                    argoprofile_Bfile_nc(dbdat,fpp(j))
+                    %copy to export
+system(['cp ' ARGO_SYS_PARAM.root_dir '/netcdf/' num2str(dbdat.wmo_id) '/BR' num2str(dbdat.wmo_id) '_' pn '.nc /home/argo/ArgoRT/export'])
                     % or could run argoprofile_nc here too
 %                 catch
 %                     bad = [bad;ii,j];
 %                 end
-            end
+%             end
         end
 %     end
 end

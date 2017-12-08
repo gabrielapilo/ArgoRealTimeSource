@@ -12,16 +12,16 @@ getdbase(0);
 count = 0; %using this to just do 5 floats.
 
 %% Iridium
-for ii = 1:length(THE_ARGO_FLOAT_DB)
+for ii = 709:length(THE_ARGO_FLOAT_DB)
     %testing the creation of iridium traj files
     if isempty(strfind(THE_ARGO_FLOAT_DB(ii).controlboardnumstring,'i'))
         continue
     end
     %only webb and seabird iridium floats
-    if THE_ARGO_FLOAT_DB(ii).maker ~= 4
+    if THE_ARGO_FLOAT_DB(ii).maker ~= 4 & THE_ARGO_FLOAT_DB(ii).maker ~= 1 
         continue
     end
-%     if THE_ARGO_FLOAT_DB(ii).wmo_id ~= 5905022
+%     if THE_ARGO_FLOAT_DB(ii).wmo_id ~= 7900609
 %         
 %         continue
 %     end
@@ -39,10 +39,10 @@ for ii = 1:length(THE_ARGO_FLOAT_DB)
         %construct a location for the log files that have been processed
         floc = [ARGO_SYS_PARAM.iridium_path 'iridium_processed/' ...
             num2str(THE_ARGO_FLOAT_DB(ii).wmo_id) '/'];
+%         floc = ARGO_SYS_PARAM.iridium_path;
         
         % get the file metadata information
         pmeta.wmo_id = THE_ARGO_FLOAT_DB(ii).wmo_id;
-        not_last = 1;
         %load the traj mat file just once:
         tfnm = [ARGO_SYS_PARAM.root_dir 'trajfiles/T' num2str(pmeta.wmo_id)];
         if exist([tfnm '.mat'],'file');
@@ -66,9 +66,6 @@ for ii = 1:length(THE_ARGO_FLOAT_DB)
             pmeta.ftp_fname = [fn '.' pn '.log'];
             pmeta.pn = j;
             
-            if j == length(fpp)
-                not_last = 0;
-            end
             % create the netcdf and matlab trajectory files.
             disp(['WMO: ' num2str(pmeta.wmo_id) ', pn: ' num2str(pmeta.pn)])
 %             try
@@ -103,6 +100,10 @@ for ii = 1:length(THE_ARGO_FLOAT_DB)
             %creation:
 %             try
                 trajectory_iridium_nc(dbdat,fpp,traj)
+                %open a file to write the message out for later checking
+                fid = fopen('trajfilesremade_Nov2017.txt','a');
+                fprintf(fid,'%s\n',num2str(pmeta.wmo_id));
+                fclose(fid);
 %             catch Me
 %                 %open a file to write the message out for later checking
 %                 fid = fopen('traj_runtime_errors.txt','a');
@@ -158,16 +159,16 @@ return
 % next step is to put code into processing
 %and copy to Lisa
 clear
-
-fldn = dir('/home/argo/ArgoRT/exporttest/')
+fn = load('trajfilesremade_Nov2017.txt');
+fldn = dir('/home/argo/ArgoRT/netcdf/')
 matdir = '/home/argo/ArgoRT/trajfiles/';
 
-for a = 3:length(fldn)
+for a = 1:length(fn)
 %     if fldn(a).isdir == 0 | fldn(a).name(1) == '.'
 %         continue
 %     end
-%     system(['cp /home/argo/ArgoRT/netcdf_test/' fldn(a).name '/*.nc /home/argo/ArgoRT/exporttest/'])
-    system(['cp ' matdir 'T' fldn(a).name(1:7) '.mat /home/argo/ArgoRT/exporttest/'])
+    system(['cp /home/argo/ArgoRT/netcdf/' num2str(fn(a)) '/*Rtraj*.nc /home/argo/ArgoRT/exporttest/'])
+    system(['cp ' matdir 'T' num2str(fn(a)) '.mat /home/argo/ArgoRT/exporttest/'])
     
 end
 %then ran writeGDAC manually to transfer the files to ifremer only.
