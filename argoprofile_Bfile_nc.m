@@ -937,7 +937,7 @@ if dbdat.oxy %  & dbdat.subtype~=1006
         if isfield(fp,'Rphase_raw')  %( dbdat.subtype==1002 || dbdat.subtype==1012 || dbdat.subtype==1006 || dbdat.subtype==1020 )
 
             NRPHASEDOXYID=netcdf.defVar(ncid,'RPHASE_DOXY','NC_FLOAT',[N_LEVELSID,N_PROFID]);
-            netcdf.putAtt(ncid,NRPHASEDOXYID,'long_name','Uncalibrated phase shift reported by oxygen sensor');
+            netcdf.putAtt(ncid,NRPHASEDOXYID,'long_name','Uncalibrated red phase shift reported by oxygen sensor');
             netcdf.putAtt(ncid,NRPHASEDOXYID,'standard_name','-');
             netcdf.putAtt(ncid,NRPHASEDOXYID,'units','degree');
             netcdf.putAtt(ncid,NRPHASEDOXYID,'_FillValue',single(fval));
