@@ -34,6 +34,17 @@ if isempty(ik)
     return
 end
 
+%clear out existing interpolations and re-do.
+ii = find(cellfun(@(x) x==8,{float.pos_qc},'Uniformoutput',1)==1);
+ij = find(cellfun(@(x) x==9,{float.pos_qc},'Uniformoutput',1)==1);
+ik = sort([ii ij]);
+for g = 1:length(ik)
+    float(ik(g)).lat = NaN;
+    float(ik(g)).lon = NaN;
+    float(ik(g)).pos_qc = 9;
+    float(ik(g)).jday = [];
+    float(ik(g)).position_accuracy=' ';
+end
 %look for different groups of missing postions:
 iid = find(diff(ik)>1);
 if isempty(iid)
