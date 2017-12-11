@@ -29,12 +29,12 @@ a=[a
 %         then check for missing files
 
 % check for zero sized files
-for j=1:m
-    if (a{j,5} == 0)
-        % mail out error
-        mail_out_iridium_log_error([a{j,1}],2)
-    end
-end
+% for j=1:m
+%     if (a{j,5} == 0)
+%         % mail out error
+%         mail_out_iridium_log_error([a{j,1}],2)
+%     end
+% end
 
 % re-list as we may have lost some
 a=dirc([idatapath '*.*.log']);
