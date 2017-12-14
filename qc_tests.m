@@ -151,16 +151,11 @@ end
            fp.s_oxygen_qc(jj) = 9;
        end
    end
-
-   if ~isfield(fp,'testsperformed')
-      fp.testsperformed = zeros(1,19);
-   end
-   if ~isfield(fp,'testsfailed')
-      fp.testsfailed = zeros(1,19);
-   end
-   if ~isfield(fp,'pos_qc')
-      fp.pos_qc = zeros(1);
-   end
+   
+   %set all tests to zeros before starting
+   fp.testsperformed = zeros(1,19);
+   fp.testsfailed = zeros(1,19);
+   fp.pos_qc = zeros(1);
 
    nlev = length(fp.p_raw);
    if isfield(fp,'p_oxygen')
