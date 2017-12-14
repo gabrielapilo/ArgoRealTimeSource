@@ -257,6 +257,7 @@ if any(stage==1)
             else
                 pro.lon(gps)=str2num(gg(comma(3)+1:end));
             end
+            if pro.lon(gps)<0; pro.lon(gps)=360+pro.lon(gps); end
             pro.datetime_vec(gps,:)=gregorian(pro.jday_location(gps));
             if numlines<10
                 previouslocation=[previouslocation gps];
