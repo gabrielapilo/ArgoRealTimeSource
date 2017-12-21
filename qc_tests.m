@@ -282,7 +282,7 @@ for ii = ipf(:)'
     % Test6: Global Range Test:
     fp.testsperformed(6) = 1;
     
-    ip = fp.p_raw < -5;
+    ip = find(fp.p_raw < -5);
     jj = find(fp.t_raw<=-2.5 | fp.t_raw>40.);
     kk = find(fp.s_raw<2.0 | fp.s_raw>41.);
     if ~isempty(ip)
@@ -610,63 +610,30 @@ for ii = ipf(:)'
     % Test14: Density Inversion Test
     fp.testsperformed(14) = 1;
     
-    %    density = sw_pden(fp.s_raw,fp.t_raw,fp.p_calibrate,0);
-    %    dd = diff(density);
-    %
-    %    jj = find(dd>0.04);
-    %    if (~isempty(jj) & fp.s_qc(jj)<=2 & fp.t_qc(jj)<=2)
-    %       % Have to reject value at both levels involved
-    %       kk = unique([jj; jj+1]);
-    %       newv = repmat(4,1,length(kk));
-    %       fp.t_qc(kk) = max([fp.t_qc(kk); newv]);
-    %       fp.s_qc(kk) = max([fp.s_qc(kk); newv]);
-    %       fp.testsfailed(14) = 1;
-    %    end
-    
     % new test from ADMT12: density calculated relative to neighboring points,
     % not surface reference level...:
+    jf = [];
     
-    difdd=0;
-    
-    for iij=1:length(fp.p_calibrate)-1
-        difdd(iij)=0;
-        mp(iij) = (fp.p_calibrate(iij)+fp.p_calibrate(iij+1))/2;
-        density = sw_pden(fp.s_raw(iij:iij+1),fp.t_raw(iij:iij+1),fp.p_calibrate(iij:iij+1), ...
-            (fp.p_calibrate(iij)+fp.p_calibrate(iij+1))/2);
-        difdd(iij)=diff(density);
-        
-    end
-    
+    %bottom to top
+    mp = fp.p_calibrate(1:end-1) + diff(fp.p_calibrate)/2;
+    density = sw_pden(fp.s_raw(1:end-1),fp.t_raw(1:end-1),fp.p_calibrate(1:end-1),mp);
+    difdd = diff(density);
     jj = find(difdd>0.03);
-    jf=[];
-    for i=1:length(jj)
-        jk=[max(jj(i)-1,1);jj(i);min(length(difdd),jj(i)+1)];
-        jk=unique(jk);
-        jl=find(difdd(jk)==min(difdd(jk)));
-        jf=[jf jj(i) jk(jl)];
-    end
     
-    for iij=length(fp.p_calibrate):-1:2
-        difdd(iij)=0;
-        
-        density = sw_pden(fp.s_raw(iij:-1:iij-1),fp.t_raw(iij:-1:iij-1),fp.p_calibrate(iij:-1:iij-1), ...
-            (fp.p_calibrate(iij)+fp.p_calibrate(iij-1))/2);
-        difdd(iij)=diff(density);
-        
-    end
+    %we know that we have to remove this data point, as the one at the
+    %lesser pressure has a density difference > 0.03
+    jf = jj;
     
-    jj = find(difdd<-0.03);
+    %top to bottom
+    mp = fp.p_calibrate(2:end) + diff(fp.p_calibrate)/2;
+    density = sw_pden(fp.s_raw(2:end),fp.t_raw(2:end),fp.p_calibrate(2:end),mp);
+    difdd = diff(density);
+    jj = find(difdd < -0.03);
     
-    for i=1:length(jj)
-        jk=[max(jj(i)-1,1);jj(i);min(length(difdd),jj(i)+1)];
-        jk=unique(jk);
-        jl=find(difdd(jk)==min(difdd(jk)));
-        jf=[jf jj(i) jk(jl)];
-    end
-    
+    jf = unique([jf,jj+1]);
     
     if (~isempty(jf))
-        % Have to reject value at both levels involved
+        % Have to reject value for both T & S
         newv = repmat(4,1,length(jf));
         fp.t_qc(jf) = max([fp.t_qc(jf); newv]);
         fp.s_qc(jf) = max([fp.s_qc(jf); newv]);
@@ -677,14 +644,13 @@ for ii = ipf(:)'
     %load up the grey list
     glist = load_greylist;
     ib = find(glist.wmo_id == dbdat.wmo_id);
-    fp.testsperformed(15) = 0;
+    fp.testsperformed(15) = 1;
     
     if ~isempty(ib) %float is on the greylist
         %check the date range:
         if datenum(gregorian(fp.jday(1))) > min(glist.start(ib)) & ...
                 datenum(gregorian(fp.jday(1))) < max(glist.end(ib))
             
-            fp.testsperformed(15) = 1;
             fp.testsfailed(15) = 1;
             vv=1:length(fp.p_raw);
             newv = repmat(4,1,length(vv));
