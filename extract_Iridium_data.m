@@ -17,145 +17,66 @@ system(['mv -f *.000.* ' ARGO_SYS_PARAM.iridium_path 'iridium_processed\000files
 else
 system(['mv -f *.000.* ' ARGO_SYS_PARAM.iridium_path 'iridium_processed/000files'])   
 end
-% list all .msg and .log files
-a=dirc([idatapath '*.*.log']);
-b=dirc([idatapath '*.*.msg']);
-a=[a 
-    b];
-[m,n]=size(a);
 
-% check for log/msg file corruption
-% method: check each set of files .msg the .log for file size equal zero
-%         then check for missing files
+% list all reported
+allfn=dirc([idatapath '*.*g']);
 
-% check for zero sized files
-% for j=1:m
-%     if (a{j,5} == 0)
-%         % mail out error
-%         mail_out_iridium_log_error([a{j,1}],2)
-%     end
-% end
-
-% re-list as we may have lost some
-a=dirc([idatapath '*.*.log']);
-b=dirc([idatapath '*.*.msg']);
-crash2=0;
-
-%Bec did this (22 Oct, 2010)
-bb = char(b{:,1});
-bb = bb(:,1:end-3);
-aa = char(a{:,1});
-aa = aa(:,1:end-3);
-[nn,ia,ib] = intersect(aa,bb,'rows');
-
-for i = 1:size(aa,1)
-    if ismember(aa(i,:),nn,'rows') == 0
-        % find_rudics_file will only look for files on server if processor
-        % is CSIRO.
-        found=find_rudics_file(a{i,1});
-        if ~found
-            mail_out_iridium_log_error([a{i,1}],1);
-        else
-            %need to transfer to ftp (only works if CSIRO is processor)
-            BOM_retrieve_Iridium
+%Find missing and largest files
+found = zeros(1,size(allfn,1));
+for ii = 1:size(allfn,1)
+    % for CSIRO processor only, look for the largest files
+    if isfield(ARGO_SYS_PARAM,'processor')
+        % Check for the data processor information - set in set_argo_sys_params.m
+        if ~isempty(strfind(ARGO_SYS_PARAM.processor,'CSIRO'))
+            [ps,nn,ext] = fileparts([idatapath allfn{ii,1}]);
+            found(ii)=find_largest_file(nn);
         end
     end
 end
-for i = 1:size(bb,1)
-    if ismember(bb(i,:),nn,'rows') == 0
-        % find_rudics_file will only look for files on server if processor
-        % is CSIRO.
-        found=find_rudics_file(b{i,1});
-        if ~found
-            mail_out_iridium_log_error([b{i,1}],1);
-        else
-            %need to transfer to ftp (only works if CSIRO is processor)
-            BOM_retrieve_Iridium
-        end
-    end
+%If we updated any files, copy to BOM ftp
+if any(found)
+    %need to transfer to ftp (only works if CSIRO is processor)
+    BOM_retrieve_Iridium
 end
 
 %reload directories which might now have missing files retrieved:
-a=dirc([idatapath '*.*.log']);
-b=dirc([idatapath '*.*.msg']);
-crash2=0;
+logfn=dirc([idatapath '*.*.log']);
+msgfn=dirc([idatapath '*.*.msg']);
 
-%Bec did this (22 Oct, 2010)
-bb = char(b{:,1});
+%now mail out missing files messages
+bb = char(msgfn{:,1});
 bb = bb(:,1:end-3);
-aa = char(a{:,1});
+aa = char(logfn{:,1});
 aa = aa(:,1:end-3);
 [nn,ia,ib] = intersect(aa,bb,'rows');
 
+if any(ia ~= ib)
+    [nfils,infl] = max([size(aa,1), size(bb,1)]);
+    if infl == 1
+        flns = aa;
+    else
+        flns = bb;
+    end
+    for ii = 1:nfils
+        if ~ismember(flns(ii,:),nn,'rows')
+            mail_out_iridium_log_error([flns{ii,1}],1);
+        end
+    end
+end
 
-% a=[a
-%     b]
+[m,n]=size(msgfn);
 
-% [m,n]=size(a);
-
-% for each file in the list look for a match, if no match send message
-% loop through all files
-% for i=1:m
-% 	% match flag
-%     setmatch=0;
-
-% 	% loop through a second time
-%     for j=1:m
-% 		% if the iterators are NOT the same
-% 		if (i ~= j)
-% 			% compare the two file names
-%         	if strmatch(a{i,1}(1:length(a{i,1})-3),a{j,1}(1:length(a{j,1})-3))
-% 				% if a match, i.e. two files a .msg and a .log, set flag
-%             	setmatch=1;
-%         	end
-% 		end
-%     end
-
-% 	% if flag is not set, i.e. no two files, send error and move file
-%     if (~setmatch)
-%         % mail out error
-%         if (strmatch('msg',a{j,3}))
-%         else
-%             mail_out_iridium_log_error([a{j,1}],1)
-%             system(['cp -f ' a{i,1} ' ' ARGO_SYS_PARAM.iridium_path '/iridium_bad_files'])
-%         end
-%     end
-
-% end
-
-% re-list only .msg files
-a=dirc([idatapath '*.msg']);
-
-[m,n]=size(a);
-
-% for j=1:m REMOVE THIS AND KEEP ZERO LENGTH FILES IN PROCESSING.
-%     if (a{j,5} == 0)
-%         % mail out error
-%         a(j,:)=[];
-%         m=m-1;
-%         break
-%     end
-% end
-
-% isfloat=0;
-
-
+% Now start decoding each pair
 if(m>0)
-    for i=1:m
+    for ii=1:m
         isfloat=0;
         
-        if(a{i,6})  %is this a directory?
+        if(msgfn{ii,6})  %is this a directory?
             
         else  %first check whether this float is in the spreadsheet:
-            a{i,1}
-            ftptime = julian(datevec(a{i,4}));
-            argosid = str2num(a{i,1}(1:4));
-            %             if length(num2str(argosid))>=4
-            %                 % Bad ID num
-            %                 argosid = -1;
-            %                 logerr(0,'');
-            %                 dbdat = [];
-            %         else
+            msgfn{ii,1}
+            ftptime = julian(datevec(msgfn{ii,4}));
+            argosid = str2num(msgfn{ii,1}(1:4));
             if ~any(argosidlist==argosid)
                 % Not a float we know or want
                 logerr(0,'');
@@ -171,7 +92,7 @@ if(m>0)
                 % Set details for the next profile
                 pmeta.wmo_id = idcrossref(argosid,2,1);
                 pmeta.ftptime = ftptime;
-                pmeta.ftp_fname = a{i,1};
+                pmeta.ftp_fname = msgfn{ii,1};
                 if length(pmeta.wmo_id)>1
                     pmeta.wmo_id=pmeta.wmo_id(2);  % assume you want the live version and punt if this isn't true
                 end
@@ -218,54 +139,45 @@ if(m>0)
                         logerr(5,['Line: ' num2str(Me.stack(jk).line)])
                     end
                     isfloat=0;
-                    mail_out_iridium_log_error([a{i,1}],3);
+                    mail_out_iridium_log_error([msgfn{ii,1}],3);
                     crash=1;
                 end
                 
                 if isfloat
                     %after processing, move the files from the delivery directory into the
-                    %individual directories:
-                    ss=strfind(a{i,1},'.');
-                    % try
-                    %     system(['mv '  ARGO_SYS_PARAM.iridium_delivery_path a{i,1}(1:ss(2)) '* ' ARGO_SYS_PARAM.iridium_delivery_path  num2str(dbdat.maker_id)]);
-                    % catch
-                    %     system(['mv '  ARGO_SYS_PARAM.iridium_delivery_path a{i,1}(1:ss(2)) '* ' ARGO_SYS_PARAM.iridium_delivery_path 'f'  num2str(dbdat.maker_id)]);
-                    % end
-                    
+                    %individual directories:                    
                     
                     if(~isempty(dbdat))
                         if ispc
-                            if (exist([ARGO_SYS_PARAM.iridium_path  'iridium_processed\' num2str(dbdat.wmo_id)])~=7)
+                            if (exist([ARGO_SYS_PARAM.iridium_path  'iridium_processed\' num2str(dbdat.wmo_id)],'file')~=7)
                                 system(['mkdir ' ARGO_SYS_PARAM.iridium_path  'iridium_processed\' num2str(dbdat.wmo_id)]);
                             end
-                            file2=[a{i,1}(1:length(a{i,1})-3) 'log'];
-                            if ~exist(a{i,1},'file') | ~exist(file2,'file')
+                            file2=[msgfn{ii,1}(1:length(msgfn{ii,1})-3) 'log'];
+                            if ~exist(msgfn{ii,1},'file') | ~exist(file2,'file')
                                 try
-                                    system(['cp -f ' a{i,1} ' ' ARGO_SYS_PARAM.iridium_path  'iridium_processed\' num2str(dbdat.wmo_id)]);
-                                    system(['cp -f ' a{i,1}(1:length(a{i,1})-3) 'log ' ARGO_SYS_PARAM.iridium_path  'iridium_processed\' num2str(dbdat.wmo_id)]);
+                                    system(['cp -f ' msgfn{ii,1} ' ' ARGO_SYS_PARAM.iridium_path  'iridium_processed\' num2str(dbdat.wmo_id)]);
+                                    system(['cp -f ' msgfn{ii,1}(1:length(msgfn{ii,1})-3) 'log ' ARGO_SYS_PARAM.iridium_path  'iridium_processed\' num2str(dbdat.wmo_id)]);
                                 end
                             elseif(~crash)
-                                system(['mv -f ' a{i,1} ' ' ARGO_SYS_PARAM.iridium_path  'iridium_processed\' num2str(dbdat.wmo_id)]);
-                                system(['mv -f ' a{i,1}(1:length(a{i,1})-3) '* ' ARGO_SYS_PARAM.iridium_path  'iridium_processed\' num2str(dbdat.wmo_id)]);
+                                system(['mv -f ' msgfn{ii,1} ' ' ARGO_SYS_PARAM.iridium_path  'iridium_processed\' num2str(dbdat.wmo_id)]);
+                                system(['mv -f ' msgfn{ii,1}(1:length(msgfn{ii,1})-3) '* ' ARGO_SYS_PARAM.iridium_path  'iridium_processed\' num2str(dbdat.wmo_id)]);
                             end
                             
                         else
-                            if (exist([ARGO_SYS_PARAM.iridium_path  'iridium_processed/' num2str(dbdat.wmo_id)])~=7)
+                            if (exist([ARGO_SYS_PARAM.iridium_path  'iridium_processed/' num2str(dbdat.wmo_id)],'file')~=7)
                                 system(['mkdir ' ARGO_SYS_PARAM.iridium_path  'iridium_processed/' num2str(dbdat.wmo_id)]);
                             end
-                            file2=[a{i,1}(1:length(a{i,1})-3) 'log'];
-                            if ~exist(a{i,1},'file') | ~exist(file2,'file')
+                            file2=[msgfn{ii,1}(1:length(msgfn{ii,1})-3) 'log'];
+                            if ~exist(msgfn{ii,1},'file') | ~exist(file2,'file')
                                 try
-                                    system(['cp -f ' a{i,1} ' ' ARGO_SYS_PARAM.iridium_path  'iridium_processed/' num2str(dbdat.wmo_id)]);
-                                    system(['cp -f ' a{i,1}(1:length(a{i,1})-3) 'log ' ARGO_SYS_PARAM.iridium_path  'iridium_processed/' num2str(dbdat.wmo_id)]);
+                                    system(['cp -f ' msgfn{ii,1} ' ' ARGO_SYS_PARAM.iridium_path  'iridium_processed/' num2str(dbdat.wmo_id)]);
+                                    system(['cp -f ' msgfn{ii,1}(1:length(msgfn{ii,1})-3) 'log ' ARGO_SYS_PARAM.iridium_path  'iridium_processed/' num2str(dbdat.wmo_id)]);
                                 end
                             elseif(~crash)
-                                system(['mv -f ' a{i,1} ' ' ARGO_SYS_PARAM.iridium_path  'iridium_processed/' num2str(dbdat.wmo_id)]);
-                                system(['mv -f ' a{i,1}(1:length(a{i,1})-3) '* ' ARGO_SYS_PARAM.iridium_path  'iridium_processed/' num2str(dbdat.wmo_id)]);
+                                system(['mv -f ' msgfn{ii,1} ' ' ARGO_SYS_PARAM.iridium_path  'iridium_processed/' num2str(dbdat.wmo_id)]);
+                                system(['mv -f ' msgfn{ii,1}(1:length(msgfn{ii,1})-3) '* ' ARGO_SYS_PARAM.iridium_path  'iridium_processed/' num2str(dbdat.wmo_id)]);
                             end
                         end
-                        % code for copy the data within CSIRO
-%                         CSIRO_copy_iridium_data
                     end
                     
                 end
