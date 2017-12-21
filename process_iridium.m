@@ -1110,6 +1110,56 @@ if any(stage==1)
     if(length(float)>3 & ~isempty(pro.jday))
         np=profile_rollover(pro,float,dbdat);
     end
+    %check previous profile has location information, could be
+    %extracted from this log file
+    if length(float) > 1
+        if isnan(float(np-1).lat)
+            % open and parse file
+            fid=fopen([pmeta.ftp_fname(1:end-3) 'log'],'r');
+            if fid > 0
+                [tdata] = textscan(fid,'%s','Delimiter','|');
+                fclose(fid);
+                %get the previous profile surface time information:
+                igps = find(cellfun(@isempty,strfind(tdata{1},'Fix:')) == 0);
+                if ~isempty(igps)
+                    for igg = 1:length(igps)
+                        %Assume the format will remain constant:  lon     lat mm/dd/yyyy hhmmss nsat
+                        fmt = 'mm/dd/yyyy HHMMSS';
+                        dt = regexp(tdata{1}{igps(igg)},'\d+/\d+/\d+ [0-9]*','match');
+                        if ~isempty(dt)
+                            ll = regexp(tdata{1}{igps(igg)},'[-0-9]+\.[0-9]+','match');
+                            float(np-1).lat(igg)=str2num(ll{2});
+                            float(np-1).lon(igg)=str2num(ll{1});
+                            ns = regexp(tdata{1}{igps(igg)},'[0-9]*','match');
+                            ns = str2num(ns{end});
+                            float(np-1).GPSsatellites(igg)=ns;
+                            gl = regexp(tdata{1}{igps(igg)-2},'\w*[0-9](?=.seconds)','match');
+                            float(np-1).GPSfixtime(igg)=str2num(gl{:});
+                            ldt=datenum(dt{:},fmt);
+                            location_date = [str2num(datestr(ldt,'yyyy')),str2num(datestr(ldt,'mm')) ...
+                                ,str2num(datestr(ldt,'dd')),str2num(datestr(ldt,'HH')),str2num(datestr(ldt,'MM')),...
+                                str2num(datestr(ldt,'SS'))];
+                            float(np-1).datetime_vec(igg,1:6)=location_date;
+                            float(np-1).jday_location(igg)=julian(location_date);
+                        end
+                    end
+                end
+                %this information goes in the current profile
+                if isempty(pro.jday)
+                    %next best guess is in the log file:
+                    iendp = find(cellfun(@isempty,strfind(tdata{1},'Sbe41cpBinAverage')) == 0);
+                    if ~isempty(iendp)
+                        t_date = datenum(tdata{1}{iendp}(2:21),'mmm dd yyyy HH:MM:SS');
+                        jdays =  [str2num(datestr(t_date,'yyyy')),str2num(datestr(t_date,'mm')) ...
+                            ,str2num(datestr(t_date,'dd')),str2num(datestr(t_date,'HH')),str2num(datestr(t_date,'MM')),...
+                            str2num(datestr(t_date,'SS'))];
+                        pro.jday=julian(jdays);
+                        pro.jday_ascent_end=julian(jdays);
+                    end
+                end
+            end
+        end
+    end
     
     %check this information here:
     deps = get_ocean_depth(pro.lat,pro.lon);
