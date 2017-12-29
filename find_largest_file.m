@@ -66,8 +66,8 @@ for ii = 1:length(typ)
         %it to iridium_data folder
         if mm > irdat_size
             %move the small file out
-            system(['mv ' ARGO_SYS_PARAM.iridium_path nfilen ' ' ARGO_SYS_PARAM.iridium_path '/iridium_bad_files'])
-            system(['cp ' lookhere{imax} ' ' ARGO_SYS_PARAM.iridium_path '/' nfilen]);
+            system(['mv -f ' ARGO_SYS_PARAM.iridium_path nfilen ' ' ARGO_SYS_PARAM.iridium_path '/iridium_bad_files'])
+            system(['cp -f ' lookhere{imax} ' ' ARGO_SYS_PARAM.iridium_path '/' nfilen]);
             found = 1;
         end
     end
