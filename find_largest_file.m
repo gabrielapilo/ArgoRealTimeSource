@@ -24,6 +24,10 @@ if isempty(kk)
     return
 end
 
+if length(kk) > 1
+    kk = kk(end);
+end
+
 typ = {'log','msg'};
 for ii = 1:length(typ)
     nfilen=[filen '.' typ{ii}];
