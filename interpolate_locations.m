@@ -35,9 +35,22 @@ if isempty(ik)
 end
 
 %clear out existing interpolations and re-do.
+%first find non-reports and assign a temporary zero so all the following
+%indexing works
+im = find(cellfun(@any,cellfun(@isempty,{float.pos_qc},'Uniformoutput',0))==1);
+if ~isempty(im)
+    for g = 1:length(im)
+        float(im(g)).pos_qc = 7;
+    end
+end
+ipos = find(cellfun(@(x) x==0,{float.pos_qc},'Uniformoutput',1)==1);
 ii = find(cellfun(@(x) x==8,{float.pos_qc},'Uniformoutput',1)==1);
 ij = find(cellfun(@(x) x==9,{float.pos_qc},'Uniformoutput',1)==1);
 ik = sort([ii ij]);
+%keep the original values. If they are the same as the new ones, don't
+%regenerate the netcdf files.
+fpp = float;
+
 for g = 1:length(ik)
     float(ik(g)).lat = NaN;
     float(ik(g)).lon = NaN;
@@ -66,14 +79,18 @@ for a = 1:length(iid)
             str2num(dbdat.launchdate(9:10)) str2num(dbdat.launchdate(11:12)) str2num(dbdat.launchdate(13:14))])
     else
         %use last postion fix
-        startlat=float(ii(1)-1).lat(end);
-        startlon=float(ii(1)-1).lon(end);
-        startjday = float(ii(1)-1).jday_location(end);
+        ip = find(ii(1) - ipos > 0);
+        [~,ilast] = min(ii(1) - ipos(ip));
+        startlat=float(ip(ipos(ilast))).lat(end);
+        startlon=float(ip(ipos(ilast))).lon(end);
+        startjday = float(ip(ipos(ilast))).jday_location(end);
     end
-    %use first postion fix of this profile
-    endlat = float(ii(end)+1).lat(1);
-    endlon = float(ii(end)+1).lon(1);
-    endjday = float(ii(end)+1).jday_location(1);
+    %use next postion fix
+    ip = find(ii(1) - ipos < 0);
+    [~,ilast] = min(ipos(ip) - ii(end));
+    endlat = float(ipos(ip(ilast))).lat(1);
+    endlon = float(ipos(ip(ilast))).lon(1);
+    endjday = float(ipos(ip(ilast))).jday_location(1);
     
     %now need to calculate the approximate jdays for missing profiles
     xq = 1:length(ii)+2;
@@ -112,23 +129,37 @@ for a = 1:length(iid)
             float(ii(g)).lon = str2num(sprintf(('%5.3f'),lonarr(g)));
             float(ii(g)).position_accuracy='8';
             float(ii(g)).pos_qc=8;
+            %check for same values as already calculated:
+            if float(ii(g)).jday == fpp(ii(g)).jday & float(ii(g)).lat == fpp(ii(g)).lat ...
+                    & float(ii(g)).lon == fpp(ii(g)).lon
+                gennc(g) = 0;
+            else
+                gennc(g) = 1;
+            end
         end
         
         fnm = [ARGO_SYS_PARAM.root_dir 'matfiles/float' num2str(dbdat.wmo_id)];
+        %return pos_qc to missing for missing profiles
+        if ~isempty(im)
+            for g = 1:length(im)
+                float(im(g)).pos_qc = [];
+            end
+        end
         
         save(fnm,'float','-v6');
         
         % now re-generate netcdf files:
-        
         for g=1:length(ii)
-            if ~isempty(float(ii(g)).jday) & ~isempty(float(ii(g)).wmo_id)
-                argoprofile_nc(dbdat,float(ii(g)));
-                write_tesac(dbdat,float(ii(g)));
-                web_profile_plot(float(ii(g)),dbdat);
+            if gennc(g) == 1
+                if ~isempty(float(ii(g)).jday) & ~isempty(float(ii(g)).wmo_id)
+                    argoprofile_nc(dbdat,float(ii(g)));
+                    write_tesac(dbdat,float(ii(g)));
+                    web_profile_plot(float(ii(g)),dbdat);
+                end
+                web_float_summary(float,dbdat,1);
+                locationplots(float);
             end
         end
-        web_float_summary(float,dbdat,1);
-        locationplots(float);
         % done!
     end
     st = iid(a)+1;
