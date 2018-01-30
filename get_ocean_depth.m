@@ -48,13 +48,13 @@ end
 
 lx = 9999999999999; ly = [];
 
+hb = -1*ncread(fname,'height');
 
 for ii = 1:size(lat)
    ix = find(XB >= lon(ii)-dist & XB <= lon(ii)+dist);
    iy = find(YB >= lat(ii)-dist & YB <= lat(ii)+dist);
 
    if length(union(ix,lx))~=length(ix) | length(union(iy,ly))~=length(iy) 
-      hb = -1*ncread(fname,'height');
       hb = hb(min(ix):max(ix),min(iy):max(iy));
       lx = ix;
       ly = iy;

@@ -14,14 +14,6 @@ latarr=[];
 lonarr=[];
 needpos=[];
 
-%if this profile has a nan, we can't interp yet. In the case of
-%re-processing, we need to esure we don't re-interp accross already guessed
-%values. This will be an issue if we are reprocessing just one file with a
-%missing position, without the bracketing files.
-if isnan(pro.lat)
-    return
-end
-
 %assign all the data so far:
 float(pro.profile_number) = pro;
 
@@ -55,7 +47,6 @@ for g = 1:length(ik)
     float(ik(g)).lat = NaN;
     float(ik(g)).lon = NaN;
     float(ik(g)).pos_qc = 9;
-    float(ik(g)).jday = [];
     float(ik(g)).position_accuracy=' ';
 end
 %look for different groups of missing postions:
@@ -80,23 +71,37 @@ for a = 1:length(iid)
     else
         %use last postion fix
         ip = find(ii(1) - ipos > 0);
+        %if there is no fix before this one, we need to abort here
+        if isempty(ip)
+            return
+        end
         [~,ilast] = min(ii(1) - ipos(ip));
-        startlat=float(ip(ipos(ilast))).lat(end);
-        startlon=float(ip(ipos(ilast))).lon(end);
-        startjday = float(ip(ipos(ilast))).jday_location(end);
+        first = ipos(ip(ilast));
+        startlat=float(first).lat(end);
+        startlon=float(first).lon(end);
+        startjday = float(first).jday_location(end);
     end
     %use next postion fix
     ip = find(ii(1) - ipos < 0);
+    %if there is no fix after this one, we need to abort here
+    if isempty(ip)
+        return
+    end
     [~,ilast] = min(ipos(ip) - ii(end));
-    endlat = float(ipos(ip(ilast))).lat(1);
-    endlon = float(ipos(ip(ilast))).lon(1);
-    endjday = float(ipos(ip(ilast))).jday_location(1);
+    last = ipos(ip(ilast));
+    endlat = float(last).lat(1);
+    endlon = float(last).lon(1);
+    endjday = float(last).jday_location(1);
     
-    %now need to calculate the approximate jdays for missing profiles
-    xq = 1:length(ii)+2;
-    vql = interp1([xq(1),xq(end)],[startjday,endjday],xq);
-    needpos = vql(2:end-1);
-    
+    %now need to calculate the approximate jdays for missing profiles, only
+    %if the date is missing. For iridium floats, the date should be there.
+    needpos = [float(ii).jday];
+    if any(isnan(needpos)) || length(needpos) ~= length(ii)
+        %interpolate over missing date/times
+        xq = find(isnan(needpos));
+        vql = interp1([first,last],[startjday,endjday],xq);
+        needpos(xq) = vql;
+    end
     if ~isempty(needpos)
         %check for longitude that has gone over the 360 degrees:
         %first unwrap the longitude

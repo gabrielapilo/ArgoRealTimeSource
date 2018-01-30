@@ -1162,14 +1162,19 @@ if any(stage==1)
     end
     
     %check this information here:
-    deps = get_ocean_depth(pro.lat,pro.lon);
-    kk = find(isnan(pro.lat) | isnan(pro.lon) | pro.lat<-90 | pro.lat>90 ...
-        | pro.lon<-180 | pro.lon>360 | deps<0 );
-    if ~isempty(kk) | isempty(pro.lat) | isempty(pro.lon);
+    if ~isempty(pro.lat) | ~isempty(pro.lon)
+        deps = get_ocean_depth(pro.lat,pro.lon);
+        kk = find(pro.lat<-90 | pro.lat>90 | pro.lon<-180 | pro.lon>360);
+    else
+        deps = [];
+        kk = 0;
+    end
+    if kk == 1 | isempty(pro.lat) | isempty(pro.lon) | isempty(deps) || deps < 0;
         logerr(2,'Implausible locations');
         goodfixes = [];
         pro.lat = nan;
         pro.lon = nan;
+        pro.pos_qc = 9;
         if isempty(goodfixes)
             logerr(2,'No good location fixes!');
         end
