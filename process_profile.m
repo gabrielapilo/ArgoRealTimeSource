@@ -367,16 +367,17 @@ if any(stage>=1)
    % not offshore (ie a very lenient test)
    lats = head(gdhed,7);  
    lons = head(gdhed,8);  
-
-   deps = get_ocean_depth(lats,lons);      
+   
+   [maxdeps,mindeps] = get_ocean_depth(lats,lons,0.03);
+   deps = nanmin(mindeps);
    kk = find(isnan(lats) | isnan(lons) | lats<-90 | lats>90 ...
-	     | lons<-180 | lons>360 | deps<0);
+       | lons<-180 | lons>360 | deps<0);
    if ~isempty(kk)
-      logerr(2,'Implausible locations');
-      gdhed(kk) = [];
-      if isempty(gdhed)
-	 logerr(2,'No good location fixes!');
-      end
+       logerr(2,'Implausible locations');
+       gdhed(kk) = [];
+       if isempty(gdhed)
+           logerr(2,'No good location fixes!');
+       end
    end
 
 

@@ -218,15 +218,26 @@ end
 
    % Test4: Position on Land Test:
    % We have done this test earlier
-   fp.testsperformed(4) = 1;
-if (~isnan(fp.lat(1)))
-   deps = get_ocean_depth(fp.lat(1),fp.lon(1));      
-   if(deps<0)
-       fp.testsfailed(4)=1;
-       fp.pos_qc=4;
-   end   
-end
-
+    fp.testsperformed(4) = 0;
+    if any(~isnan(fp.lat))
+        fp.testsperformed(4) = 1;
+        %use a small window
+        [maxdeps,mindeps] = get_ocean_depth(fp.lat,fp.lon,0.03);
+        deps = [maxdeps;mindeps];
+        if isnan(nansum(deps))
+            %outside the ranges of the topography files
+            fp.testsperformed(4) = 0;
+        else
+            
+            %index the locations that have both min and max depths < 0
+            jj = nansum(deps<0) > 1;
+            if any(jj)
+                fp.testsfailed(4)=1;
+                fp.pos_qc=4; %update to every jj later
+%                 fp.pos_qc(jj)=4;
+            end
+        end
+    end
    % Test5: Impossible Speed Test:
    % Test speed between profiles. If apparently wrong, try some variant
    % tests and maybe remove our present 1st fix if it appears wrong. Could

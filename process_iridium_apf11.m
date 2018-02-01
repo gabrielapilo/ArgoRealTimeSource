@@ -205,7 +205,7 @@ if any(stage==1)
         fclose(fid);
     end
     
-    cullAPF11Missions_iridium(dbdat.wmo_id,np);  %& No mission
+    cullAPF11Missions_iridium(dbdat,np);  %& No mission
 %     information for older apf11s!  Therefore must create mission for the
 %     successive profiles: and be flexible so can handle newer floats which
 %     DO report missions
@@ -397,15 +397,19 @@ if any(stage==1)
     pro.n_parkaverages=length(pro.park_jday);
  end     
     
-    %also need to check location information:
-       deps = get_ocean_depth(pro.lat,pro.lon);
-    kk = find(isnan(pro.lat) | isnan(pro.lon) | pro.lat<-90 | pro.lat>90 ...
-        | pro.lon<-180 | pro.lon>360 | deps<0 );
-    if ~isempty(kk) | isempty(pro.lat) | isempty(pro.lon);
+ %also need to check location information:
+    if ~isempty(pro.lat) & ~isempty(pro.lon)
+        [maxdeps,mindeps] = get_ocean_depth(pro.lat,pro.lon,0.03);
+        deps = nanmin(mindeps);
+    else
+        deps = NaN;
+    end
+    if isempty(pro.lat) | isempty(pro.lon) | isnan(deps) || deps < 0;
         logerr(2,'Implausible locations');
         goodfixes = [];
-        pro.lat = nan;
-        pro.lon = nan;
+        pro.lat = NaN;
+        pro.lon = NaN;
+        pro.pos_qc = 9;
         if isempty(goodfixes)
             logerr(2,'No good location fixes!');
         end
@@ -513,7 +517,7 @@ end
     slog=dirc([idatapath fn(1:dot(2)) '*system_log.txt']);
 
     if ~isempty(slog)
-        fid=fopen(slog{1,1});  %System log
+        fid=fopen([idatapath slog{1,1}]);  %System log
         %     else
         %         fid=-1
         %         return
@@ -582,7 +586,7 @@ end
     end
     
     vlog=dirc([idatapath fn(1:dot(2)+1) '*vitals_log.csv']);
-    fid=fopen(vlog{1});  %Vitals log - technical data - unknown where it belongs  
+    fid=fopen([idatapath vlog{1}]);  %Vitals log - technical data - unknown where it belongs  
     techno=0;
     if fid<=0
         

@@ -13,7 +13,7 @@
 % USAGE: [dep] = get_ocean_depth(lat,lon);
 % edited 2017 July to use matlab netcdf toolbox. RC.
 
-function [dep] = get_ocean_depth(lat,lon, dist)
+function [maxdep,mindep] = get_ocean_depth(lat,lon, dist)
 
 global ARGO_SYS_PARAM
 
@@ -28,7 +28,8 @@ if isempty(XB)
 end
 
 % If for any reason we can't get depths, then 5000 is a benign fillin.
-dep = repmat(5000,size(lat));
+maxdep = repmat(5000,size(lat));
+mindep = repmat(5000,size(lat));
 if nargin<3;dist=0.25;end
 
 % Want longitude in range 0-360
@@ -48,19 +49,28 @@ end
 
 lx = 9999999999999; ly = [];
 
-hb = -1*ncread(fname,'height');
 
-for ii = 1:size(lat)
+for ii = 1:length(lat)
    ix = find(XB >= lon(ii)-dist & XB <= lon(ii)+dist);
    iy = find(YB >= lat(ii)-dist & YB <= lat(ii)+dist);
-
-   if length(union(ix,lx))~=length(ix) | length(union(iy,ly))~=length(iy) 
-      hb = hb(min(ix):max(ix),min(iy):max(iy));
-      lx = ix;
-      ly = iy;
+   if isempty(iy) %outside range of the bathy dataset, return a 5000db depth
+       maxdep(ii) = 5000;
+       mindep(ii) = 5000;
+       continue
    end
-   dep(ii) = max(hb(:));
-%    mindep(ii) = min(hb(:));
+   if length(union(ix,lx))~=length(ix) | length(union(iy,ly))~=length(iy)
+       hb = -1*ncread(fname,'height');
+       hb = hb(min(ix):max(ix),min(iy):max(iy));
+       lx = ix;
+       ly = iy;
+   end
+   if isnan(lat(ii))
+       maxdep(ii) = NaN;
+       mindep(ii) = NaN;
+   else
+       maxdep(ii) = max(hb(:)); 
+       mindep(ii) = min(hb(:)); 
+   end    
 end
 
 return

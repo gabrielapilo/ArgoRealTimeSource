@@ -135,8 +135,8 @@ for a = 1:length(iid)
             float(ii(g)).position_accuracy='8';
             float(ii(g)).pos_qc=8;
             %check for same values as already calculated:
-            if float(ii(g)).jday == fpp(ii(g)).jday & float(ii(g)).lat == fpp(ii(g)).lat ...
-                    & float(ii(g)).lon == fpp(ii(g)).lon
+            if float(ii(g)).jday == fpp(ii(g)).jday & abs(float(ii(g)).lat - fpp(ii(g)).lat) < 0.005 ...
+                    & abs(float(ii(g)).lon - fpp(ii(g)).lon) < 0.005
                 gennc(g) = 0;
             else
                 gennc(g) = 1;
@@ -154,15 +154,14 @@ for a = 1:length(iid)
         save(fnm,'float','-v6');
         
         % now re-generate netcdf files:
-        for g=1:length(ii)
-            if gennc(g) == 1
-                if ~isempty(float(ii(g)).jday) & ~isempty(float(ii(g)).wmo_id)
-                    argoprofile_nc(dbdat,float(ii(g)));
-                    write_tesac(dbdat,float(ii(g)));
-                    web_profile_plot(float(ii(g)),dbdat);
+        if any(gennc) == 1
+            for g=1:length(ii)
+                if gennc(g) == 1
+                    if ~isempty(float(ii(g)).jday) & ~isempty(float(ii(g)).wmo_id)
+                        argoprofile_nc(dbdat,float(ii(g)));
+                        write_tesac(dbdat,float(ii(g)));
+                    end
                 end
-                web_float_summary(float,dbdat,1);
-                locationplots(float);
             end
         end
         % done!

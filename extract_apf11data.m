@@ -205,8 +205,6 @@ if m>0   % are there any apf 11data?
                             elseif(~crash)
                                 system(['mv -f ' fn '* ' ARGO_SYS_PARAM.iridium_path  'iridium_processed/' num2str(dbdat.wmo_id)]);
                             end
-                            % code for copy the data within CSIRO
-                            CSIRO_copy_apf11_iridium_data
                         end
                         
                     end
@@ -214,6 +212,8 @@ if m>0   % are there any apf 11data?
             end
             
         end
+        % code for copy the data within CSIRO
+        CSIRO_copy_apf11_iridium_data
     end
 end
     
