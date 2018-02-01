@@ -72,6 +72,8 @@ for ii = 1:length(typ)
             %move the small file out
             system(['mv -f ' ARGO_SYS_PARAM.iridium_path nfilen ' ' ARGO_SYS_PARAM.iridium_path '/iridium_bad_files'])
             system(['cp -f ' lookhere{imax} ' ' ARGO_SYS_PARAM.iridium_path '/' nfilen]);
+            %If we updated any files, copy to BOM ftp
+            BOM_retrieve_Iridium(lookhere{imax})
             found = 1;
         end
     end

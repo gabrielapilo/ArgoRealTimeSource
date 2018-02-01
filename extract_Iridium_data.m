@@ -33,11 +33,6 @@ for ii = 1:size(allfn,1)
         end
     end
 end
-%If we updated any files, copy to BOM ftp
-if any(found)
-    %need to transfer to ftp (only works if CSIRO is processor)
-    BOM_retrieve_Iridium
-end
 
 %reload directories which might now have missing files retrieved:
 logfn=dirc([idatapath '*.*.log']);
