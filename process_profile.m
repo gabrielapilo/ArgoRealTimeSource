@@ -369,7 +369,8 @@ if any(stage>=1)
    lons = head(gdhed,8);  
    
    [maxdeps,mindeps] = get_ocean_depth(lats,lons,0.03);
-   deps = nanmedian(mindeps);
+   inan = isnan(mindeps);
+   deps = median(mindeps(~inan));
    kk = find(isnan(lats) | isnan(lons) | lats<-90 | lats>90 ...
        | lons<-180 | lons>360 | deps<0);
    if ~isempty(kk)
