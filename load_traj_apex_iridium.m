@@ -133,7 +133,7 @@ if fid > 0
     [tdata] = textscan(fid,'%s','Delimiter','|');
     fclose(fid);
 else
-    disp(['File not found: ' fn])
+    disp(['File not found: ' fn(1:end-3) 'log'])
     return
 end
 
