@@ -95,10 +95,14 @@ for a = 1:length(iid)
     
     %now need to calculate the approximate jdays for missing profiles, only
     %if the date is missing. For iridium floats, the date should be there.
+    iempty = find(cellfun(@(x) isempty(x),{float(ii).jday},'Uniformoutput',1)==1);
+    if ~isempty(iempty)
+        float(ii(iempty)).jday = NaN;
+    end
     needpos = [float(ii).jday];
-    if any(isnan(needpos)) || length(needpos) ~= length(ii)
+    if any(isnan(needpos))
         %interpolate over missing date/times
-        xq = find(isnan(needpos));
+        xq = ii(find(isnan(needpos)));
         vql = interp1([first,last],[startjday,endjday],xq);
         needpos(xq) = vql;
     end
