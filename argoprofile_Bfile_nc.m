@@ -1645,7 +1645,7 @@ if dbdat.irr & ~dbdat.irr2
     netcdf.putAtt(ncid,NDOWNIRRA412ADERRID,'resolution',' ');
     netcdf.putAtt(ncid,NDOWNIRRA412ADERRID,'_FillValue',single(fval));
     
-    NRAWDOWNIRRA412ID=netcdf.defVar(ncid,'RAW_DOWNWELLING_IRRADIANCE412','NC_DOUBLE',[N_LEVELSID,N_PROFID]);
+    NRAWDOWNIRRA412ID=netcdf.defVar(ncid,'RAW_DOWNWELLING_IRRADIANCE412','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'long_name','Raw downwelling irradiance at 412 nanometers');
     %         netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'standard_name','moles_of_RAWDOWNIRRA412_per_unit_mass_in_sea_water');
     netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'units','count');
