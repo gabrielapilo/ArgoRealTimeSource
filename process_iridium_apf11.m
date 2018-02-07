@@ -396,34 +396,7 @@ if any(stage==1)
  
     pro.n_parkaverages=length(pro.park_jday);
  end     
-    
- %also need to check location information:
-    if ~isempty(pro.lat) & ~isempty(pro.lon)
-        [maxdeps,mindeps] = get_ocean_depth(pro.lat,pro.lon,0.03);
-        deps = nanmin(mindeps);
-    else
-        deps = NaN;
-    end
-    if isempty(pro.lat) | isempty(pro.lon) | isnan(deps) || deps < 0;
-        logerr(2,'Implausible locations');
-        goodfixes = [];
-        pro.lat = NaN;
-        pro.lon = NaN;
-        pro.pos_qc = 9;
-        if isempty(goodfixes)
-            logerr(2,'No good location fixes!');
-        end
-    end
-    %this is where we should now be doing the position interpolation if
-    %needed.
-    %                 % check for missing profile locations from ice floats and
-    % add to the affected profiles:
-    try
-        [latarr,lonarr]=interpolate_locations(dbdat,float,pro);
-    catch
-        logerr(5,'Interpolate_locations.m fails for this float')
-    end
- 
+     
     % now we need to sort out the location information - one position is
     % reported from the end of the previous surface drift and needs to be
     % moved to that profile:
@@ -497,7 +470,33 @@ if any(stage==1)
                     if isempty(pro.lat);pro.lat=nan;end
                     if isempty(pro.lon);pro.lon=nan;end
                 end
-            end      
+            end
+        end
+        %also need to check location information:
+        if ~isempty(pro.lat) && ~isnan(pro.lat)
+            [maxdeps,mindeps] = get_ocean_depth(pro.lat,pro.lon,0.03);
+            deps = nanmin(mindeps);
+        else
+            deps = NaN;
+        end
+        if isempty(pro.lat) | isempty(pro.lon) | isnan(deps) || deps < 0;
+            logerr(2,'Implausible locations');
+            goodfixes = [];
+            pro.lat = NaN;
+            pro.lon = NaN;
+            pro.pos_qc = 9;
+            if isempty(goodfixes)
+                logerr(2,'No good location fixes!');
+            end
+        end
+        %this is where we should now be doing the position interpolation if
+        %needed.
+        %                 % check for missing profile locations from ice floats and
+        % add to the affected profiles:
+        try
+            [float,pro]=interpolate_locations(dbdat,float,pro);
+        catch
+            logerr(5,'Interpolate_locations.m fails for this float')
         end
     end
     
