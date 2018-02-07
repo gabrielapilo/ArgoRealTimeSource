@@ -1649,7 +1649,7 @@ if dbdat.irr & ~dbdat.irr2
     netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'long_name','Raw downwelling irradiance at 412 nanometers');
     %         netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'standard_name','moles_of_RAWDOWNIRRA412_per_unit_mass_in_sea_water');
     netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'units','count');
-    netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'_FillValue',double(fval));
+    netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'_FillValue',single(fval));
     %         netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'valid_min','');
     %         netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'valid_max','');
     netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'C_format','%9.1f');
@@ -1701,11 +1701,11 @@ if dbdat.irr & ~dbdat.irr2
     netcdf.putAtt(ncid,NDOWNIRRA443ADERRID,'resolution',' ');
     netcdf.putAtt(ncid,NDOWNIRRA443ADERRID,'_FillValue',single(fval));
     
-    NRAWDOWNIRRA443ID=netcdf.defVar(ncid,'RAW_DOWNWELLING_IRRADIANCE443','NC_DOUBLE',[N_LEVELSID,N_PROFID]);
+    NRAWDOWNIRRA443ID=netcdf.defVar(ncid,'RAW_DOWNWELLING_IRRADIANCE443','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NRAWDOWNIRRA443ID,'long_name','Raw downwelling irradiance at 443 nanometers');
     %         netcdf.putAtt(ncid,NRAWDOWNIRRA443ID,'standard_name','moles_of_RAWDOWNIRRA443_per_unit_mass_in_sea_water');
     netcdf.putAtt(ncid,NRAWDOWNIRRA443ID,'units','count');
-    netcdf.putAtt(ncid,NRAWDOWNIRRA443ID,'_FillValue',double(fval));
+    netcdf.putAtt(ncid,NRAWDOWNIRRA443ID,'_FillValue',single(fval));
     %         netcdf.putAtt(ncid,NRAWDOWNIRRA443ID,'valid_min','');
     %         netcdf.putAtt(ncid,NRAWDOWNIRRA443ID,'valid_max','');
     netcdf.putAtt(ncid,NRAWDOWNIRRA443ID,'C_format','%9.1f');
@@ -1757,11 +1757,11 @@ if dbdat.irr & ~dbdat.irr2
     netcdf.putAtt(ncid,NDOWNIRRA490ADERRID,'resolution',' ');
     netcdf.putAtt(ncid,NDOWNIRRA490ADERRID,'_FillValue',single(fval));
     
-    NRAWDOWNIRRA490ID=netcdf.defVar(ncid,'RAW_DOWNWELLING_IRRADIANCE490','NC_DOUBLE',[N_LEVELSID,N_PROFID]);
+    NRAWDOWNIRRA490ID=netcdf.defVar(ncid,'RAW_DOWNWELLING_IRRADIANCE490','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NRAWDOWNIRRA490ID,'long_name','Raw downwelling irradiance at 490 nanometers');
     %         netcdf.putAtt(ncid,NRAWDOWNIRRA490ID,'standard_name','moles_of_RAWDOWNIRRA490_per_unit_mass_in_sea_water');
     netcdf.putAtt(ncid,NRAWDOWNIRRA490ID,'units','count');
-    netcdf.putAtt(ncid,NRAWDOWNIRRA490ID,'_FillValue',double(fval));
+    netcdf.putAtt(ncid,NRAWDOWNIRRA490ID,'_FillValue',single(fval));
     %         netcdf.putAtt(ncid,NRAWDOWNIRRA490ID,'valid_min','');
     %         netcdf.putAtt(ncid,NRAWDOWNIRRA490ID,'valid_max','');
     netcdf.putAtt(ncid,NRAWDOWNIRRA490ID,'C_format','%9.1f');
@@ -1813,11 +1813,11 @@ if dbdat.irr & ~dbdat.irr2
     netcdf.putAtt(ncid,NDOWNIRRA555ADERRID,'resolution',' ');
     netcdf.putAtt(ncid,NDOWNIRRA555ADERRID,'_FillValue',single(fval));
     
-    NRAWDOWNIRRA555ID=netcdf.defVar(ncid,'RAW_DOWNWELLING_IRRADIANCE555','NC_DOUBLE',[N_LEVELSID,N_PROFID]);
+    NRAWDOWNIRRA555ID=netcdf.defVar(ncid,'RAW_DOWNWELLING_IRRADIANCE555','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NRAWDOWNIRRA555ID,'long_name','Raw downwelling irradiance at 555 nanometers');
     %         netcdf.putAtt(ncid,NRAWDOWNIRRA555ID,'standard_name','moles_of_RAWDOWNIRRA555_per_unit_mass_in_sea_water');
     netcdf.putAtt(ncid,NRAWDOWNIRRA555ID,'units','count');
-    netcdf.putAtt(ncid,NRAWDOWNIRRA555ID,'_FillValue',double(fval));
+    netcdf.putAtt(ncid,NRAWDOWNIRRA555ID,'_FillValue',single(fval));
     %         netcdf.putAtt(ncid,NRAWDOWNIRRA555ID,'valid_min','');
     %         netcdf.putAtt(ncid,NRAWDOWNIRRA555ID,'valid_max','');
     netcdf.putAtt(ncid,NRAWDOWNIRRA555ID,'C_format','%9.1f');
@@ -2091,10 +2091,10 @@ if dbdat.irr2
     netcdf.putAtt(ncid,NDOWNIRRA380ADERRID,'resolution',' ');
     netcdf.putAtt(ncid,NDOWNIRRA380ADERRID,'_FillValue',single(fval));
     
-    NRAWDOWNIRRA380ID=netcdf.defVar(ncid,'RAW_DOWNWELLING_IRRADIANCE380','NC_DOUBLE',[N_LEVELSID,N_PROFID]);
+    NRAWDOWNIRRA380ID=netcdf.defVar(ncid,'RAW_DOWNWELLING_IRRADIANCE380','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NRAWDOWNIRRA380ID,'long_name','Raw downwelling irradiance at 380 nanometers');
     netcdf.putAtt(ncid,NRAWDOWNIRRA380ID,'units','count');
-    netcdf.putAtt(ncid,NRAWDOWNIRRA380ID,'_FillValue',double(fval));
+    netcdf.putAtt(ncid,NRAWDOWNIRRA380ID,'_FillValue',single(fval));
     netcdf.putAtt(ncid,NRAWDOWNIRRA380ID,'C_format','%9.1f');
     netcdf.putAtt(ncid,NRAWDOWNIRRA380ID,'FORTRAN_format','F9.1');
     netcdf.putAtt(ncid,NRAWDOWNIRRA380ID,'resolution',' ');
@@ -2138,10 +2138,10 @@ if dbdat.irr2
     netcdf.putAtt(ncid,NDOWNIRRA412ADERRID,'resolution',' ');
     netcdf.putAtt(ncid,NDOWNIRRA412ADERRID,'_FillValue',single(fval));
     
-    NRAWDOWNIRRA412ID=netcdf.defVar(ncid,'RAW_DOWNWELLING_IRRADIANCE412','NC_DOUBLE',[N_LEVELSID,N_PROFID]);
+    NRAWDOWNIRRA412ID=netcdf.defVar(ncid,'RAW_DOWNWELLING_IRRADIANCE412','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'long_name','Raw downwelling irradiance at 412 nanometers');
     netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'units','count');
-    netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'_FillValue',double(fval));
+    netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'_FillValue',single(fval));
     netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'C_format','%9.1f');
     netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'FORTRAN_format','F9.1');
     netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'resolution',' ');
@@ -2185,10 +2185,10 @@ if dbdat.irr2
     netcdf.putAtt(ncid,NDOWNIRRA490ADERRID,'resolution',' ');
     netcdf.putAtt(ncid,NDOWNIRRA490ADERRID,'_FillValue',single(fval));
     
-    NRAWDOWNIRRA490ID=netcdf.defVar(ncid,'RAW_DOWNWELLING_IRRADIANCE490','NC_DOUBLE',[N_LEVELSID,N_PROFID]);
+    NRAWDOWNIRRA490ID=netcdf.defVar(ncid,'RAW_DOWNWELLING_IRRADIANCE490','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NRAWDOWNIRRA490ID,'long_name','Raw downwelling irradiance at 490 nanometers');
     netcdf.putAtt(ncid,NRAWDOWNIRRA490ID,'units','count');
-    netcdf.putAtt(ncid,NRAWDOWNIRRA490ID,'_FillValue',double(fval));
+    netcdf.putAtt(ncid,NRAWDOWNIRRA490ID,'_FillValue',single(fval));
     netcdf.putAtt(ncid,NRAWDOWNIRRA490ID,'C_format','%9.1f');
     netcdf.putAtt(ncid,NRAWDOWNIRRA490ID,'FORTRAN_format','F9.1');
     netcdf.putAtt(ncid,NRAWDOWNIRRA490ID,'resolution',' ');
@@ -2234,10 +2234,10 @@ if dbdat.irr2
     netcdf.putAtt(ncid,NDOWNPARADERRID,'resolution',' ');
     netcdf.putAtt(ncid,NDOWNPARADERRID,'_FillValue',single(fval));
     
-    NRAWDOWN_PARID=netcdf.defVar(ncid,'RAW_DOWNWELLING_PAR','NC_DOUBLE',[N_LEVELSID,N_PROFID]);
+    NRAWDOWN_PARID=netcdf.defVar(ncid,'RAW_DOWNWELLING_PAR','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NRAWDOWN_PARID,'long_name','Raw downwelling photosynthetic available radiation');
     netcdf.putAtt(ncid,NRAWDOWN_PARID,'units','count');
-    netcdf.putAtt(ncid,NRAWDOWN_PARID,'_FillValue',double(fval));
+    netcdf.putAtt(ncid,NRAWDOWN_PARID,'_FillValue',single(fval));
     netcdf.putAtt(ncid,NRAWDOWN_PARID,'C_format','%9.1f');
     netcdf.putAtt(ncid,NRAWDOWN_PARID,'FORTRAN_format','F9.1');
     netcdf.putAtt(ncid,NRAWDOWN_PARID,'resolution',' ');
