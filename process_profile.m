@@ -370,15 +370,15 @@ if any(stage>=1)
    
    [maxdeps,mindeps] = get_ocean_depth(lats,lons,0.03);
    inan = isnan(mindeps);
-   deps = median(mindeps(~inan));
+   deps = max(mindeps(~inan));
    kk = find(isnan(lats) | isnan(lons) | lats<-90 | lats>90 ...
        | lons<-180 | lons>360 | deps<0);
    if ~isempty(kk)
        logerr(2,'Implausible locations or location on land');
-       gdhed(kk) = [];
-       if isempty(gdhed)
+%        gdhed(kk) = [];
+%        if isempty(gdhed)
            logerr(2,'No good location fixes or location on land!');
-       end
+%        end
    end
 
 
