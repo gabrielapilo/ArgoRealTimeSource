@@ -6,7 +6,7 @@
 %  then generates the tesac and netcdf files for the float for delivery to
 %  the GDACs and GTS.
 
-function [float,pro]=interpolate_locations(dbdat,float,pro)
+function [float,pro,gn]=interpolate_locations(dbdat,float,pro)
 
 global ARGO_SYS_PARAM
 
@@ -58,7 +58,7 @@ else
     iid = [iid,length(ik)];
 end
 
-st = 1;
+st = 1;gn = [];gennc=[];
 for a = 1:length(iid)
     ii = ik(st:iid(a));
     if ii(1) == 1
@@ -141,37 +141,24 @@ for a = 1:length(iid)
             %check for same values as already calculated:
             if float(ii(g)).jday == fpp(ii(g)).jday & abs(float(ii(g)).lat - fpp(ii(g)).lat) < 0.005 ...
                     & abs(float(ii(g)).lon - fpp(ii(g)).lon) < 0.005
-                gennc(g) = 0;
             else
-                gennc(g) = 1;
-            end
-        end
-        
-        fnm = [ARGO_SYS_PARAM.root_dir 'matfiles/float' num2str(dbdat.wmo_id)];
-        %return pos_qc to missing for missing profiles
-        if ~isempty(im)
-            for g = 1:length(im)
-                float(im(g)).pos_qc = [];
-            end
-        end
-        
-        save(fnm,'float','-v6');
-        
-        % now re-generate netcdf files:
-        if any(gennc) == 1
-            for g=1:length(ii)
-                if gennc(g) == 1
-                    if ~isempty(float(ii(g)).jday) & ~isempty(float(ii(g)).wmo_id)
-                        argoprofile_nc(dbdat,float(ii(g)));
-                        write_tesac(dbdat,float(ii(g)));
-                    end
-                end
+                gennc(g) = ii(g);
             end
         end
         % done!
     end
     st = iid(a)+1;
+    gn = [gn,gennc];
 end
+%return pos_qc to missing for missing profiles
+if ~isempty(im)
+    for g = 1:length(im)
+        float(im(g)).pos_qc = [];
+    end
+end
+
+fnm = [ARGO_SYS_PARAM.root_dir 'matfiles/float' num2str(dbdat.wmo_id)];
+save(fnm,'float','-v6');
 
 %now assign the interpolated values back to pro.
 pro = float(pro.profile_number);

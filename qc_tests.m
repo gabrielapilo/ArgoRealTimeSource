@@ -155,7 +155,6 @@ end
    %set all tests to zeros before starting
    fp.testsperformed = zeros(1,19);
    fp.testsfailed = zeros(1,19);
-   fp.pos_qc = zeros(1);
 
    nlev = length(fp.p_raw);
    if isfield(fp,'p_oxygen')
@@ -210,7 +209,9 @@ end
    fp.testsperformed(3) = 1;
    if(fp.lat(1)<-90 | fp.lat(1) > 90 | fp.lon(1)<0 | fp.lon(1) > 360)
       fp.testsfailed(3) = 1;
-      fp.pos_qc = 3;
+      if fp.pos_qc ~= 8 %interpolated
+          fp.pos_qc = 3;
+      end
    end 
    if(isnan(fp.lat(1)))
        fp.pos_qc = 9;
@@ -233,8 +234,10 @@ end
             jj = nansum(deps<0) > 1;
             if any(jj)
                 fp.testsfailed(4)=1;
-                fp.pos_qc=4; %update to every jj later
-%                 fp.pos_qc(jj)=4;
+                if fp.pos_qc ~= 8
+                    fp.pos_qc=4; %update to every jj later
+                    %                 fp.pos_qc(jj)=4;
+                end
             end
         end
     end

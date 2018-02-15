@@ -633,70 +633,34 @@ if any(stage==1)
         end
     end
     
-    %data for the profile
-    ii = ii+1;
+    %data for the profile, get the range first
+    istart = [];iend = [];
+    ii = find(strncmp('#',c,1));
+    if ~isempty(ii) && length(ii) > 1
+        istart = ii(1)+1;
+        iend = ii(2) -1;
+    elseif isempty(ii)
+        %no data
+        pro.npoints = 0;
+    else
+        istart = ii(1)+1;
+        iend = length(c); %assume message is short and no GPS fixes etc at end
+    end
     
-    if ~isempty(jj) && ii <= length(c)
-        gg=c{ii};  %start line
+    if ~isempty(istart)
         j=pro.npoints+1;
-        if dbdat.subtype==1007 | dbdat.subtype==1008 | dbdat.subtype==1009
-            j=j+l;
-        end
-        
-        % seabird bio floats have two additional lines with the serial
-        % numbers of the sensors
-        if dbdat.subtype==1026 | dbdat.subtype==1027 | dbdat.subtype==1028 | dbdat.subtype==1029
-            ii = ii+2;
-            gg=c{ii};
-        end
-        
-        while(isempty(strmatch('#',gg)) & j>0 & ii <= length(c) & isempty(strmatch('<EOT>',gg))...
-                & isempty(strmatch('Res',gg)))  % GPS fix',gg)) & j>1 & gg~=-1)
-            
-            j=j-1;
-            ll=strfind(gg,'[');
-            if(strmatch('00000',gg))
-                stophere=1;
-            end
-            if(~isempty(ll) | strmatch('00000000000000',gg))
-                l2=strfind(gg,']') ;
-                if(isempty(l2))
-                    while strmatch('00000000000000',gg)
-                        j=j-1;
-                        ii = ii+1;
-                        gg=c{ii};
-                        if ~isempty(strmatch('Res',gg)) | j==0
-                            %                         gg=fgetl(fid);
-                            break
-                        end
-                    end
-                else
-                    j=j-str2num(gg(ll+1:l2-1));
-                    ii = ii+1;
-                    gg=c{ii};
-                    if ~isempty(strmatch('Res',gg))
-                        ii = ii+1;
-                        gg=c{ii};
-                        break
-                    end
+        for ii = istart:iend
+            gg = c{ii};
+            try
+                %check the whole string is convertible, else, go to the
+                %next string
+                h = hex2dec(gg);
+                if isempty(h) %blank line
+                    continue
                 end
-                %                pro.npoints=j;
-            end
-            %             gg=gg
-            if ~isempty(strmatch('Res',gg))
-                ii = ii+1;
-                gg=c{ii};
-                break
-            end
-            if  j==0
-                break
-            end
-            if ii > length(c)
-                break
-            end
-            if ~(isempty(strmatch('#',gg)) & j>0 & isempty(strmatch('<EOT>',gg))...
-                & isempty(strmatch('Res',gg)))
-               break
+                j = j-1; %put everything in backwards
+            catch
+                continue
             end
             pro.p_raw(j)=hex2dec(gg(1:4))/10.;
             pro.t_raw(j)=hex2dec(gg(5:8))/1000.;
@@ -882,8 +846,6 @@ if any(stage==1)
                     pro.nsamps(j)=hex2dec(gg(13:14));
                 end
             end
-            ii = ii+1;
-            gg = c{ii};
         end
     end
  
@@ -1184,9 +1146,9 @@ if any(stage==1)
     %                 % check for missing profile locations from ice floats and
     % add to the affected profiles:
     try
-        [float,pro]=interpolate_locations(dbdat,float,pro);
+        [float,pro,gennc]=interpolate_locations(dbdat,float,pro);
     catch
-        logerr(5,'Interpolate_locations.m fails for this float')
+        logerr(5,['Interpolate_locations.m fails for profile ' num2str(pro.profile_number)])
     end
    
     %         else
@@ -1528,6 +1490,20 @@ if any(stage==1)
     if(length(float(np).p_raw)>0)
         argoprofile_nc(dbdat,float(np));
     end
+    % now re-generate netcdf files that had interpolation done:
+    if any(gennc) > 0
+        for g=1:length(gennc)
+            if gennc(g) == np
+                continue
+            end
+            if gennc(g) > 0
+                if ~isempty(float(gennc(g)).jday) & ~isempty(float(gennc(g)).wmo_id)
+                    argoprofile_nc(dbdat,float(gennc(g)));
+                    write_tesac(dbdat,float(gennc(g)));
+                end
+            end
+        end
+    end
     
     if(pro.npoints>0)  %do we have data?!
         
@@ -1594,22 +1570,20 @@ if any(stage==1)
     % Update float summary plots and web page
     prec.proc_status(2) = 1;
     
-    if opts.rtmode
-        try
-            %put this in, separated out by Ann and lost
-            web_profile_plot(float(np),dbdat);
-            web_float_summary(float,dbdat,1);
-            time_section_plot(float);
-            waterfallplots(float);
-            locationplots(float);
-            tsplots(float);
-        catch Me
-            logerr(5,['error in plotting routines - ' num2str(dbdat.wmo_id) ' profile ' num2str(float(np).profile_number)])
-            logerr(5,['Message: ' Me.message ])
-            for jk = 1:length(Me.stack)
-                logerr(5,Me.stack(jk).file)
-                logerr(5,['Line: ' num2str(Me.stack(jk).line)])
-            end
+    try
+        %plotting
+        web_profile_plot(float(np),dbdat);
+        web_float_summary(float,dbdat,1);
+        time_section_plot(float);
+        waterfallplots(float);
+        locationplots(float);
+        tsplots(float);
+    catch Me
+        logerr(5,['error in plotting routines - ' num2str(dbdat.wmo_id) ' profile ' num2str(float(np).profile_number)])
+        logerr(5,['Message: ' Me.message ])
+        for jk = 1:length(Me.stack)
+            logerr(5,Me.stack(jk).file)
+            logerr(5,['Line: ' num2str(Me.stack(jk).line)])
         end
     end
     
