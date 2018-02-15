@@ -1491,15 +1491,17 @@ if any(stage==1)
         argoprofile_nc(dbdat,float(np));
     end
     % now re-generate netcdf files that had interpolation done:
-    if any(gennc) > 0
-        for g=1:length(gennc)
-            if gennc(g) == np
-                continue
-            end
-            if gennc(g) > 0
-                if ~isempty(float(gennc(g)).jday) & ~isempty(float(gennc(g)).wmo_id)
-                    argoprofile_nc(dbdat,float(gennc(g)));
-                    write_tesac(dbdat,float(gennc(g)));
+    if exist('gennc','var') == 1
+        if any(gennc) > 0
+            for g=1:length(gennc)
+                if gennc(g) == np
+                    continue
+                end
+                if gennc(g) > 0
+                    if ~isempty(float(gennc(g)).jday) & ~isempty(float(gennc(g)).wmo_id)
+                        argoprofile_nc(dbdat,float(gennc(g)));
+                        write_tesac(dbdat,float(gennc(g)));
+                    end
                 end
             end
         end

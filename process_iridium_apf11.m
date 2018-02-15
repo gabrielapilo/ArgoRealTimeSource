@@ -494,7 +494,7 @@ if any(stage==1)
         %                 % check for missing profile locations from ice floats and
         % add to the affected profiles:
         try
-            [float,pro]=interpolate_locations(dbdat,float,pro);
+            [float,pro,gennc]=interpolate_locations(dbdat,float,pro);
         catch
             logerr(5,'Interpolate_locations.m fails for this float')
         end
@@ -644,6 +644,22 @@ end
             web_select_float
         end
     end
+    % now re-generate netcdf files that had interpolation done:
+    if exist('gennc','var') == 1
+        if any(gennc) > 0
+            for g=1:length(gennc)
+                if gennc(g) == np
+                    continue
+                end
+                if gennc(g) > 0
+                    if ~isempty(float(gennc(g)).jday) & ~isempty(float(gennc(g)).wmo_id)
+                        argoprofile_nc(dbdat,float(gennc(g)));
+                        write_tesac(dbdat,float(gennc(g)));
+                    end
+                end
+            end
+        end
+    end
     
     if(pro.npoints>0)  %do we have data?!
         
@@ -683,22 +699,20 @@ end
     
     % Update float summary plots and web page
     
-    if opts.rtmode
-        try
-            web_float_summary(float,dbdat,1);
-            time_section_plot(float);
-            waterfallplots(float);
-            locationplots(float);
-            tsplots(float);
-            %        try
-            %             trajectory_nc(dbdat,float,np);
-            %        end
-            prec.traj_nc_count = 0;
-            prec.proc_status(2) = 1;
-            logerr(5,['Successful stage 2, np=' num2str(float(np).profile_number)]);
-        catch
-            logerr(5,['error in plotting routines - ' num2str(dbdat.wmo_id) ' profile ' num2str(float(np).profile_number)])
-        end
+    try
+        web_float_summary(float,dbdat,1);
+        time_section_plot(float);
+        waterfallplots(float);
+        locationplots(float);
+        tsplots(float);
+        %        try
+        %             trajectory_nc(dbdat,float,np);
+        %        end
+        prec.traj_nc_count = 0;
+        prec.proc_status(2) = 1;
+        logerr(5,['Successful stage 2, np=' num2str(float(np).profile_number)]);
+    catch
+        logerr(5,['error in plotting routines - ' num2str(dbdat.wmo_id) ' profile ' num2str(float(np).profile_number)])
     end
     
     prec.proc_status(1) = 1;
