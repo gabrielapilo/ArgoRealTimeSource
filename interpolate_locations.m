@@ -23,6 +23,7 @@ ij = find(cellfun(@isempty,{float.lat}));
 ik = sort([ii,ij]);
 if isempty(ik)
     %no missing position info
+    gn = 0;
     return
 end
 
