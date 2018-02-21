@@ -163,5 +163,5 @@ save(fnm,'float','-v6');
 
 %now assign the interpolated values back to pro.
 pro = float(pro.profile_number);
-
+gn = unique(gn);
 return

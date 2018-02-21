@@ -42,7 +42,7 @@ if isfield(fp,'oxy_raw')
      axes('position',[.08 .08 .25 .9])
       vr = fp.oxy_raw;
       vq = qc_apply(vr,fp.oxy_qc);
-      if db.subtype==1006 | db.subtype==1020   % this has its own p t and s scales
+      if db.subtype==1006 | db.subtype==1020 |  db.subtype==1030 % this has its own p t and s scales
           pp = fp.p_oxygen;  %no qc for this variable
       else
           pp = qc_apply(fp.p_calibrate,fp.p_qc);
