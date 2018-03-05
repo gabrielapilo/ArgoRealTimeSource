@@ -73,38 +73,23 @@ if m>0   % are there any apf 11data?
         if ismember(aa(i,:),nn,'rows') == 0
             mail_out_iridium_log_error([a{i,1}],1);
             missingaa=1;
-            %             system(['cp -f ' a{i,1} ' ' ARGO_SYS_PARAM.iridium_path '/iridium_bad_files']);
-            try
-                %                 system(['cp -f ' ARGO_SYS_PARAM.iridium_path '/iridium_bad_files/' aa(i,:) 'msg '...
-                %                     ARGO_SYS_PARAM.iridium_path]);
-            end
         end
     end
     end
     if ~isempty(b)
-    for i = 1:size(bb,1)
-        if ismember(bb(i,:),nn,'rows') == 0
-            mail_out_iridium_log_error([b{i,1}],1);
-            missingbb=1;
-            %             system(['cp -f ' b{i,1} ' ' ARGO_SYS_PARAM.iridium_path '/iridium_bad_files']);
+        for i = 1:size(bb,1)
+            if ismember(bb(i,:),nn,'rows') == 0
+                mail_out_iridium_log_error([b{i,1}],1);
+                missingbb=1;
+            end
         end
-        try
-            %                 system(['cp -f ' ARGO_SYS_PARAM.iridium_path '/iridium_bad_files/' aa(i,:) 'log '...
-            %                     ARGO_SYS_PARAM.iridium_path]);
-        end
-    end
     end
     if ~isempty(c)
-    for i = 1:size(cc,1)
-        if ismember(cc(i,:),mm,'rows') == 0
-            mail_out_iridium_log_error([c{i,1}],1);
-            %             system(['cp -f ' b{i,1} ' ' ARGO_SYS_PARAM.iridium_path '/iridium_bad_files']);
+        for i = 1:size(cc,1)
+            if ismember(cc(i,:),mm,'rows') == 0
+                mail_out_iridium_log_error([c{i,1}],1);
+            end
         end
-        try
-            %                 system(['cp -f ' ARGO_SYS_PARAM.iridium_path '/iridium_bad_files/' aa(i,:) 'log '...
-            %                     ARGO_SYS_PARAM.iridium_path]);
-        end
-    end
     end
     [m,n]=size(a);
     
@@ -183,14 +168,7 @@ if m>0   % are there any apf 11data?
                                         
                     if isfloat
                         %after processing, move the files from the delivery directory into the
-                        %individual directories:
-                        ss=strfind(a{i,1},'.');
-                        % try
-                        %     system(['mv '  ARGO_SYS_PARAM.iridium_delivery_path a{i,1}(1:ss(2)) '* ' ARGO_SYS_PARAM.iridium_delivery_path  num2str(dbdat.maker_id)]);
-                        % catch
-                        %     system(['mv '  ARGO_SYS_PARAM.iridium_delivery_path a{i,1}(1:ss(2)) '* ' ARGO_SYS_PARAM.iridium_delivery_path 'f'  num2str(dbdat.maker_id)]);
-                        % end
-                        
+                        %individual directories:                        
                         
                         if(~isempty(dbdat))
                             if (exist([ARGO_SYS_PARAM.iridium_path  'iridium_processed/' num2str(dbdat.wmo_id)])~=7)
@@ -212,8 +190,6 @@ if m>0   % are there any apf 11data?
             end
             
         end
-        % code for copy the data within CSIRO
-        CSIRO_copy_apf11_iridium_data
     end
 end
     
