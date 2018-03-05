@@ -473,9 +473,11 @@ if any(stage==1)
             end
         end
         %also need to check location information:
-        if ~isempty(pro.lat) && ~isnan(pro.lat)
-            [maxdeps,mindeps] = get_ocean_depth(pro.lat,pro.lon,0.03);
-            deps = nanmin(mindeps);
+        if ~isempty(pro.lat) 
+            if any(~isnan(pro.lat))
+                [maxdeps,mindeps] = get_ocean_depth(pro.lat,pro.lon,0.03);
+                deps = nanmin(mindeps);
+            end
         else
             deps = NaN;
         end
