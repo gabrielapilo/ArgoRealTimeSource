@@ -292,7 +292,8 @@ if any(stage==1)
             if(length(gg)>78);pro.park_O2phase(j)=pd(4);end
             if(length(gg)>85);pro.parkT_SBEO2(j)=pd(5);end
         elseif dbdat.subtype==1026 | dbdat.subtype==1027 ...
-                | dbdat.subtype==1028 | dbdat.subtype==1029
+                | dbdat.subtype==1028 | dbdat.subtype==1029 | ...
+                dbdat.subtype == 1031
             pro.park_date(j,1:6)=datevec(gg(9:31));
             pro.park_jday(j)=julian(pro.park_date(j,1:6));
             pd=sscanf(gg(32:end),'%f');
@@ -428,7 +429,7 @@ if any(stage==1)
                         pro.parkFsig(j) = parkd(6);
                         pro.parkBbsig(j) = parkd(7);
                         pro.parkBbsig532(j) = parkd(8);
-                    elseif dbdat.subtype==1027  % parkd(4) is placeholder for no3
+                    elseif dbdat.subtype==1027 % parkd(4) is placeholder for no3
                         if parkd(4)>=99.
                             pro.park_O2phase(j)=NaN;
                         else
@@ -457,7 +458,22 @@ if any(stage==1)
                             pro.park_pHT(j)=parkd(14);
                             pro.park_Tilt(j)=parkd(15);
                         end
-                     else
+                    elseif dbdat.subtype==1031 
+                        pro.park_O2phase(j)=parkd(5);
+                        pro.parkT_volts(j) =  parkd(6);
+                        pro.parkFsig(j) = parkd(7);
+                        pro.parkBbsig(j) = parkd(8);
+                        pro.parkBbsig532(j) = parkd(9);
+                        pro.park_irr412(j) = parkd(11);
+                        pro.park_irr443(j) = parkd(11);
+                        pro.park_irr490(j) = parkd(12);
+                        pro.park_irr555(j) = parkd(13);
+                        pro.park_rad412(j) = parkd(14);
+                        pro.park_rad443(j) = parkd(15);
+                        pro.park_rad490(j) = parkd(16);
+                        pro.park_rad555(j) = parkd(17);
+                        pro.park_tilt(j) = parkd(18);
+                    else
                         pro.park_Bphase(j)=parkd(4);
                         pro.parkToptode(j)=parkd(5);
                         if dbdat.flbb
@@ -560,7 +576,7 @@ if any(stage==1)
 %                         pro.parkFsig(k-1) = parkd(6);
 %                         pro.parkBbsig532(k-1) = parkd(7);
 %                         pro.parkBbsig = parkd(8);
-                    elseif dbdat.subtype==1027  % parkd(4) is placeholder for no3
+                    elseif dbdat.subtype==1027 | dbdat.subtype == 1031  % parkd(4) is placeholder for no3
 %  don't measure anything except p, t, s and no3 discretely..
                         pro.p_oxygen(k-1)=parkd(1);
                         pro.t_oxygen(k-1)=parkd(2);
@@ -605,7 +621,7 @@ if any(stage==1)
             pro.n_Oxysamples=length(pro.p_oxygen);
         elseif dbdat.subtype==1022 | dbdat.subtype==1030 % this is the oxygen profile area: added by uday
             pro.n_Oxysamples=length(pro.p_oxygen);
-        elseif dbdat.subtype==1027
+        elseif dbdat.subtype==1027 | dbdat.subtype == 1031
             pro.n_Oxysamples=length(pro.p_oxygen);
         end
         pro.n_parkaverages=length(pro.park_p);
@@ -701,6 +717,65 @@ if any(stage==1)
                 pro.nsamps(j)=rawline(4);
 
             
+            elseif dbdat.subtype == 1031 %bio float with irrad, isus
+                lt=length(gg);
+                [fmtstr,bits]=SBEbitstofmtstr(gg(lt-3:lt-2));
+                rawline=sscanf(gg,fmtstr);
+
+                n=length(rawline);
+                rawline(n+1)=nan;
+                isum = 4;
+                if (bits(1)) oxph=isum+1; isum=isum+1; else oxph=n+1; end
+                if (bits(1)) oxt=isum+1; isum=isum+1; else oxt=n+1; end
+                if (bits(1)) oxnbin=isum+1; isum=isum+1; else oxnbin=n+1; end
+                if (bits(2)) mcfl=isum+1; isum=isum+1; else mcfl=n+1; end
+                if (bits(2)) mcbb=isum+1; isum=isum+1; else mcbb=n+1; end
+                if (bits(2)) mccd=isum+1; isum=isum+1; else mccd=n+1; end
+                if (bits(2)) mcnbin=isum+1; isum=isum+1; else mcnbin=n+1; end
+                if (bits(3)) crv=isum+1; isum=isum+1; else crv=n+1; end
+                if (bits(3)) crvc=isum+1; isum=isum+1; else crvc=n+1; end
+                if (bits(3)) crvnbin=isum+1; isum=isum+1; else crvnbin=n+1; end
+                if (bits(4)) ocri1=isum+1; isum=isum+1; else ocri1=n+1; end
+                if (bits(4)) ocri2=isum+1; isum=isum+1; else ocri2=n+1; end
+                if (bits(4)) ocri3=isum+1; isum=isum+1; else ocri3=n+1; end
+                if (bits(4)) ocri4=isum+1; isum=isum+1; else ocri4=n+1; end
+                if (bits(4)) ocrinbin=isum+1; isum=isum+1; else ocrinbin=n+1; end
+                if (bits(5)) ocrr1=isum+1; isum=isum+1; else ocrr1=n+1; end
+                if (bits(5)) ocrr2=isum+1; isum=isum+1; else ocrr2=n+1; end
+                if (bits(5)) ocrr3=isum+1; isum=isum+1; else ocrr3=n+1; end
+                if (bits(5)) ocrr4=isum+1; isum=isum+1; else ocrr4=n+1; end
+                if (bits(5)) ocrrnbin=isum+1; isum=isum+1; else ocrrnbin=n+1; end
+                if (bits(6)) ecobb1=isum+1; isum=isum+1; else ecobb1=n+1; end
+                if (bits(6)) ecobb2=isum+1; isum=isum+1; else ecobb2=n+1; end
+                if (bits(6)) ecobb3=isum+1; isum=isum+1; else ecobb3=n+1; end                        
+                if (bits(6)) econbin=isum+1; isum=isum+1; else econbin=n+1; end                        
+                if (bits(7)) tilt=isum+1; isum=isum+1; else tilt=n+1; end
+                if (bits(7)) tiltsd=isum+1; isum=isum+1; else tiltsd=n+1; end                        
+            
+%                 if rawline(oxph)>=99.
+%                     pro.O2phase_raw(j)=NaN;
+%                 else
+                    pro.O2phase_raw(j)=(rawline(oxph)/100000.0)-10.0;
+%                 end
+                pro.t_oxygen_volts(j)=(rawline(oxt)/1000000.0)-1.0;
+                
+                pro.Fsig(j)=(rawline(mcfl)-500); % FLTNU data
+                pro.Bbsig(j)=(rawline(mcbb)-500);
+                pro.Bbsig532(j)=(rawline(mccd)-500);
+                
+              
+                pro.irr412(j)=(rawline(ocri1)*1024 + 2013265920); % upward and downwelling radiances
+                pro.irr443(j)=(rawline(ocri2)*1024 + 2013265920); 
+                pro.irr490(j)=(rawline(ocri3)*1024 + 2013265920); 
+                pro.irr555(j)=(rawline(ocri4)*1024 + 2013265920); 
+                pro.rad412(j)=(rawline(ocrr1)*1024 + 2013265920); 
+                pro.rad443(j)=(rawline(ocrr2)*1024 + 2013265920); 
+                pro.rad490(j)=(rawline(ocrr3)*1024 + 2013265920); 
+                pro.rad555(j)=(rawline(ocrr4)*1024 + 2013265920); 
+                pro.Tilt(j)=(rawline(tilt)/10.0);
+                pro.Tilt_sd(j)=(rawline(tiltsd)/100.0);
+                
+                pro.nsamps(j)=rawline(4);
             elseif dbdat.subtype==1026  % bio optical float with irradiance and fltnu sensor
                 % these are self describing with the end bits telling you
                 % what variables have been measured in a particular line -
@@ -1238,8 +1313,8 @@ if any(stage==1)
                 pro.p_oxygen(ii),pro.lat(1));
         end
     end
-    if dbdat.oxy & (dbdat.subtype==1026 | dbdat.subtype==1027 | dbdat.subtype==1028| dbdat.subtype==1029)
-        %Seabird bio geochemical floats with SBD61 Optode:
+    if dbdat.oxy & (dbdat.subtype==1026 | dbdat.subtype==1027 | dbdat.subtype==1028| dbdat.subtype==1029| dbdat.subtype==1030| dbdat.subtype==1031)
+        %Seabird bio geochemical floats with SBE63 Optode:
         for ii=1:pro.n_parkaverages  % park data
             % first convert T volts to T90
             pro.parkToptode(ii)=convertSBE63Tv(pro.parkT_volts(ii),pro.wmo_id);
