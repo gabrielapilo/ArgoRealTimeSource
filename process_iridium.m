@@ -240,8 +240,9 @@ if any(stage==1)
     %     for 5905023, 5905194, 5905197, 5905198 BGC floats only, initiate mission swapping based on pn:
     if isfield(ARGO_SYS_PARAM,'processor')
         if ~isempty(strmatch('CSIRO',ARGO_SYS_PARAM.processor))
-            if dbdat.wmo_id==5905023 | dbdat.wmo_id==5905194 | dbdat.wmo_id==5905197% ...
-                    %| dbdat.wmo_id==5905198
+            if dbdat.wmo_id==5905023 | dbdat.wmo_id==5905194 | dbdat.wmo_id==5905197 ...
+                    | dbdat.wmo_id==5905395 | dbdat.wmo_id == 5905396 ...
+                    | dbdat.wmo_id == 5905397
                 if np > 8
                     swap_missions(np,dbdat.argos_hex_id);
                 end

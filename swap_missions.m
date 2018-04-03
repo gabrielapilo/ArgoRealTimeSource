@@ -14,6 +14,29 @@
 function swap_missions(pn,fn)
 global ARGO_SYS_PARAM;
 
+if dbdat.wmo_id==5905395 | dbdat.wmo_id == 5905396 ...
+        | dbdat.wmo_id == 5905397
+    if mod(pn,5) == 0
+        system(['cp ' ARGO_SYS_PARAM.rudics_server '/f' fn '/mission5day.cfg ' ...
+            ARGO_SYS_PARAM.rudics_server '/f' fn '/mission.cfg'])
+        system(['cp ' ARGO_SYS_PARAM.secondary_server '/f' fn '/mission5day.cfg ' ...
+            ARGO_SYS_PARAM.secondary_server '/f' fn '/mission.cfg'])
+    elseif mod(pn,5) == 1
+        system(['cp ' ARGO_SYS_PARAM.rudics_server '/f' fn '/mission12hr.cfg ' ...
+            ARGO_SYS_PARAM.rudics_server '/f' fn '/mission.cfg'])
+        system(['cp ' ARGO_SYS_PARAM.secondary_server '/f' fn '/mission12hr.cfg ' ...
+            ARGO_SYS_PARAM.secondary_server '/f' fn '/mission.cfg'])
+        
+    else
+        system(['cp ' ARGO_SYS_PARAM.rudics_server '/f' fn '/missionTelRetry.cfg ' ...
+            ARGO_SYS_PARAM.rudics_server '/f' fn '/mission.cfg'])
+        system(['cp ' ARGO_SYS_PARAM.secondary_server '/f' fn '/missionTelRetry.cfg ' ...
+            ARGO_SYS_PARAM.secondary_server '/f' fn '/mission.cfg'])
+        
+    end
+    
+else
+
 if mod(pn,6)==0  % profile divisible by 6 (every 3rd mission swap)
     % swap in mission 3
     system(['cp ' ARGO_SYS_PARAM.rudics_server '/f' fn '/mission_3.cfg ' ...
@@ -34,6 +57,6 @@ else %even number profile
     system(['cp ' ARGO_SYS_PARAM.secondary_server '/f' fn '/mission_1.cfg ' ...
         ARGO_SYS_PARAM.secondary_server '/f' fn '/mission.cfg'])
 end
-
+end
 
 
