@@ -244,7 +244,7 @@ if any(stage==1)
                     | dbdat.wmo_id==5905395 | dbdat.wmo_id == 5905396 ...
                     | dbdat.wmo_id == 5905397
                 if np > 8
-                    swap_missions(np,dbdat.argos_hex_id);
+                    swap_missions(np,dbdat.argos_hex_id, dbdat.wmo_id);
                 end
             end
         end
