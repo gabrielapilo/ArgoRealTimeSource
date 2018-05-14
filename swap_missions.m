@@ -18,24 +18,24 @@ fn = str2num(fn);
 fn = num2str(fn,'%04.f');
 
 if wmo_id==5905395 | wmo_id == 5905396 | wmo_id == 5905397
-    if mod(pn,5) == 0
-        system(['cp ' ARGO_SYS_PARAM.rudics_server '/f' fn '/mission5day.cfg ' ...
-            ARGO_SYS_PARAM.rudics_server '/f' fn '/mission.cfg'])
-        system(['cp ' ARGO_SYS_PARAM.secondary_server '/f' fn '/mission5day.cfg ' ...
-            ARGO_SYS_PARAM.secondary_server '/f' fn '/mission.cfg'])
-    elseif mod(pn,5) == 1
-        system(['cp ' ARGO_SYS_PARAM.rudics_server '/f' fn '/mission12hr.cfg ' ...
-            ARGO_SYS_PARAM.rudics_server '/f' fn '/mission.cfg'])
-        system(['cp ' ARGO_SYS_PARAM.secondary_server '/f' fn '/mission12hr.cfg ' ...
-            ARGO_SYS_PARAM.secondary_server '/f' fn '/mission.cfg'])
-        
-    else
-        system(['cp ' ARGO_SYS_PARAM.rudics_server '/f' fn '/missionTelRetry.cfg ' ...
-            ARGO_SYS_PARAM.rudics_server '/f' fn '/mission.cfg'])
-        system(['cp ' ARGO_SYS_PARAM.secondary_server '/f' fn '/missionTelRetry.cfg ' ...
-            ARGO_SYS_PARAM.secondary_server '/f' fn '/mission.cfg'])
-        
-    end
+%     if mod(pn,5) == 0
+%         system(['cp ' ARGO_SYS_PARAM.rudics_server '/f' fn '/mission5day.cfg ' ...
+%             ARGO_SYS_PARAM.rudics_server '/f' fn '/mission.cfg'])
+%         system(['cp ' ARGO_SYS_PARAM.secondary_server '/f' fn '/mission5day.cfg ' ...
+%             ARGO_SYS_PARAM.secondary_server '/f' fn '/mission.cfg'])
+%     elseif mod(pn,5) == 1
+%         system(['cp ' ARGO_SYS_PARAM.rudics_server '/f' fn '/mission12hr.cfg ' ...
+%             ARGO_SYS_PARAM.rudics_server '/f' fn '/mission.cfg'])
+%         system(['cp ' ARGO_SYS_PARAM.secondary_server '/f' fn '/mission12hr.cfg ' ...
+%             ARGO_SYS_PARAM.secondary_server '/f' fn '/mission.cfg'])
+%         
+%     else
+%         system(['cp ' ARGO_SYS_PARAM.rudics_server '/f' fn '/missionTelRetry.cfg ' ...
+%             ARGO_SYS_PARAM.rudics_server '/f' fn '/mission.cfg'])
+%         system(['cp ' ARGO_SYS_PARAM.secondary_server '/f' fn '/missionTelRetry.cfg ' ...
+%             ARGO_SYS_PARAM.secondary_server '/f' fn '/mission.cfg'])
+%         
+%     end
     
 else
     
