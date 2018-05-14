@@ -12,20 +12,20 @@ getdbase(0);
 count = 0; %using this to just do 5 floats.
 
 %% Iridium
-for ii = 709:length(THE_ARGO_FLOAT_DB)
-    %testing the creation of iridium traj files
-    if isempty(strfind(THE_ARGO_FLOAT_DB(ii).controlboardnumstring,'i'))
-        continue
-    end
-    %only webb and seabird iridium floats
-    if THE_ARGO_FLOAT_DB(ii).maker ~= 4 & THE_ARGO_FLOAT_DB(ii).maker ~= 1 
-        continue
-    end
-%     if THE_ARGO_FLOAT_DB(ii).wmo_id ~= 7900609
-%         
+for ii = 1:length(THE_ARGO_FLOAT_DB)
+%     %testing the creation of iridium traj files
+%     if isempty(strfind(THE_ARGO_FLOAT_DB(ii).controlboardnumstring,'i'))
 %         continue
 %     end
-%     
+%     %only webb and seabird iridium floats
+%     if THE_ARGO_FLOAT_DB(ii).maker ~= 4 & THE_ARGO_FLOAT_DB(ii).maker ~= 1 
+%         continue
+%     end
+    if THE_ARGO_FLOAT_DB(ii).wmo_id ~= 7900614
+        
+        continue
+    end
+    
     clear traj traj_mc_order
     
     [fpp,dbdat] = getargo(THE_ARGO_FLOAT_DB(ii).wmo_id);
@@ -54,9 +54,9 @@ for ii = 709:length(THE_ARGO_FLOAT_DB)
 %         if length(fpp) - 10 > 0
 %             strt = length(fpp) - 10;
 %         else
-            strt = 1;
+            strt = 47;
 %         end
-        for j=strt:length(fpp)
+        for j=strt%:length(fpp)
             pn = '000';
             pns = num2str(j);
             pn(end-length(pns)+1:end) = pns;
@@ -99,11 +99,11 @@ for ii = 709:length(THE_ARGO_FLOAT_DB)
             %!!Let's make 5 traj mat files up, then troubleshoot the netcdf
             %creation:
 %             try
-                trajectory_iridium_nc(dbdat,fpp,traj)
-                %open a file to write the message out for later checking
-                fid = fopen('trajfilesremade_Nov2017.txt','a');
-                fprintf(fid,'%s\n',num2str(pmeta.wmo_id));
-                fclose(fid);
+%                 trajectory_iridium_nc(dbdat,fpp,traj)
+%                 %open a file to write the message out for later checking
+%                 fid = fopen('trajfilesremade_Nov2017.txt','a');
+%                 fprintf(fid,'%s\n',num2str(pmeta.wmo_id));
+%                 fclose(fid);
 %             catch Me
 %                 %open a file to write the message out for later checking
 %                 fid = fopen('traj_runtime_errors.txt','a');

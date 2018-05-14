@@ -20,6 +20,6 @@ end
 for j=startprof:endprof
     if ~isempty(fpp(j))
 %         rejectpoints(dbdat.wmo_id,j,{'s' 't' 'p'},0,2500,retrieve)
-         rejectpoints(dbdat.wmo_id,j,{'s' },0,2500,retrieve)
+         rejectpoints(dbdat.wmo_id,j,{'s' 't' 'p' },-2000,2500,retrieve)
     end
 end
