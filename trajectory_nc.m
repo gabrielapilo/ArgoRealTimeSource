@@ -865,6 +865,7 @@ j1950 = julian([1950 1 1 0 0 0]);
 iNM = 1;
 tmp = sscanf(dbdat.launchdate,'%4d%2d%2d%2d%2d%2d');
 netcdf.putVar(ncid,NJULDID,iNM-1,length(julian(tmp(:)')),julian(tmp(:)')-j1950);
+netcdf.putVar(ncid,NJULDSTID,iNM-1,length('1'),'0');
 netcdf.putVar(ncid,NLATID,iNM-1,length(dbdat.launch_lat),dbdat.launch_lat);
 netcdf.putVar(ncid,NLONGID,iNM-1,length(dbdat.launch_lon),dbdat.launch_lon);
 netcdf.putVar(ncid,NJULDQCID,iNM-1,length('1'),'1');
@@ -936,27 +937,27 @@ for nn = gotcyc
         'PET','DDET','DPST','DAST',...
         'AST','AET','TST','FMT',...
         'FLT','LLT','LMT','TET'};
+    jfillval = 999999;
     %    j1950 = julian([1950 1 1 0 0 0]); %%%%%%%%%%%%%%%%%%%%%%%%%20160725Add
     for jj = 1:length(nvnm)
         nnm = nvnm{jj};
         tnm = tvnm{jj};
         if isfield(traj,tnm) && ~isempty(traj(nn).(tnm).juld)
-            if ~isnan(traj(nn).(tnm).juld)
-                if traj(nn).(tnm).adj
-                    %            cmmd=['netcdf.putAtt(ncid,N' parnm 'ADID,''C_format'',cfmt{ipar});'];
-                    cmmd=['netcdf.putVar(ncid,NJULD' nnm 'ID,ii-1,length(traj(nn).(tnm).juld),traj(nn).(tnm).juld-j1950);'];
-                    eval(cmmd);
-                    %            netcdf.putVar(ncid,['NJULD_' nnm 'ID'],ii-1,length(traj(nn).(tnm).juld-j1950),traj(nn).(tnm).juld-j1950);
-                else
-                    cmmd=['netcdf.putVar(ncid,NJULD' nnm 'ID,ii-1,length(traj(nn).(tnm).juld),traj(nn).(tnm).juld-jcor);'];
-                    eval(cmmd);
-                    %            netcdf.putVar(ncid,['NJULD_' nnm 'ID'],ii-1,length(traj(nn).(tnm).juld-jcor),traj(nn).(tnm).juld-jcor);
-                end
+            if isnan(traj(nn).(tnm).juld)
+                jday = jfillval;
+                status = '9';
+            else
+                jday = traj(nn).(tnm).juld-jcor;
+                status = traj(nn).(tnm).stat;
             end
-            cmmd=['netcdf.putVar(ncid,NJULD' nnm 'STID,ii-1,length(char(traj(nn).(tnm).stat)),char(traj(nn).(tnm).stat));'];
+            %            cmmd=['netcdf.putAtt(ncid,N' parnm 'ADID,''C_format'',cfmt{ipar});'];
+            cmmd=['netcdf.putVar(ncid,NJULD' nnm 'ID,ii-1,length(traj(nn).(tnm).juld),jday);'];
             eval(cmmd);
-            %      netcdf.putVar(ncid,['NJULD_' nnm '_STATUSID'],ii-1,length(traj(nn).(tnm).stat),traj(nn).(tnm).stat);
+            %            netcdf.putVar(ncid,['NJULD_' nnm 'ID'],ii-1,length(traj(nn).(tnm).juld-j1950),traj(nn).(tnm).juld-j1950);
+            cmmd=['netcdf.putVar(ncid,NJULD' nnm 'STID,ii-1,length(status),status);'];
+            eval(cmmd);
         end
+        %      netcdf.putVar(ncid,['NJULD_' nnm '_STATUSID'],ii-1,length(traj(nn).(tnm).stat),traj(nn).(tnm).stat);
     end
     
     netcdf.putVar(ncid,NGROUDID,ii-1,length(fpp(nn).grounded),fpp(nn).grounded);
@@ -1002,8 +1003,6 @@ vnms([100,150,200,250,300,400,450,500,550,600,700,702,704,800]) = ...
     [{'DST'} {'FST'} {'DET'} {'PST'} {'PET'} {'DDET'} {'DPST'} {'AST'} {'DAST'} ...
     {'AET'} {'TST'} {'FMT'} {'LMT'} {'TET'}];
 
-jfillval = 999999;
-
 numnn=0;
 % Loop on profiles to be written to this file
 for nn = gotcyc
@@ -1033,9 +1032,11 @@ for nn = gotcyc
                         if isnan(fv.juld)
                             jday = jfillval;
                             status = '9';
+                            qc = '9';
                         else
                             jday = fv.juld-j1950;
                             status = fv.stat;
+                            qc = '0';
                         end
                         adj = fv.adj;
                         madd = iNM+1;
@@ -1045,23 +1046,20 @@ for nn = gotcyc
                             if isfield(fv,'qc') && ~isempty(fv.qc)
                                 netcdf.putVar(ncid,NJULDQCID,madd(1)-1,length(fv.qc),fv.qc);
                             else
-                                netcdf.putVar(ncid,NJULDQCID,madd(1)-1,length('0'),'0');
+                                netcdf.putVar(ncid,NJULDQCID,madd(1)-1,length(qc),qc);
                             end
                             if ~isempty(traj(nn).clockoffset)
                                 adj = 1;
                                 jday = jday - traj(nn).clockoffset;
                             end
                         end
-                        if adj
-                            if fv.adj
-                                netcdf.putVar(ncid,NJULDSTID,madd(1)-1,length( '9'), '9');
-                            end
+                        if adj %an estimated value is being used, so only enter into adjusted fields
                             netcdf.putVar(ncid,NJULDADID,madd(1)-1,length(jday),jday);
                             netcdf.putVar(ncid,NJULDADSTID,madd(1)-1,length(status),status);
                             if isfield(fv,'qc') && ~isempty(fv.qc)
                                 netcdf.putVar(ncid,NJULDADQCID,madd(1)-1,length(fv.qc),fv.qc);
                             else
-                                netcdf.putVar(ncid,NJULDADQCID,madd(1)-1,length('0'),'0');
+                                netcdf.putVar(ncid,NJULDADQCID,madd(1)-1,length(qc),qc);
                             end
                         end
                     end
@@ -1205,9 +1203,9 @@ for nn = gotcyc
                     if isfield(traj(nn).heads,'juld_qc') && ~isempty(traj(nn).heads.juld_qc)
                         netcdf.putVar(ncid,NJULDQCID,madd(1)-1,length(char(traj(nn).heads.juld_qc(:))),char(traj(nn).heads.juld_qc(:)));
                     else
-                        netcdf.putVar(ncid,NJULDQCID,madd(1)-1,length('0'),'0');
+                        netcdf.putVar(ncid,NJULDQCID,madd(1)-1,length(madd),repmat('0',1,length(madd)));
                     end
-                    netcdf.putVar(ncid,NJULDSTID,madd(1)-1,length('4'),'4');
+                    netcdf.putVar(ncid,NJULDSTID,madd(1)-1,length(madd),repmat('4',1,length(madd)));
                     netcdf.putVar(ncid,NLATID,madd(1)-1,length(traj(nn).heads.lat),traj(nn).heads.lat);
                     %make sure longitude is +/-180, not 0-360 as stored in mat files:
                     lon = traj(nn).heads.lon;

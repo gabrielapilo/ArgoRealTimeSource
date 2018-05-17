@@ -10,7 +10,7 @@ for bb =1:length(fns)
     if strfind(fns(bb).name,'.')
         continue
     end
-    if isempty(strfind(fns(bb).name,'1901322'))
+    if isempty(strfind(fns(bb).name,'5901678'))
         continue
     end
     fln = fns(bb).name;
@@ -76,7 +76,7 @@ for bb =1:length(fns)
             continue
         end
         ii = find(mc == umc(a));
-        inan = find(isnan(jd(ii)) & isnan(jd_adj(ii)) & str2num(stat(ii)) ~=9);
+        inan = find(isnan(jd(ii)) & isnan(jd_adj(ii)));% & str2num(stat(ii)) ~=9);
         if any(inan)
             disp(['Code: ' num2str(umc(a)) ])
             disp('Cycle')
