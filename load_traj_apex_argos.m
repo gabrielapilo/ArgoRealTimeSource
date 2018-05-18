@@ -129,12 +129,14 @@ end
 % ---- Load data and parameters from this cycle 
 
 % Switched to getting this info from fpp - see below
-traj(np).heads.juld = julian(heads.dat(:,1:6));
-traj(np).heads.lat = heads.dat(:,7);
-traj(np).heads.lon = heads.dat(:,8);
-traj(np).heads.aclass = char(heads.dat(:,9));
+%include a sort as sometimes the dates are out of order and this causes
+%mismatches later in the netcdf file creation.
+[traj(np).heads.juld,isort] = sort(julian(heads.dat(:,1:6)));
+traj(np).heads.lat = heads.dat(isort,7);
+traj(np).heads.lon = heads.dat(isort,8);
+traj(np).heads.aclass = char(heads.dat(isort,9));
 if isfield(heads,'qc')
-   traj(np).heads.qcflags = heads.qc;
+   traj(np).heads.qcflags = heads.qc(isort);
 else
    traj(np).heads.qcflags = ones(size(traj(np).heads.juld));
 end

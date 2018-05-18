@@ -901,7 +901,7 @@ netcdf.putVar(ncid,NDAUPID,0,length(today_str),today_str);
 ii = 0;
 for nn = gotcyc
     % We don't include missing cycles, so should end up with ii=length(gotcyc)
-    ii = ii+1;
+    ii = ii+1;       
     
     % If float cycle number starts from zero then this will may need
     % correction, although normally cycle zero would be in in fpp(1), so
@@ -1233,6 +1233,11 @@ for nn = gotcyc
                 if ~isempty(fpp(nn).surfpres_used) && ~isnan(fpp(nn).surfpres_used)
                     madd = iNM+1;
                     netcdf.putVar(ncid,NPRESID,madd(1)-1,length(fpp(nn).surfpres_used),fpp(nn).surfpres_used);
+                    netcdf.putVar(ncid,NPRESQCID,madd(1)-1,length(fpp(nn).surfpres_used),'0');
+                    %need to include in adjusted field as well to meet
+                    %consistency checks for the file
+                    netcdf.putVar(ncid,NPRESADID,madd(1)-1,length(fpp(nn).surfpres_used),fpp(nn).surfpres_used);
+                    netcdf.putVar(ncid,NPRESADQCID,madd(1)-1,length(fpp(nn).surfpres_used),'0');                    
                 end
         end
         
