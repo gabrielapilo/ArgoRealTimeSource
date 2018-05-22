@@ -553,7 +553,7 @@ for ii = 1:length(traj)
    end
    traj(ii).FMT.adj = 0;
 
-   % FLT - no MC
+   % FLT - first 703 measurement
    [~,jj] = min(jhead);
    if isempty(jj) || isnan(jhead(jj))
       traj(ii).FLT.juld = nan;
@@ -564,7 +564,7 @@ for ii = 1:length(traj)
    end
    traj(ii).FLT.adj = 0;
       
-   % LLT - no MC
+   % LLT - last 703 measurement
    [~,jj] = max(jhead);
    if isempty(jj) || isnan(jhead(jj))
       traj(ii).LLT.juld = nan;
