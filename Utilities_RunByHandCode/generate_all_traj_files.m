@@ -21,7 +21,7 @@ for ii = 1:length(THE_ARGO_FLOAT_DB)
 %     if THE_ARGO_FLOAT_DB(ii).maker ~= 4 & THE_ARGO_FLOAT_DB(ii).maker ~= 1 
 %         continue
 %     end
-    if THE_ARGO_FLOAT_DB(ii).wmo_id ~= 7900614
+    if THE_ARGO_FLOAT_DB(ii).wmo_id ~= 5901678
         
         continue
     end
@@ -124,7 +124,7 @@ for ii = 1:length(THE_ARGO_FLOAT_DB)
     if THE_ARGO_FLOAT_DB(ii).iridium == 1
         continue
     end
-    if THE_ARGO_FLOAT_DB(ii).wmo_id ~= 1901157
+    if THE_ARGO_FLOAT_DB(ii).wmo_id ~= 5901166
         
         continue
     end
@@ -134,15 +134,8 @@ for ii = 1:length(THE_ARGO_FLOAT_DB)
     [fpp,dbdat] = getargo(THE_ARGO_FLOAT_DB(ii).wmo_id);
 
     if ~isempty(fpp)
-        %construct a location for the log files that have been processed
-        floc = [ARGO_SYS_PARAM.iridium_path 'iridium_processed/' ...
-            num2str(THE_ARGO_FLOAT_DB(ii).wmo_id) '/'];
-        
-        % get the file metadata information
-        pmeta.wmo_id = THE_ARGO_FLOAT_DB(ii).wmo_id;
-        not_last = 1;
         %load the traj mat file just once:
-        tfnm = [ARGO_SYS_PARAM.root_dir 'trajfiles/T' num2str(pmeta.wmo_id)];
+        tfnm = [ARGO_SYS_PARAM.root_dir 'trajfiles/T' num2str(THE_ARGO_FLOAT_DB(ii).wmo_id)];
         if exist([tfnm '.mat'],'file');
             load(tfnm);
         else
@@ -150,11 +143,17 @@ for ii = 1:length(THE_ARGO_FLOAT_DB)
         end
                 
         if exist('traj','var') == 1
+            %rebuild all the traj files, and recreate the netcdf files
+            disp(['Building traj: ' num2str(THE_ARGO_FLOAT_DB(ii).wmo_id)])
             trajectory_nc(dbdat,fpp,traj,traj_mc_order)
+%             load_float_to_traj(THE_ARGO_FLOAT_DB(ii).wmo_id,1)
         end
     end
 end
 return
+%% ARGOS, but force remake of some files
+% see code: traj_rebuild_failed_files.m
+
 %% copy all the test files up to a export directory for sending to gdac in one hit
 % next step is to put code into processing
 %and copy to Lisa

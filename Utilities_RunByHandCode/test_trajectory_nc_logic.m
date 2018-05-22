@@ -10,7 +10,7 @@ for bb =1:length(fns)
     if strfind(fns(bb).name,'.')
         continue
     end
-    if isempty(strfind(fns(bb).name,'1901322'))
+    if isempty(strfind(fns(bb).name,'5901166'))
         continue
     end
     fln = fns(bb).name;
@@ -23,12 +23,14 @@ for bb =1:length(fns)
     mc = ncread(fn,'MEASUREMENT_CODE');
     cyc = ncread(fn,'CYCLE_NUMBER');
     press = ncread(fn,'PRES');
+    pressqc = ncread(fn,'PRES_QC');
     jd = ncread(fn,'JULD');
     jd_adj = ncread(fn,'JULD_ADJUSTED');
     stat = ncread(fn,'JULD_STATUS');
     jd_qc = ncread(fn,'JULD_QC');
     jda_stat = ncread(fn,'JULD_ADJUSTED_STATUS');
     jda_qc = ncread(fn,'JULD_ADJUSTED_QC');
+    pqc = ncread(fn,'POSITION_QC');
     if isempty(jd)
         disp(['EMPTY NC FILE! ' fln])
         continue
@@ -76,7 +78,7 @@ for bb =1:length(fns)
             continue
         end
         ii = find(mc == umc(a));
-        inan = find(isnan(jd(ii)) & isnan(jd_adj(ii)) & str2num(stat(ii)) ~=9);
+        inan = find(isnan(jd(ii)) & isnan(jd_adj(ii)));% & str2num(stat(ii)) ~=9);
         if any(inan)
             disp(['Code: ' num2str(umc(a)) ])
             disp('Cycle')
@@ -111,8 +113,10 @@ for bb =1:length(fns)
         ii = find(cyc == a & mc == 703);
         flt = min(jd_adj(ii));
         llt = max(jd_adj(ii));
-        if flt ~= jfl(ij) | llt ~= jll(ij)
-            disp(['Profile: ' num2str(a) ' mc = 703'])
+        if ~isnan(flt.*jfl(ij)) & ~isnan(llt.*jll(ij))
+            if flt ~= jfl(ij) | llt ~= jll(ij)
+                disp(['first/last mesage times dont match, Profile: ' num2str(a) ' mc = 703'])
+            end
         end
         
         
@@ -124,7 +128,7 @@ for bb =1:length(fns)
             %check both juld and juld_adj values (TST is not adjusted)
             if ~isnan(jds(ij).*jd_adj(ii))
                 if jds(ij) ~= jd_adj(ii) & jds(ij) ~= jd(ii)
-                    disp(['Profile: ' num2str(a) ' mc = ' num2str(mcN(b))])
+                    disp(['Juld start/end dont match juld, Profile: ' num2str(a) ' mc = ' num2str(mcN(b))])
                     keyboard
                 end
             end
@@ -134,16 +138,18 @@ for bb =1:length(fns)
     %% check that AST and DDET are the same
     jddde = ncread(fn,'JULD_DEEP_DESCENT_END');
     jdast = ncread(fn,'JULD_ASCENT_START');
-    if nansum(jddde - jdast) ~= 0
+    if ~isnan(nansum(jddde - jdast))
+        if nansum(jddde - jdast) ~= 0
         disp('JULD_DEEP_DESCENT_END and JULD_ASCENT_START DIFFERENT!!')
         keyboard
+        end
     end
     % check statuses are correct for failed file checker:
     stat_jdde = ncread(fn,'JULD_DEEP_DESCENT_END_STATUS');
     stat_jast = ncread(fn,'JULD_ASCENT_START_STATUS');
     stat_jaet = ncread(fn,'JULD_ASCENT_END_STATUS');
     ii = find(mc == 400);
-    [cyc(ii) str2num(stat(ii))]
+    [cyc(ii) str2num(stat(ii))];
  
     %% location times
     jdll = ncread(fn,'JULD_LAST_LOCATION');
@@ -164,13 +170,13 @@ for bb =1:length(fns)
     mc(ibad)
     mc(ibad2)
     %% pressure adj
-    pr = ncread(fn,'PRES_ADJUSTED');
-    prqc = ncread(fn,'PRES_ADJUSTED_QC');
+    pra = ncread(fn,'PRES_ADJUSTED');
+    praqc = ncread(fn,'PRES_ADJUSTED_QC');
     ibad = [];ibad2 = [];
-    for a = 1:length(pr)
-        if ~isnan(pr(a)) & prqc(a) == ' '
+    for a = 1:length(pra)
+        if ~isnan(pra(a)) & praqc(a) == ' '
             ibad = [ibad;a];
-        elseif isnan(pr(a)) & prqc(a) ~= ' '
+        elseif isnan(pra(a)) & praqc(a) ~= ' '
             ibad2 = [ibad2;a];
         end
     end
@@ -240,13 +246,16 @@ for bb =1:length(fns)
     hold on
     coast
     
-    %the measurement codes for each cycle
+    %the measurement codes for each cycle, where we have values
+    ifil = ~isnan(jd) | ~isnan(jd_adj);
     figure(3);clf
-    plot(mc,cyc,'x')
+    plot(mc,cyc,'ko');hold on
+    plot(mc(ifil),cyc(ifil),'r.')
     grid
     title(fln)
     xlabel('MC')
     ylabel('Cycle')
+    legend('Fill value','Juld/adj value')
     
     % the times between the surface locations:
     figure(5);clf
