@@ -1,0 +1,24 @@
+[logfile]
+name : /filepath/filename.log
+
+[account]
+addr : account@somewhere.com
+val : **********
+domain : @somewhere.com
+
+[server]
+hostname : imap.somewhere.com
+readfromfolder : Inbox
+movetofolder : Cabinet
+expectedmaxcount : 500
+filterby : subject
+filterwith: SBD Msg From Unit
+moveemail : yes
+
+[linux]
+saveheader : no
+savepathhdr : /filepath/
+saveattachments : no
+savepathatt : /filepath/
+saveemailscrape : yes
+savepathscrape: /filepath/
