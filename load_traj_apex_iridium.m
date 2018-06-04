@@ -389,7 +389,7 @@ if isnan(PET)
         estpet = 1;
     end
     if ~isempty(fpp(pn).park_date)
-        if isnan(PET) | PET < datenum(fpp(pn).park_date(end,:))
+        if isnan(PET) | abs(PET - datenum(fpp(pn).park_date(end,:))) > 3/24
             %try using last time from park info in msg file
             try
                 PET = datenum(fpp(pn).park_date(end,:));
