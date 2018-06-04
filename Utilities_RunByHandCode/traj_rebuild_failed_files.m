@@ -5,6 +5,7 @@
 %list the XML files
 fcd = '/home/argo/ArgoRT/trajchecker/out/';
 fnms = dir([fcd '*.filecheck']);
+fid = fopen('trajArgosForRerun.txt','a');
 
 jj = 0;
 for a = 1:length(fnms)
@@ -26,10 +27,8 @@ for a = 1:length(fnms)
         continue
     end
     
-    % which profiles?
-    
-    % rebuild the workfile
-    
-    % remake the traj file from workfiles.
+    %let's output the wmo id to a file
+    fprintf(fid,'%s\n',fnms(a).name(1:7))
     jj = jj+1;
 end
+fclose(fid)

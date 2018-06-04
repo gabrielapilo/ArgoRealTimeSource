@@ -21,7 +21,7 @@ for ii = 1:length(THE_ARGO_FLOAT_DB)
 %     if THE_ARGO_FLOAT_DB(ii).maker ~= 4 & THE_ARGO_FLOAT_DB(ii).maker ~= 1 
 %         continue
 %     end
-    if THE_ARGO_FLOAT_DB(ii).wmo_id ~= 5901678
+    if THE_ARGO_FLOAT_DB(ii).wmo_id ~= 5904887
         
         continue
     end
@@ -54,9 +54,9 @@ for ii = 1:length(THE_ARGO_FLOAT_DB)
 %         if length(fpp) - 10 > 0
 %             strt = length(fpp) - 10;
 %         else
-            strt = 47;
+            strt = 158;
 %         end
-        for j=strt%:length(fpp)
+        for j=strt:strt%length(fpp)
             pn = '000';
             pns = num2str(j);
             pn(end-length(pns)+1:end) = pns;
@@ -70,7 +70,6 @@ for ii = 1:length(THE_ARGO_FLOAT_DB)
             disp(['WMO: ' num2str(pmeta.wmo_id) ', pn: ' num2str(pmeta.pn)])
 %             try
             traj = load_traj_apex_iridium(traj,pmeta,pmeta.pn,dbdat,fpp,floc); %for iridium floats
-%             [traj,traj_mc_order] = load_traj_apex(traj,pmeta,dbdat,fpp,not_last,floc); % for argos floats
 %             catch Me
 %                 %open a file to write the message out for later checking
 %                 fid = fopen('traj_runtime_errors.txt','a');
@@ -99,7 +98,7 @@ for ii = 1:length(THE_ARGO_FLOAT_DB)
             %!!Let's make 5 traj mat files up, then troubleshoot the netcdf
             %creation:
 %             try
-%                 trajectory_iridium_nc(dbdat,fpp,traj)
+                 trajectory_iridium_nc(dbdat,fpp,traj)
 %                 %open a file to write the message out for later checking
 %                 fid = fopen('trajfilesremade_Nov2017.txt','a');
 %                 fprintf(fid,'%s\n',num2str(pmeta.wmo_id));
@@ -124,7 +123,7 @@ for ii = 1:length(THE_ARGO_FLOAT_DB)
     if THE_ARGO_FLOAT_DB(ii).iridium == 1
         continue
     end
-    if THE_ARGO_FLOAT_DB(ii).wmo_id ~= 5901166
+    if THE_ARGO_FLOAT_DB(ii).wmo_id ~= 1901119
         
         continue
     end
