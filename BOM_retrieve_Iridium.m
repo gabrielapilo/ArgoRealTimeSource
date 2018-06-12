@@ -44,21 +44,18 @@ if isfield(ARGO_SYS_PARAM,'processor')
     elseif ~isempty(strfind(ARGO_SYS_PARAM.processor,'BOM'))        
         %BOM are retrieving the data from the FTP
         ftp_conn = ftp(ARGO_SYS_PARAM.ftp.ftp,ARGO_SYS_PARAM.ftp.name,ARGO_SYS_PARAM.ftp.pswd);
+        fils = dir(ftp_conn,'/iridium_data/*');
         
         %now go get the other iridiums
         eval(['cd ' ARGO_SYS_PARAM.iridium_path]);
         cd(ftp_conn,'iridium_data');
         mget(ftp_conn,'*');
-        cd(ftp_conn,'../');
         
-%         %now that they have all the data downloaded, move the files to the
-%         %hold_iridium_data folder.
-%         %have to move one at a time, ftp functionality not there for multiple
-%         %moves with wildcards
-%         fils = dir(ftp_conn,'/iridium_data/*');
-%         for aa = 1:length(fils)
-%             rename(ftp_conn,['./iridium_data/' fils(aa).name],['/hold_iridium_data_sent/' fils(aa).name]);
-%         end
+        %now that they have all the data downloaded, delete them. Copies in
+        %stampdated files if needed
+        for aa = 1:length(fils)
+            del(ftp_conn,fils(aa).name);
+        end
         close(ftp_conn);
     end
 end
