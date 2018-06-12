@@ -71,7 +71,11 @@ for ii = 1:length(typ)
         if mm > irdat_size
             %move the small file out
             system(['mv -f ' ARGO_SYS_PARAM.iridium_path nfilen ' ' ARGO_SYS_PARAM.iridium_path '/iridium_bad_files'])
-            system(['cp -f ' lookhere{imax} ' ' ARGO_SYS_PARAM.iridium_path '/' nfilen]);
+            if imax == 7 %need to change file name
+                system(['cp -f ' lookhere{imax} ' ' ARGO_SYS_PARAM.iridium_path '/' nfilen(end-11:end)]);
+            else
+                system(['cp -f ' lookhere{imax} ' ' ARGO_SYS_PARAM.iridium_path '/' nfilen]);
+            end
             %If we updated any files, copy to BOM ftp
             BOM_retrieve_Iridium(lookhere{imax})
             found = 1;

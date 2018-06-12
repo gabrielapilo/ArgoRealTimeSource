@@ -619,7 +619,16 @@ catch Me
     end
 end
 
-extract_Iridium_data
+try
+    extract_Iridium_data
+catch Me
+    logerr(5,['error in processing Iridium float - ' num2str(dbdat.wmo_id)])
+    logerr(5,['Message: ' Me.message ])
+    for jk = 1:length(Me.stack)
+        logerr(5,Me.stack(jk).file)
+        logerr(5,['Line: ' num2str(Me.stack(jk).line)])
+    end
+end
 
 
 %APF 11 floats
