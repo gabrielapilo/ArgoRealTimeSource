@@ -51,14 +51,14 @@ if isfield(ARGO_SYS_PARAM,'processor')
         mget(ftp_conn,'*');
         cd(ftp_conn,'../');
         
-        %now that they have all the data downloaded, move the files to the
-        %hold_iridium_data folder.
-        %have to move one at a time, ftp functionality not there for multiple
-        %moves with wildcards
-        fils = dir(ftp_conn,'/iridium_data/*');
-        for aa = 1:length(fils)
-            rename(ftp_conn,['./iridium_data/' fils(aa).name],['/hold_iridium_data_sent/' fils(aa).name]);
-        end
+%         %now that they have all the data downloaded, move the files to the
+%         %hold_iridium_data folder.
+%         %have to move one at a time, ftp functionality not there for multiple
+%         %moves with wildcards
+%         fils = dir(ftp_conn,'/iridium_data/*');
+%         for aa = 1:length(fils)
+%             rename(ftp_conn,['./iridium_data/' fils(aa).name],['/hold_iridium_data_sent/' fils(aa).name]);
+%         end
         close(ftp_conn);
     end
 end
