@@ -54,7 +54,7 @@ if isfield(ARGO_SYS_PARAM,'processor')
         %now that they have all the data downloaded, delete them. Copies in
         %stampdated files if needed
         for aa = 1:length(fils)
-            del(ftp_conn,fils(aa).name);
+            delete(ftp_conn,fils(aa).name);
         end
         close(ftp_conn);
     end
