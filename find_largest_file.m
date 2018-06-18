@@ -73,11 +73,13 @@ for ii = 1:length(typ)
             system(['mv -f ' ARGO_SYS_PARAM.iridium_path nfilen ' ' ARGO_SYS_PARAM.iridium_path '/iridium_bad_files'])
             if imax == 7 %need to change file name
                 system(['cp -f ' lookhere{imax} ' ' ARGO_SYS_PARAM.iridium_path '/' nfilen(end-11:end)]);
+                %If we updated any files, copy to BOM ftp
+                BOM_retrieve_Iridium([ARGO_SYS_PARAM.iridium_path nfilen(end-11:end)])
             else
                 system(['cp -f ' lookhere{imax} ' ' ARGO_SYS_PARAM.iridium_path '/' nfilen]);
+                %If we updated any files, copy to BOM ftp
+                BOM_retrieve_Iridium([ARGO_SYS_PARAM.iridium_path nfilen])
             end
-            %If we updated any files, copy to BOM ftp
-            BOM_retrieve_Iridium(lookhere{imax})
             found = 1;
         end
     end
