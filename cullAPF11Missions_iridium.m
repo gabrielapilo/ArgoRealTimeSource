@@ -14,11 +14,13 @@
 % fname=-1 regenerates all missions from the iridium_processed directory
 % for a given float - note this is based on cullMissions_iridium
 
-function cullAPF11Missions_iridium(wmo_id,pn)
+function cullAPF11Missions_iridium(dbdat,pn)
 
 global ARGO_SYS_PARAM
 global ARGO_ID_CROSSREF
 aic=ARGO_ID_CROSSREF;
+
+wmo_id = dbdat.wmo_id;
 
 kk=find(aic(:,1)==wmo_id);
 
@@ -33,9 +35,10 @@ if exist(fn,'file')
 else
     floatTech=[];
 end
+
 fnm=[];
 ms=[];
-dbdat=getdbase(wmo_id);
+
 % create the file name here:
 pns=sprintf('%3.3i',pn+dbdat.np0);
 
@@ -44,7 +47,7 @@ fnm=dirc([ARGO_SYS_PARAM.iridium_path 'f' num2str(aic(kk,2)) '.' pns '.*.system_
 
 if ~isempty(fnm)
     
-    fnm=fnm{end,1};
+    fnm=[ARGO_SYS_PARAM.iridium_path fnm{end,1}];
     
     
     % go and get the mission data from individual iridium data files

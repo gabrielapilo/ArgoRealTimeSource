@@ -925,7 +925,7 @@ if dbdat.flbb
         netcdf.putVar(ncid,SENSORSERNOID,[0,jj-1],[length(aa),1],aa);
     end
     
-    if dbdat.subtype > 1025 & dbdat.subtype < 1030 %MCOMS wetlabs types NHM floats
+    if dbdat.subtype > 1025 & dbdat.subtype < 1030  | dbdat.subtype == 1031%MCOMS wetlabs types NHM floats
         if dbdat.subtype == 1026 %BB3 eco model (not in spreadsheet) with MCOMS FLBBCD (in spreadsheet)
             jj=jj+1;
             aa=s.FLBB.mfg;
@@ -982,7 +982,7 @@ if dbdat.flbb
             aa=s.FLBB.SerialNo;
             netcdf.putVar(ncid,SENSORSERNOID,[0,jj-1],[length(aa),1],aa);
         end
-        if dbdat.subtype > 1026 & dbdat.subtype < 1030 %MCOMS flbb2
+        if dbdat.subtype > 1026 & dbdat.subtype < 1030 | dbdat.subtype == 1031 %MCOMS flbb2
             jj=jj+1;
             aa=s.FLBB.mfg;
             netcdf.putVar(ncid,SENSORMAKERID,[0,jj-1],[length(aa),1],aa);

@@ -6,12 +6,38 @@ set_argo_sys_params
 dirn1 = '/home/argo/data/dmode/newSoftwareTest/';
 dirn2 = '/home/argo/ArgoRT/netcdf/';
 getdbase(0);
+fln = [1901339
+1901156
+1901157
+1901158
+1901159
+1901152
+1901153
+1901154
+1901155
+5903954
+5903956
+5903957
+5904218
+5903955
+1901135
+5901646
+5901647
+5901648
+5901697
+5901699
+5903226
+5903242
+5903248
+5903255
+5903256];
 
 %open a text file to record the files changed:
-fid = fopen('/home/argo/ArgoRT/HisParam_changes.txt','a');
+fid = fopen('/home/argo/ArgoRT/HisParam_changes_oxy.txt','a');
 
-for a = 420:length(THE_ARGO_FLOAT_DB)
-    if THE_ARGO_FLOAT_DB(a).oxy
+for a = 1:length(THE_ARGO_FLOAT_DB)
+%     if THE_ARGO_FLOAT_DB(a).oxy
+    if ~isempty(find(THE_ARGO_FLOAT_DB(a).wmo_id==fln))
         for cc = 1:2 %for both D and R files
             eval(['dirn = dirn' num2str(cc) ';'])
             if cc == 1

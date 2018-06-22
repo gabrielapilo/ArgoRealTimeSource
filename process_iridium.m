@@ -240,10 +240,11 @@ if any(stage==1)
     %     for 5905023, 5905194, 5905197, 5905198 BGC floats only, initiate mission swapping based on pn:
     if isfield(ARGO_SYS_PARAM,'processor')
         if ~isempty(strmatch('CSIRO',ARGO_SYS_PARAM.processor))
-            if dbdat.wmo_id==5905023 | dbdat.wmo_id==5905194 | dbdat.wmo_id==5905197% ...
-                    %| dbdat.wmo_id==5905198
+            if dbdat.wmo_id==5905023 | dbdat.wmo_id==5905194 | dbdat.wmo_id==5905197 ...
+                    | dbdat.wmo_id==5905395 | dbdat.wmo_id == 5905396 ...
+                    | dbdat.wmo_id == 5905397
                 if np > 8
-                    swap_missions(np,dbdat.argos_hex_id);
+                    swap_missions(np,dbdat.argos_hex_id, dbdat.wmo_id);
                 end
             end
         end
@@ -292,7 +293,8 @@ if any(stage==1)
             if(length(gg)>78);pro.park_O2phase(j)=pd(4);end
             if(length(gg)>85);pro.parkT_SBEO2(j)=pd(5);end
         elseif dbdat.subtype==1026 | dbdat.subtype==1027 ...
-                | dbdat.subtype==1028 | dbdat.subtype==1029
+                | dbdat.subtype==1028 | dbdat.subtype==1029 | ...
+                dbdat.subtype == 1031
             pro.park_date(j,1:6)=datevec(gg(9:31));
             pro.park_jday(j)=julian(pro.park_date(j,1:6));
             pd=sscanf(gg(32:end),'%f');
@@ -428,7 +430,7 @@ if any(stage==1)
                         pro.parkFsig(j) = parkd(6);
                         pro.parkBbsig(j) = parkd(7);
                         pro.parkBbsig532(j) = parkd(8);
-                    elseif dbdat.subtype==1027  % parkd(4) is placeholder for no3
+                    elseif dbdat.subtype==1027 % parkd(4) is placeholder for no3
                         if parkd(4)>=99.
                             pro.park_O2phase(j)=NaN;
                         else
@@ -457,7 +459,22 @@ if any(stage==1)
                             pro.park_pHT(j)=parkd(14);
                             pro.park_Tilt(j)=parkd(15);
                         end
-                     else
+                    elseif dbdat.subtype==1031 
+                        pro.park_O2phase(j)=parkd(5);
+                        pro.parkT_volts(j) =  parkd(6);
+                        pro.parkFsig(j) = parkd(7);
+                        pro.parkBbsig(j) = parkd(8);
+                        pro.parkBbsig532(j) = parkd(9);
+                        pro.park_irr412(j) = parkd(11);
+                        pro.park_irr443(j) = parkd(11);
+                        pro.park_irr490(j) = parkd(12);
+                        pro.park_irr555(j) = parkd(13);
+                        pro.park_rad412(j) = parkd(14);
+                        pro.park_rad443(j) = parkd(15);
+                        pro.park_rad490(j) = parkd(16);
+                        pro.park_rad555(j) = parkd(17);
+                        pro.park_tilt(j) = parkd(18);
+                    else
                         pro.park_Bphase(j)=parkd(4);
                         pro.parkToptode(j)=parkd(5);
                         if dbdat.flbb
@@ -560,7 +577,7 @@ if any(stage==1)
 %                         pro.parkFsig(k-1) = parkd(6);
 %                         pro.parkBbsig532(k-1) = parkd(7);
 %                         pro.parkBbsig = parkd(8);
-                    elseif dbdat.subtype==1027  % parkd(4) is placeholder for no3
+                    elseif dbdat.subtype==1027 | dbdat.subtype == 1031  % parkd(4) is placeholder for no3
 %  don't measure anything except p, t, s and no3 discretely..
                         pro.p_oxygen(k-1)=parkd(1);
                         pro.t_oxygen(k-1)=parkd(2);
@@ -605,7 +622,7 @@ if any(stage==1)
             pro.n_Oxysamples=length(pro.p_oxygen);
         elseif dbdat.subtype==1022 | dbdat.subtype==1030 % this is the oxygen profile area: added by uday
             pro.n_Oxysamples=length(pro.p_oxygen);
-        elseif dbdat.subtype==1027
+        elseif dbdat.subtype==1027 | dbdat.subtype == 1031
             pro.n_Oxysamples=length(pro.p_oxygen);
         end
         pro.n_parkaverages=length(pro.park_p);
@@ -633,70 +650,34 @@ if any(stage==1)
         end
     end
     
-    %data for the profile
-    ii = ii+1;
+    %data for the profile, get the range first
+    istart = [];iend = [];
+    ii = find(strncmp('#',c,1));
+    if ~isempty(ii) && length(ii) > 1
+        istart = ii(1)+1;
+        iend = ii(2) -1;
+    elseif isempty(ii)
+        %no data
+        pro.npoints = 0;
+    else
+        istart = ii(1)+1;
+        iend = length(c); %assume message is short and no GPS fixes etc at end
+    end
     
-    if ~isempty(jj) && ii <= length(c)
-        gg=c{ii};  %start line
+    if ~isempty(istart)
         j=pro.npoints+1;
-        if dbdat.subtype==1007 | dbdat.subtype==1008 | dbdat.subtype==1009
-            j=j+l;
-        end
-        
-        % seabird bio floats have two additional lines with the serial
-        % numbers of the sensors
-        if dbdat.subtype==1026 | dbdat.subtype==1027 | dbdat.subtype==1028 | dbdat.subtype==1029
-            ii = ii+2;
-            gg=c{ii};
-        end
-        
-        while(isempty(strmatch('#',gg)) & j>0 & ii <= length(c) & isempty(strmatch('<EOT>',gg))...
-                & isempty(strmatch('Res',gg)))  % GPS fix',gg)) & j>1 & gg~=-1)
-            
-            j=j-1;
-            ll=strfind(gg,'[');
-            if(strmatch('00000',gg))
-                stophere=1;
-            end
-            if(~isempty(ll) | strmatch('00000000000000',gg))
-                l2=strfind(gg,']') ;
-                if(isempty(l2))
-                    while strmatch('00000000000000',gg)
-                        j=j-1;
-                        ii = ii+1;
-                        gg=c{ii};
-                        if ~isempty(strmatch('Res',gg)) | j==0
-                            %                         gg=fgetl(fid);
-                            break
-                        end
-                    end
-                else
-                    j=j-str2num(gg(ll+1:l2-1));
-                    ii = ii+1;
-                    gg=c{ii};
-                    if ~isempty(strmatch('Res',gg))
-                        ii = ii+1;
-                        gg=c{ii};
-                        break
-                    end
+        for ii = istart:iend
+            gg = c{ii};
+            try
+                %check the whole string is convertible, else, go to the
+                %next string
+                h = hex2dec(gg);
+                if isempty(h) %blank line
+                    continue
                 end
-                %                pro.npoints=j;
-            end
-            %             gg=gg
-            if ~isempty(strmatch('Res',gg))
-                ii = ii+1;
-                gg=c{ii};
-                break
-            end
-            if  j==0
-                break
-            end
-            if ii > length(c)
-                break
-            end
-            if ~(isempty(strmatch('#',gg)) & j>0 & isempty(strmatch('<EOT>',gg))...
-                & isempty(strmatch('Res',gg)))
-               break
+                j = j-1; %put everything in backwards
+            catch
+                continue
             end
             pro.p_raw(j)=hex2dec(gg(1:4))/10.;
             pro.t_raw(j)=hex2dec(gg(5:8))/1000.;
@@ -737,6 +718,65 @@ if any(stage==1)
                 pro.nsamps(j)=rawline(4);
 
             
+            elseif dbdat.subtype == 1031 %bio float with irrad, isus
+                lt=length(gg);
+                [fmtstr,bits]=SBEbitstofmtstr(gg(lt-3:lt-2));
+                rawline=sscanf(gg,fmtstr);
+
+                n=length(rawline);
+                rawline(n+1)=nan;
+                isum = 4;
+                if (bits(1)) oxph=isum+1; isum=isum+1; else oxph=n+1; end
+                if (bits(1)) oxt=isum+1; isum=isum+1; else oxt=n+1; end
+                if (bits(1)) oxnbin=isum+1; isum=isum+1; else oxnbin=n+1; end
+                if (bits(2)) mcfl=isum+1; isum=isum+1; else mcfl=n+1; end
+                if (bits(2)) mcbb=isum+1; isum=isum+1; else mcbb=n+1; end
+                if (bits(2)) mccd=isum+1; isum=isum+1; else mccd=n+1; end
+                if (bits(2)) mcnbin=isum+1; isum=isum+1; else mcnbin=n+1; end
+                if (bits(3)) crv=isum+1; isum=isum+1; else crv=n+1; end
+                if (bits(3)) crvc=isum+1; isum=isum+1; else crvc=n+1; end
+                if (bits(3)) crvnbin=isum+1; isum=isum+1; else crvnbin=n+1; end
+                if (bits(4)) ocri1=isum+1; isum=isum+1; else ocri1=n+1; end
+                if (bits(4)) ocri2=isum+1; isum=isum+1; else ocri2=n+1; end
+                if (bits(4)) ocri3=isum+1; isum=isum+1; else ocri3=n+1; end
+                if (bits(4)) ocri4=isum+1; isum=isum+1; else ocri4=n+1; end
+                if (bits(4)) ocrinbin=isum+1; isum=isum+1; else ocrinbin=n+1; end
+                if (bits(5)) ocrr1=isum+1; isum=isum+1; else ocrr1=n+1; end
+                if (bits(5)) ocrr2=isum+1; isum=isum+1; else ocrr2=n+1; end
+                if (bits(5)) ocrr3=isum+1; isum=isum+1; else ocrr3=n+1; end
+                if (bits(5)) ocrr4=isum+1; isum=isum+1; else ocrr4=n+1; end
+                if (bits(5)) ocrrnbin=isum+1; isum=isum+1; else ocrrnbin=n+1; end
+                if (bits(6)) ecobb1=isum+1; isum=isum+1; else ecobb1=n+1; end
+                if (bits(6)) ecobb2=isum+1; isum=isum+1; else ecobb2=n+1; end
+                if (bits(6)) ecobb3=isum+1; isum=isum+1; else ecobb3=n+1; end                        
+                if (bits(6)) econbin=isum+1; isum=isum+1; else econbin=n+1; end                        
+                if (bits(7)) tilt=isum+1; isum=isum+1; else tilt=n+1; end
+                if (bits(7)) tiltsd=isum+1; isum=isum+1; else tiltsd=n+1; end                        
+            
+%                 if rawline(oxph)>=99.
+%                     pro.O2phase_raw(j)=NaN;
+%                 else
+                    pro.O2phase_raw(j)=(rawline(oxph)/100000.0)-10.0;
+%                 end
+                pro.t_oxygen_volts(j)=(rawline(oxt)/1000000.0)-1.0;
+                
+                pro.Fsig(j)=(rawline(mcfl)-500); % FLTNU data
+                pro.Bbsig(j)=(rawline(mcbb)-500);
+                pro.Bbsig532(j)=(rawline(mccd)-500);
+                
+              
+                pro.irr412(j)=(rawline(ocri1)*1024 + 2013265920); % upward and downwelling radiances
+                pro.irr443(j)=(rawline(ocri2)*1024 + 2013265920); 
+                pro.irr490(j)=(rawline(ocri3)*1024 + 2013265920); 
+                pro.irr555(j)=(rawline(ocri4)*1024 + 2013265920); 
+                pro.rad412(j)=(rawline(ocrr1)*1024 + 2013265920); 
+                pro.rad443(j)=(rawline(ocrr2)*1024 + 2013265920); 
+                pro.rad490(j)=(rawline(ocrr3)*1024 + 2013265920); 
+                pro.rad555(j)=(rawline(ocrr4)*1024 + 2013265920); 
+                pro.Tilt(j)=(rawline(tilt)/10.0);
+                pro.Tilt_sd(j)=(rawline(tiltsd)/100.0);
+                
+                pro.nsamps(j)=rawline(4);
             elseif dbdat.subtype==1026  % bio optical float with irradiance and fltnu sensor
                 % these are self describing with the end bits telling you
                 % what variables have been measured in a particular line -
@@ -882,8 +922,6 @@ if any(stage==1)
                     pro.nsamps(j)=hex2dec(gg(13:14));
                 end
             end
-            ii = ii+1;
-            gg = c{ii};
         end
     end
  
@@ -1162,14 +1200,18 @@ if any(stage==1)
     end
     
     %check this information here:
-    deps = get_ocean_depth(pro.lat,pro.lon);
-    kk = find(isnan(pro.lat) | isnan(pro.lon) | pro.lat<-90 | pro.lat>90 ...
-        | pro.lon<-180 | pro.lon>360 | deps<0 );
-    if ~isempty(kk) | isempty(pro.lat) | isempty(pro.lon);
+    if ~isempty(pro.lat) & ~isempty(pro.lon)
+        [maxdeps,mindeps] = get_ocean_depth(pro.lat,pro.lon,0.03);
+        deps = nanmin(mindeps);
+    else
+        deps = NaN;
+    end
+    if isempty(pro.lat) | isempty(pro.lon) | isnan(deps) || deps < 0;
         logerr(2,'Implausible locations');
         goodfixes = [];
-        pro.lat = nan;
-        pro.lon = nan;
+        pro.lat = NaN;
+        pro.lon = NaN;
+        pro.pos_qc = 9;
         if isempty(goodfixes)
             logerr(2,'No good location fixes!');
         end
@@ -1180,9 +1222,9 @@ if any(stage==1)
     %                 % check for missing profile locations from ice floats and
     % add to the affected profiles:
     try
-        [float,pro]=interpolate_locations(dbdat,float,pro);
+        [float,pro,gennc]=interpolate_locations(dbdat,float,pro);
     catch
-        logerr(5,'Interpolate_locations.m fails for this float')
+        logerr(5,['Interpolate_locations.m fails for profile ' num2str(pro.profile_number)])
     end
    
     %         else
@@ -1272,8 +1314,8 @@ if any(stage==1)
                 pro.p_oxygen(ii),pro.lat(1));
         end
     end
-    if dbdat.oxy & (dbdat.subtype==1026 | dbdat.subtype==1027 | dbdat.subtype==1028| dbdat.subtype==1029)
-        %Seabird bio geochemical floats with SBD61 Optode:
+    if dbdat.oxy & (dbdat.subtype==1026 | dbdat.subtype==1027 | dbdat.subtype==1028| dbdat.subtype==1029| dbdat.subtype==1030| dbdat.subtype==1031)
+        %Seabird bio geochemical floats with SBE63 Optode:
         for ii=1:pro.n_parkaverages  % park data
             % first convert T volts to T90
             pro.parkToptode(ii)=convertSBE63Tv(pro.parkT_volts(ii),pro.wmo_id);
@@ -1524,6 +1566,22 @@ if any(stage==1)
     if(length(float(np).p_raw)>0)
         argoprofile_nc(dbdat,float(np));
     end
+    % now re-generate netcdf files that had interpolation done:
+    if exist('gennc','var') == 1
+        if any(gennc) > 0
+            for g=1:length(gennc)
+                if gennc(g) == np
+                    continue
+                end
+                if gennc(g) > 0
+                    if ~isempty(float(gennc(g)).jday) & ~isempty(float(gennc(g)).wmo_id)
+                        argoprofile_nc(dbdat,float(gennc(g)));
+                        write_tesac(dbdat,float(gennc(g)));
+                    end
+                end
+            end
+        end
+    end
     
     if(pro.npoints>0)  %do we have data?!
         
@@ -1590,22 +1648,20 @@ if any(stage==1)
     % Update float summary plots and web page
     prec.proc_status(2) = 1;
     
-    if opts.rtmode
-        try
-            %put this in, separated out by Ann and lost
-            web_profile_plot(float(np),dbdat);
-            web_float_summary(float,dbdat,1);
-            time_section_plot(float);
-            waterfallplots(float);
-            locationplots(float);
-            tsplots(float);
-        catch Me
-            logerr(5,['error in plotting routines - ' num2str(dbdat.wmo_id) ' profile ' num2str(float(np).profile_number)])
-            logerr(5,['Message: ' Me.message ])
-            for jk = 1:length(Me.stack)
-                logerr(5,Me.stack(jk).file)
-                logerr(5,['Line: ' num2str(Me.stack(jk).line)])
-            end
+    try
+        %plotting
+        web_profile_plot(float(np),dbdat);
+        web_float_summary(float,dbdat,1);
+        time_section_plot(float);
+        waterfallplots(float);
+        locationplots(float);
+        tsplots(float);
+    catch Me
+        logerr(5,['error in plotting routines - ' num2str(dbdat.wmo_id) ' profile ' num2str(float(np).profile_number)])
+        logerr(5,['Message: ' Me.message ])
+        for jk = 1:length(Me.stack)
+            logerr(5,Me.stack(jk).file)
+            logerr(5,['Line: ' num2str(Me.stack(jk).line)])
         end
     end
     

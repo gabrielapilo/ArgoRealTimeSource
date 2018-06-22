@@ -370,7 +370,8 @@ for nn = gotcyc
             rpp(nn) = median(pp);
             ncwrite(fname,'REPRESENTATIVE_PARK_PRESSURE',rpp(nn),ii);
             ncwrite(fname,'REPRESENTATIVE_PARK_PRESSURE_STATUS','1',ii);
-            
+        else
+            rpp = [];
         end
     else %zero profile, assume it didn't ground!
         ncwrite(fname,'GROUNDED','N',ii);
@@ -544,7 +545,7 @@ for nn = gotcyc
     
     %add in the 301 code:
     ival = find(traj_mc_order == 301);
-    if ~isempty(ival)
+    if ~isempty(ival) & ~isempty(rpp)
         pressure(ival) = rpp(nn);
         pressureadj(ival) = 0;
         pressurestat(ival) = '3';

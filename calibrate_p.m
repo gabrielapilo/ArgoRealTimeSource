@@ -82,7 +82,7 @@ else
     
        end
       
-   elseif isempty(fpp(ll).surfpres) || fpp(ll).surfpres(1) > 100 || isnan(fpp(ll).surfpres(1))
+   elseif isempty(fpp(ll).surfpres) || fpp(ll).surfpres(1) > 10 || isnan(fpp(ll).surfpres(1))
       pqc = -3;
       logerr(3,['CALIBRATE_P: Bad surf P: ' num2str(fpp(ll).surfpres)]); 
       % use surface pressure from last valid transmission:

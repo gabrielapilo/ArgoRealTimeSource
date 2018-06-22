@@ -53,20 +53,24 @@ lx = 9999999999999; ly = [];
 for ii = 1:length(lat)
    ix = find(XB >= lon(ii)-dist & XB <= lon(ii)+dist);
    iy = find(YB >= lat(ii)-dist & YB <= lat(ii)+dist);
-
-   if length(union(ix,lx))~=length(ix) | length(union(iy,ly))~=length(iy) 
-      hb = -1*ncread(fname,'height');
-      hb = hb(min(ix):max(ix),min(iy):max(iy));
-      lx = ix;
-      ly = iy;
+   if isempty(iy) %outside range of the bathy dataset, return a 5000db depth
+       maxdep(ii) = 5000;
+       mindep(ii) = 5000;
+       continue
+   end
+   if length(union(ix,lx))~=length(ix) | length(union(iy,ly))~=length(iy)
+       hb = -1*ncread(fname,'height');
+       hb = hb(min(ix):max(ix),min(iy):max(iy));
+       lx = ix;
+       ly = iy;
    end
    if isnan(lat(ii))
        maxdep(ii) = NaN;
        mindep(ii) = NaN;
    else
-       maxdep(ii) = max(hb(:));
-       mindep(ii) = min(hb(:));
-   end
+       maxdep(ii) = max(hb(:)); 
+       mindep(ii) = min(hb(:)); 
+   end    
 end
 
 return

@@ -205,7 +205,7 @@ if any(stage==1)
         fclose(fid);
     end
     
-    cullAPF11Missions_iridium(dbdat.wmo_id,np);  %& No mission
+    cullAPF11Missions_iridium(dbdat,np);  %& No mission
 %     information for older apf11s!  Therefore must create mission for the
 %     successive profiles: and be flexible so can handle newer floats which
 %     DO report missions
@@ -396,30 +396,7 @@ if any(stage==1)
  
     pro.n_parkaverages=length(pro.park_jday);
  end     
-    
-    %also need to check location information:
-       deps = get_ocean_depth(pro.lat,pro.lon);
-    kk = find(isnan(pro.lat) | isnan(pro.lon) | pro.lat<-90 | pro.lat>90 ...
-        | pro.lon<-180 | pro.lon>360 | deps<0 );
-    if ~isempty(kk) | isempty(pro.lat) | isempty(pro.lon);
-        logerr(2,'Implausible locations');
-        goodfixes = [];
-        pro.lat = nan;
-        pro.lon = nan;
-        if isempty(goodfixes)
-            logerr(2,'No good location fixes!');
-        end
-    end
-    %this is where we should now be doing the position interpolation if
-    %needed.
-    %                 % check for missing profile locations from ice floats and
-    % add to the affected profiles:
-    try
-        [latarr,lonarr]=interpolate_locations(dbdat,pro);
-    catch
-        logerr(5,'Interpolate_locations.m fails for this float')
-    end
- 
+     
     % now we need to sort out the location information - one position is
     % reported from the end of the previous surface drift and needs to be
     % moved to that profile:
@@ -493,7 +470,35 @@ if any(stage==1)
                     if isempty(pro.lat);pro.lat=nan;end
                     if isempty(pro.lon);pro.lon=nan;end
                 end
-            end      
+            end
+        end
+        %also need to check location information:
+        if ~isempty(pro.lat) && ~isnan(pro.lat)
+            if any(~isnan(pro.lat))
+                [maxdeps,mindeps] = get_ocean_depth(pro.lat,pro.lon,0.03);
+                deps = nanmin(mindeps);
+            end
+        else
+            deps = NaN;
+        end
+        if isempty(pro.lat) | isempty(pro.lon) | isnan(deps) || deps < 0;
+            logerr(2,'Implausible locations');
+            goodfixes = [];
+            pro.lat = NaN;
+            pro.lon = NaN;
+            pro.pos_qc = 9;
+            if isempty(goodfixes)
+                logerr(2,'No good location fixes!');
+            end
+        end
+        %this is where we should now be doing the position interpolation if
+        %needed.
+        %                 % check for missing profile locations from ice floats and
+        % add to the affected profiles:
+        try
+            [float,pro,gennc]=interpolate_locations(dbdat,float,pro);
+        catch
+            logerr(5,'Interpolate_locations.m fails for this float')
         end
     end
     
@@ -513,7 +518,7 @@ end
     slog=dirc([idatapath fn(1:dot(2)) '*system_log.txt']);
 
     if ~isempty(slog)
-        fid=fopen(slog{1,1});  %System log
+        fid=fopen([idatapath slog{1,1}]);  %System log
         %     else
         %         fid=-1
         %         return
@@ -582,7 +587,7 @@ end
     end
     
     vlog=dirc([idatapath fn(1:dot(2)+1) '*vitals_log.csv']);
-    fid=fopen(vlog{1});  %Vitals log - technical data - unknown where it belongs  
+    fid=fopen([idatapath vlog{1}]);  %Vitals log - technical data - unknown where it belongs  
     techno=0;
     if fid<=0
         
@@ -641,6 +646,22 @@ end
             web_select_float
         end
     end
+    % now re-generate netcdf files that had interpolation done:
+    if exist('gennc','var') == 1
+        if any(gennc) > 0
+            for g=1:length(gennc)
+                if gennc(g) == np
+                    continue
+                end
+                if gennc(g) > 0
+                    if ~isempty(float(gennc(g)).jday) & ~isempty(float(gennc(g)).wmo_id)
+                        argoprofile_nc(dbdat,float(gennc(g)));
+                        write_tesac(dbdat,float(gennc(g)));
+                    end
+                end
+            end
+        end
+    end
     
     if(pro.npoints>0)  %do we have data?!
         
@@ -680,22 +701,20 @@ end
     
     % Update float summary plots and web page
     
-    if opts.rtmode
-        try
-            web_float_summary(float,dbdat,1);
-            time_section_plot(float);
-            waterfallplots(float);
-            locationplots(float);
-            tsplots(float);
-            %        try
-            %             trajectory_nc(dbdat,float,np);
-            %        end
-            prec.traj_nc_count = 0;
-            prec.proc_status(2) = 1;
-            logerr(5,['Successful stage 2, np=' num2str(float(np).profile_number)]);
-        catch
-            logerr(5,['error in plotting routines - ' num2str(dbdat.wmo_id) ' profile ' num2str(float(np).profile_number)])
-        end
+    try
+        web_float_summary(float,dbdat,1);
+        time_section_plot(float);
+        waterfallplots(float);
+        locationplots(float);
+        tsplots(float);
+        %        try
+        %             trajectory_nc(dbdat,float,np);
+        %        end
+        prec.traj_nc_count = 0;
+        prec.proc_status(2) = 1;
+        logerr(5,['Successful stage 2, np=' num2str(float(np).profile_number)]);
+    catch
+        logerr(5,['error in plotting routines - ' num2str(dbdat.wmo_id) ' profile ' num2str(float(np).profile_number)])
     end
     
     prec.proc_status(1) = 1;

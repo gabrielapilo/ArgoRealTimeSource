@@ -12,20 +12,20 @@ getdbase(0);
 count = 0; %using this to just do 5 floats.
 
 %% Iridium
-for ii = 709:length(THE_ARGO_FLOAT_DB)
-    %testing the creation of iridium traj files
-    if isempty(strfind(THE_ARGO_FLOAT_DB(ii).controlboardnumstring,'i'))
-        continue
-    end
-    %only webb and seabird iridium floats
-    if THE_ARGO_FLOAT_DB(ii).maker ~= 4 & THE_ARGO_FLOAT_DB(ii).maker ~= 1 
-        continue
-    end
-%     if THE_ARGO_FLOAT_DB(ii).wmo_id ~= 7900609
-%         
+for ii = 1:length(THE_ARGO_FLOAT_DB)
+%     %testing the creation of iridium traj files
+%     if isempty(strfind(THE_ARGO_FLOAT_DB(ii).controlboardnumstring,'i'))
 %         continue
 %     end
-%     
+%     %only webb and seabird iridium floats
+%     if THE_ARGO_FLOAT_DB(ii).maker ~= 4 & THE_ARGO_FLOAT_DB(ii).maker ~= 1 
+%         continue
+%     end
+    if THE_ARGO_FLOAT_DB(ii).wmo_id ~= 5904887
+        
+        continue
+    end
+    
     clear traj traj_mc_order
     
     [fpp,dbdat] = getargo(THE_ARGO_FLOAT_DB(ii).wmo_id);
@@ -54,9 +54,9 @@ for ii = 709:length(THE_ARGO_FLOAT_DB)
 %         if length(fpp) - 10 > 0
 %             strt = length(fpp) - 10;
 %         else
-            strt = 1;
+            strt = 158;
 %         end
-        for j=strt:length(fpp)
+        for j=strt:strt%length(fpp)
             pn = '000';
             pns = num2str(j);
             pn(end-length(pns)+1:end) = pns;
@@ -70,7 +70,6 @@ for ii = 709:length(THE_ARGO_FLOAT_DB)
             disp(['WMO: ' num2str(pmeta.wmo_id) ', pn: ' num2str(pmeta.pn)])
 %             try
             traj = load_traj_apex_iridium(traj,pmeta,pmeta.pn,dbdat,fpp,floc); %for iridium floats
-%             [traj,traj_mc_order] = load_traj_apex(traj,pmeta,dbdat,fpp,not_last,floc); % for argos floats
 %             catch Me
 %                 %open a file to write the message out for later checking
 %                 fid = fopen('traj_runtime_errors.txt','a');
@@ -99,11 +98,11 @@ for ii = 709:length(THE_ARGO_FLOAT_DB)
             %!!Let's make 5 traj mat files up, then troubleshoot the netcdf
             %creation:
 %             try
-                trajectory_iridium_nc(dbdat,fpp,traj)
-                %open a file to write the message out for later checking
-                fid = fopen('trajfilesremade_Nov2017.txt','a');
-                fprintf(fid,'%s\n',num2str(pmeta.wmo_id));
-                fclose(fid);
+                 trajectory_iridium_nc(dbdat,fpp,traj)
+%                 %open a file to write the message out for later checking
+%                 fid = fopen('trajfilesremade_Nov2017.txt','a');
+%                 fprintf(fid,'%s\n',num2str(pmeta.wmo_id));
+%                 fclose(fid);
 %             catch Me
 %                 %open a file to write the message out for later checking
 %                 fid = fopen('traj_runtime_errors.txt','a');
@@ -124,7 +123,7 @@ for ii = 1:length(THE_ARGO_FLOAT_DB)
     if THE_ARGO_FLOAT_DB(ii).iridium == 1
         continue
     end
-    if THE_ARGO_FLOAT_DB(ii).wmo_id ~= 1901157
+    if THE_ARGO_FLOAT_DB(ii).wmo_id ~= 1901119
         
         continue
     end
@@ -134,15 +133,8 @@ for ii = 1:length(THE_ARGO_FLOAT_DB)
     [fpp,dbdat] = getargo(THE_ARGO_FLOAT_DB(ii).wmo_id);
 
     if ~isempty(fpp)
-        %construct a location for the log files that have been processed
-        floc = [ARGO_SYS_PARAM.iridium_path 'iridium_processed/' ...
-            num2str(THE_ARGO_FLOAT_DB(ii).wmo_id) '/'];
-        
-        % get the file metadata information
-        pmeta.wmo_id = THE_ARGO_FLOAT_DB(ii).wmo_id;
-        not_last = 1;
         %load the traj mat file just once:
-        tfnm = [ARGO_SYS_PARAM.root_dir 'trajfiles/T' num2str(pmeta.wmo_id)];
+        tfnm = [ARGO_SYS_PARAM.root_dir 'trajfiles/T' num2str(THE_ARGO_FLOAT_DB(ii).wmo_id)];
         if exist([tfnm '.mat'],'file');
             load(tfnm);
         else
@@ -150,11 +142,17 @@ for ii = 1:length(THE_ARGO_FLOAT_DB)
         end
                 
         if exist('traj','var') == 1
+            %rebuild all the traj files, and recreate the netcdf files
+            disp(['Building traj: ' num2str(THE_ARGO_FLOAT_DB(ii).wmo_id)])
             trajectory_nc(dbdat,fpp,traj,traj_mc_order)
+%             load_float_to_traj(THE_ARGO_FLOAT_DB(ii).wmo_id,1)
         end
     end
 end
 return
+%% ARGOS, but force remake of some files
+% see code: traj_rebuild_failed_files.m
+
 %% copy all the test files up to a export directory for sending to gdac in one hit
 % next step is to put code into processing
 %and copy to Lisa

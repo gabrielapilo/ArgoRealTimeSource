@@ -14,16 +14,16 @@ if ~exist('opts','var')
 end
 
 if ~exist ('PREC_FNM','var') | isempty(PREC_FNM)
-       PREC_FNM = [ARGO_SYS_PARAM.root_dir 'Argo_proc_records'];
+    PREC_FNM = [ARGO_SYS_PARAM.root_dir 'Argo_proc_records'];
 end
-    
+
 % System tuning parameters (could be shifted to ARGO_SYS_PARAM ?)
-Too_Old_Days = 11;         % Realtime: no interested beyond 10 and a bit days. 
+Too_Old_Days = 11;         % Realtime: no interested beyond 10 and a bit days.
 jnow = julian(clock);      % Local time - now
 
 eval(['cd ' ARGO_SYS_PARAM.iridium_path]);
 idatapath = ARGO_SYS_PARAM.iridium_path;
-    
+
 
 system(['mv -f *.000.* ' ARGO_SYS_PARAM.iridium_path 'iridium_processed/apf11000files']);
 % list all .msg and .log files
@@ -31,7 +31,7 @@ system(['mv -f *.000.* ' ARGO_SYS_PARAM.iridium_path 'iridium_processed/apf11000
 a=dirc([idatapath '*.*.*.science_log.csv']);
 b=dirc([idatapath '*.*.*.vitals_log.csv']);
 c=dirc([idatapath '*.*.*.system_log.txt']);
-d=[a 
+d=[a
     b
     c];
 [m,n]=size(d);
@@ -44,67 +44,55 @@ if m>0   % are there any apf 11data?
             mail_out_iridium_log_error([a{j,1}],2);
         end
     end
-
+    mm = ''; nn = '';
+    aa = '';bb = '';cc = '';
+    
     if ~isempty(c)
-    cc = char(c{:,1});
-    cc = cc(:,1:10);
+        cc = char(c{:,1});
+        cc = cc(:,1:10);
     end
     if ~isempty(b)
-    bb = char(b{:,1});
-    bb = bb(:,1:10);
+        bb = char(b{:,1});
+        bb = bb(:,1:10);
     end
     if ~isempty(a)
-    aa = char(a{:,1});
-    aa = aa(:,1:10);
+        aa = char(a{:,1});
+        aa = aa(:,1:10);
     end
     
+    
     if ~isempty(a) & ~isempty(b)
-    [nn,ia,ib] = intersect(aa,bb,'rows');
+        [nn,ia,ib] = intersect(aa,bb,'rows');
     end
     if ~isempty(a) & ~isempty(c)
-    [mm,ic,id] = intersect(aa,cc,'rows');
+        [mm,ic,id] = intersect(aa,cc,'rows');
     end
     
     missingaa=0;
     missingbb=0;
     
     if ~isempty(a)
-    for i = 1:size(aa,1)
-        if ismember(aa(i,:),nn,'rows') == 0
-            mail_out_iridium_log_error([a{i,1}],1);
-            missingaa=1;
-            %             system(['cp -f ' a{i,1} ' ' ARGO_SYS_PARAM.iridium_path '/iridium_bad_files']);
-            try
-                %                 system(['cp -f ' ARGO_SYS_PARAM.iridium_path '/iridium_bad_files/' aa(i,:) 'msg '...
-                %                     ARGO_SYS_PARAM.iridium_path]);
+        for i = 1:size(aa,1)
+            if ismember(aa(i,:),nn,'rows') == 0
+                mail_out_iridium_log_error([a{i,1}],1);
+                missingaa=1;
             end
         end
     end
-    end
     if ~isempty(b)
-    for i = 1:size(bb,1)
-        if ismember(bb(i,:),nn,'rows') == 0
-            mail_out_iridium_log_error([b{i,1}],1);
-            missingbb=1;
-            %             system(['cp -f ' b{i,1} ' ' ARGO_SYS_PARAM.iridium_path '/iridium_bad_files']);
+        for i = 1:size(bb,1)
+            if ismember(bb(i,:),nn,'rows') == 0
+                mail_out_iridium_log_error([b{i,1}],1);
+                missingbb=1;
+            end
         end
-        try
-            %                 system(['cp -f ' ARGO_SYS_PARAM.iridium_path '/iridium_bad_files/' aa(i,:) 'log '...
-            %                     ARGO_SYS_PARAM.iridium_path]);
-        end
-    end
     end
     if ~isempty(c)
-    for i = 1:size(cc,1)
-        if ismember(cc(i,:),mm,'rows') == 0
-            mail_out_iridium_log_error([c{i,1}],1);
-            %             system(['cp -f ' b{i,1} ' ' ARGO_SYS_PARAM.iridium_path '/iridium_bad_files']);
+        for i = 1:size(cc,1)
+            if ismember(cc(i,:),mm,'rows') == 0
+                mail_out_iridium_log_error([c{i,1}],1);
+            end
         end
-        try
-            %                 system(['cp -f ' ARGO_SYS_PARAM.iridium_path '/iridium_bad_files/' aa(i,:) 'log '...
-            %                     ARGO_SYS_PARAM.iridium_path]);
-        end
-    end
     end
     [m,n]=size(a);
     
@@ -117,18 +105,9 @@ if m>0   % are there any apf 11data?
             else  %first check whether this float is in the spreadsheet:
                 a{i,1}
                 ftptime = julian(datevec(a{i,4}));
-%                 [st,ts]=system(['date -u +%Y%m%d%H%M%S']);
                 currenttime=julian(clock);
                 hr=1/24;
-%                 hr=0.0001
-%                 currenttime=julian([str2num(ts(1:4)) str2num(ts(5:6)) str2num(ts(7:8)) str2num(ts(9:10)) str2num(ts(11:12)) str2num(ts(13:14))]);
                 argosid = str2num(a{i,1}(2:5));
-                %             if length(num2str(argosid))>=4
-                %                 % Bad ID num
-                %                 argosid = -1;
-                %                 logerr(0,'');
-                %                 dbdat = [];
-                %         else
                 if ~any(argosidlist==argosid)
                     % Not a float we know or want
                     logerr(0,'');
@@ -139,7 +118,7 @@ if m>0   % are there any apf 11data?
                     if isempty(flist)
                         logerr(3,['? New float, Argos ID=' num2str(argosid)]);
                     end
-                    %                 return
+                    isfloat = 0;
                 elseif currenttime-ftptime>=hr     % check whether this is more than 1 hour old - if so, then safe to process:
                     
                     % Set details for the next profile
@@ -160,37 +139,41 @@ if m>0   % are there any apf 11data?
                 if isfloat
                     fnm = [ARGO_SYS_PARAM.root_dir 'matfiles/float' num2str(dbdat.wmo_id)];
                     
-                    %                 try
-                    crash=0;
-                    % process iridium - where all the magic happens!!
-                    if ~isempty(strmatch(dbdat.status,'live')) | ~isempty(strmatch(dbdat.status,'suspect')) ...
-                             | ~isempty(strmatch(dbdat.status,'hold'))
-                        process_iridium_apf11(pmeta,dbdat,opts);
-                    elseif(~isempty(strmatch(dbdat.status,'expected')))
-                        logerr(3,['? New float, Iridium ID=' num2str(argosid)]);
-                        nprec = find(PROC_REC_WMO==dbdat.wmo_id);
-                        if isempty(nprec)
-                            logerr(3,['Creating new processing record as none found for float ' ...
-                                num2str(dbdat.wmo_id)]);
-                            nprec = length(PROC_REC_WMO) + 1;
-                            PROC_RECORDS(nprec) = new_proc_rec_struct(dbdat,1);
+                    try
+                        crash=0;
+                        % process iridium - where all the magic happens!!
+                        if ~isempty(strmatch(dbdat.status,'live')) | ~isempty(strmatch(dbdat.status,'suspect')) ...
+                                | ~isempty(strmatch(dbdat.status,'hold'))
+                            process_iridium_apf11(pmeta,dbdat,opts);
+                        elseif(~isempty(strmatch(dbdat.status,'expected')))
+                            logerr(3,['? New float, Iridium ID=' num2str(argosid)]);
+                            nprec = find(PROC_REC_WMO==dbdat.wmo_id);
+                            if isempty(nprec)
+                                logerr(3,['Creating new processing record as none found for float ' ...
+                                    num2str(dbdat.wmo_id)]);
+                                nprec = length(PROC_REC_WMO) + 1;
+                                PROC_RECORDS(nprec) = new_proc_rec_struct(dbdat,1);
+                            end
+                            isfloat=0;
+                        elseif ~isempty(strmatch(dbdat.status,'dead')) | ~isempty(strmatch(dbdat.status,'exhausted'))
+                            mail_out_dead_float(dbdat.wmo_id);
+                            process_iridium_apf11(pmeta,dbdat,opts)
+                        end
+                    catch Me
+                        logerr(5,['error in decoding float - ' num2str(dbdat.wmo_id) ' file ' pmeta.ftp_fname])
+                        logerr(5,['Message: ' Me.message ])
+                        for jk = 1:length(Me.stack)
+                            logerr(5,Me.stack(jk).file)
+                            logerr(5,['Line: ' num2str(Me.stack(jk).line)])
                         end
                         isfloat=0;
-                    elseif ~isempty(strmatch(dbdat.status,'dead')) | ~isempty(strmatch(dbdat.status,'exhausted'))
-                        mail_out_dead_float(dbdat.wmo_id);
-                        process_iridium_apf11(pmeta,dbdat,opts)
+                        mail_out_iridium_log_error([msgfn{ii,1}],3);
+                        crash=1;
                     end
-                                        
+                    
                     if isfloat
                         %after processing, move the files from the delivery directory into the
                         %individual directories:
-                        ss=strfind(a{i,1},'.');
-                        % try
-                        %     system(['mv '  ARGO_SYS_PARAM.iridium_delivery_path a{i,1}(1:ss(2)) '* ' ARGO_SYS_PARAM.iridium_delivery_path  num2str(dbdat.maker_id)]);
-                        % catch
-                        %     system(['mv '  ARGO_SYS_PARAM.iridium_delivery_path a{i,1}(1:ss(2)) '* ' ARGO_SYS_PARAM.iridium_delivery_path 'f'  num2str(dbdat.maker_id)]);
-                        % end
-                        
                         
                         if(~isempty(dbdat))
                             if (exist([ARGO_SYS_PARAM.iridium_path  'iridium_processed/' num2str(dbdat.wmo_id)])~=7)
@@ -205,8 +188,6 @@ if m>0   % are there any apf 11data?
                             elseif(~crash)
                                 system(['mv -f ' fn '* ' ARGO_SYS_PARAM.iridium_path  'iridium_processed/' num2str(dbdat.wmo_id)]);
                             end
-                            % code for copy the data within CSIRO
-                            CSIRO_copy_apf11_iridium_data
                         end
                         
                     end
@@ -216,5 +197,4 @@ if m>0   % are there any apf 11data?
         end
     end
 end
-    
-    
+

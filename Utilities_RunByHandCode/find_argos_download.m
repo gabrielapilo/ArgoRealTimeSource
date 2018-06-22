@@ -91,9 +91,9 @@ for ii=1:length(pn)
         greg(1)=greg(1)+1;
         yy=num2str(greg(1));
     end
-    i2=0;
+    i2=1;
     l=[];
-    numlines=[];
+    numlines=0;
     st=1;
     numtries=0;
     while st~=0 && numtries<10

@@ -129,12 +129,14 @@ end
 % ---- Load data and parameters from this cycle 
 
 % Switched to getting this info from fpp - see below
-traj(np).heads.juld = julian(heads.dat(:,1:6));
-traj(np).heads.lat = heads.dat(:,7);
-traj(np).heads.lon = heads.dat(:,8);
-traj(np).heads.aclass = char(heads.dat(:,9));
+%include a sort as sometimes the dates are out of order and this causes
+%mismatches later in the netcdf file creation.
+[traj(np).heads.juld,isort] = sort(julian(heads.dat(:,1:6)));
+traj(np).heads.lat = heads.dat(isort,7);
+traj(np).heads.lon = heads.dat(isort,8);
+traj(np).heads.aclass = char(heads.dat(isort,9));
 if isfield(heads,'qc')
-   traj(np).heads.qcflags = heads.qc;
+   traj(np).heads.qcflags = heads.qc(isort);
 else
    traj(np).heads.qcflags = ones(size(traj(np).heads.juld));
 end
@@ -254,10 +256,7 @@ traj(np).AET.adj = 0;
 %end
 
 
-% DDET (400) :  no way of estimating. Still, want the var so use status 9.
-traj(np).DDET.juld = nan;
-traj(np).DDET.stat = '9';
-traj(np).DDET.adj = 0;
+% DDET (400) : same as AST, fill below
 
 % For some Apex floats there is a second estimate of AST (3.2.2.1.7.2)
 % which is also meant to be recorded (MC=502, STATUS=3). Cross that
@@ -454,10 +453,11 @@ for ii = 1:length(traj)
    traj(ii).TET.juld = TET(ii);
    if isempty(traj(ii).TET.juld) || isnan(traj(ii).TET.juld)
       traj(ii).TET.stat = '9';
+      traj(ii).TET.adj = 0;
    else
       traj(ii).TET.stat = '1';
+      traj(ii).TET.adj = 1;
    end
-   traj(ii).TET.adj = 1;
 
    % DST (100)
    % Iridium data shows that DST=TET for Apex, and we assume is same with
@@ -469,20 +469,22 @@ for ii = 1:length(traj)
       traj(ii).DST.juld = julian(tmp');
    end
    if isempty(traj(ii).DST.juld) || isnan(traj(ii).DST.juld)
-      traj(ii).DST.stat = '9';
+       traj(ii).DST.stat = '9';
+       traj(ii).DST.adj = 0;
    else
-      traj(ii).DST.stat = '1';
+       traj(ii).DST.stat = '1';
+       traj(ii).DST.adj = 1;
    end
-   traj(ii).DST.adj = 1;
 
    % PST (250) Cookbook  3.2.2.1.4.1, .2 
    traj(ii).PST.juld = traj(ii).DST.juld + parklag;
    if isempty(traj(ii).PST.juld) || isnan(traj(ii).PST.juld)
-      traj(ii).PST.stat = '9';
+       traj(ii).PST.stat = '9';
+       traj(ii).PST.adj = 0;
    else
-      traj(ii).PST.stat = '1';
+       traj(ii).PST.stat = '1';
+       traj(ii).PST.adj = 1;
    end
-   traj(ii).PST.adj = 1;
    
    % AST (500) Cookbook  3.2.2.1.7
    traj(ii).AST.juld = nan;
@@ -515,24 +517,30 @@ for ii = 1:length(traj)
    end
    if isnan(traj(ii).AST.juld)
       traj(ii).AST.stat = '9';
+      traj(ii).AST.adj = 0; %No value, so no estimate
    else
       traj(ii).AST.stat = '1';
+      traj(ii).AST.adj = 1; %estimated, so goes into adjusted fields
    end
-   traj(ii).AST.adj = 1;
 
-   
+   % DDET (400) Same as AST
+   traj(ii).DDET.juld = traj(ii).AST.juld;
+   traj(ii).DDET.stat = traj(ii).AST.stat;
+   traj(ii).DDET.adj = traj(ii).AST.adj;
+
    % PET (300)    Cookbook 3.2.2.1.5
    if dbdat.parkpres~=dbdat.profpres
       % However if parkpres = profpres then there is no PET value, and it is 
       % not put in N_M arrays
       traj(ii).PET.juld = traj(ii).TET.juld - UPTIME - DPDP;
       if isempty(traj(ii).PET.juld) || isnan(traj(ii).PET.juld)
-	 traj(ii).PET.juld = nan;
-	 traj(ii).PET.stat = '9';      
+          traj(ii).PET.juld = nan;
+          traj(ii).PET.stat = '9';
+          traj(ii).PET.adj = 0;
       else
-	 traj(ii).PET.stat = '1';
+          traj(ii).PET.stat = '1';
+          traj(ii).PET.adj = 1;
       end
-      traj(ii).PET.adj = 1;
    end
 
    % FMT (702)
@@ -545,7 +553,7 @@ for ii = 1:length(traj)
    end
    traj(ii).FMT.adj = 0;
 
-   % FLT - no MC
+   % FLT - first 703 measurement
    [~,jj] = min(jhead);
    if isempty(jj) || isnan(jhead(jj))
       traj(ii).FLT.juld = nan;
@@ -556,7 +564,7 @@ for ii = 1:length(traj)
    end
    traj(ii).FLT.adj = 0;
       
-   % LLT - no MC
+   % LLT - last 703 measurement
    [~,jj] = max(jhead);
    if isempty(jj) || isnan(jhead(jj))
       traj(ii).LLT.juld = nan;

@@ -133,7 +133,7 @@ if fid > 0
     [tdata] = textscan(fid,'%s','Delimiter','|');
     fclose(fid);
 else
-    disp(['File not found: ' fn])
+    disp(['File not found: ' fn(1:end-3) 'log'])
     return
 end
 
@@ -389,7 +389,7 @@ if isnan(PET)
         estpet = 1;
     end
     if ~isempty(fpp(pn).park_date)
-        if isnan(PET) | PET < datenum(fpp(pn).park_date(end,:))
+        if isnan(PET) | abs(PET - datenum(fpp(pn).park_date(end,:))) > 3/24
             %try using last time from park info in msg file
             try
                 PET = datenum(fpp(pn).park_date(end,:));
@@ -704,11 +704,18 @@ traj_float_order = [200, repmat(290,1,size(PTM,1))];
 surf_t = [600, 701];
 mc_current = [100, repmat(190,1,size(DSP,1)), 250, ...
             traj_float_order(ij), 300, 301, 400, 500, surf_t(ik), 903];%, 501
-%mc order information
-traj(pn).traj_mc_order = mc_current;
-%now the indices:
-traj(pn).traj_mc_index = [1, 1:size(DSP,1), 1, ...
-    tc_ind(ij), ones(1,7)];
+%mc order information. Keep any existing mc_order if this is a reprocess:
+if length(traj) < pn
+    traj(pn).traj_mc_order = mc_current;
+    %now the indices:
+    traj(pn).traj_mc_index = [1, 1:size(DSP,1), 1, ...
+        tc_ind(ij), ones(1,7)];
+else
+    iend = find(traj(pn).traj_mc_order == 903);
+    traj(pn).traj_mc_order = [mc_current traj(pn).traj_mc_order(iend+1:end)];
+    traj(pn).traj_mc_index = [1, 1:size(DSP,1), 1, ...
+        tc_ind(ij), ones(1,7) traj(pn).traj_mc_index(iend+1:end)];    
+end
 %put the satellite information on the previous profile:
 if pn > 1
     %if this is a re-process, remove the existing indices first

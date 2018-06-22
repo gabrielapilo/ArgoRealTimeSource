@@ -33,12 +33,13 @@ fnm000=fnm000{end,1};
 % fclose(fid)
 
 fid2=fopen([ARGO_SYS_PARAM.root_dir 'iridium_data/iridium_processed/000files/' fnm000]);
-if fid2==-1
-    'Move file to 000files directory! '
-    input([' Look in iridium_processed/ ' num2str(wmo_id) ' Done?'],'s')
-    fid2=fopen(fnm000);
+
+if fid2 < 0
+   logerr(3,['Cant find 000 file: ' fnm000]);
+   
+   return
 end
-    
+
 floatTech=[];
 
 % fn= [ARGO_SYS_PARAM.root_dir 'matfiles/float' num2str(wmo_id) 'aux.mat']

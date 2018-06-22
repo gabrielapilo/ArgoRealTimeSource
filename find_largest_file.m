@@ -24,6 +24,10 @@ if isempty(kk)
     return
 end
 
+if length(kk) > 1
+    kk = kk(end);
+end
+
 typ = {'log','msg'};
 for ii = 1:length(typ)
     nfilen=[filen '.' typ{ii}];
@@ -66,8 +70,16 @@ for ii = 1:length(typ)
         %it to iridium_data folder
         if mm > irdat_size
             %move the small file out
-            system(['mv ' ARGO_SYS_PARAM.iridium_path nfilen ' ' ARGO_SYS_PARAM.iridium_path '/iridium_bad_files'])
-            system(['cp ' lookhere{imax} ' ' ARGO_SYS_PARAM.iridium_path '/' nfilen]);
+            system(['mv -f ' ARGO_SYS_PARAM.iridium_path nfilen ' ' ARGO_SYS_PARAM.iridium_path '/iridium_bad_files'])
+            if imax == 7 %need to change file name
+                system(['cp -f ' lookhere{imax} ' ' ARGO_SYS_PARAM.iridium_path '/' nfilen(end-11:end)]);
+                %If we updated any files, copy to BOM ftp
+                BOM_retrieve_Iridium([ARGO_SYS_PARAM.iridium_path nfilen(end-11:end)])
+            else
+                system(['cp -f ' lookhere{imax} ' ' ARGO_SYS_PARAM.iridium_path '/' nfilen]);
+                %If we updated any files, copy to BOM ftp
+                BOM_retrieve_Iridium([ARGO_SYS_PARAM.iridium_path nfilen])
+            end
             found = 1;
         end
     end

@@ -795,10 +795,10 @@ if dbdat.maker==1 | dbdat.maker==4  %Webb of Seabird - similar formats
             fp.n_6secAirpumpbuoyancy_adj = [];
         end
         if dbdat.subtype==1026 | dbdat.subtype==1027 | dbdat.subtype==1028 ...
-                | dbdat.subtype==1029  % seabird bio floats
+                | dbdat.subtype==1029 |dbdat.subtype == 1031 % seabird bio floats
             fp.n_Oxysamples =              [];
             fp.O2phase_raw =               [];
-            if dbdat.subtype==1027
+            if dbdat.subtype==1027 | dbdat.subtype == 1031
                 fp.p_oxygen =                  [];  %pressure for oxygen values on secondary axis
                 fp.t_oxygen =                  [];
                 fp.s_oxygen =                  [];
@@ -879,6 +879,11 @@ if dbdat.maker==1 | dbdat.maker==4  %Webb of Seabird - similar formats
                 fp.park_Tilt  =  [];
             end   
         end
+        if dbdat.subtype == 1031
+            fp.Tilt  =  [];
+            fp.Tilt_sd  =  [];
+            fp.park_tilt  =  [];
+        end 
         if dbdat.subtype==1030 %Peter Thompson's nitrate bio floats
             if dbdat.suna
                 fp.no3_raw   = [];
