@@ -627,38 +627,55 @@ for ii = ipf(:)'
     end
     
     % Test14: Density Inversion Test
+% new test from ADMT12: density calculated relative to neighboring points,
+% not surface reference level...:    
     fp.testsperformed(14) = 1;
     
-    % new test from ADMT12: density calculated relative to neighboring points,
-    % not surface reference level...:
-    jf = [];
+    for iij=1:length(fp.p_calibrate)-1
+        difdd(iij)=0;
+        
+        density = sw_pden(fp.s_raw(iij:iij+1),fp.t_raw(iij:iij+1),fp.p_calibrate(iij:iij+1), ...
+            (fp.p_calibrate(iij)+fp.p_calibrate(iij+1))/2);
+        difdd(iij)=diff(density);
+        
+    end
     
-    %bottom to top
-    mp = fp.p_calibrate(1:end-1) + diff(fp.p_calibrate)/2;
-    density = sw_pden(fp.s_raw(1:end-1),fp.t_raw(1:end-1),fp.p_calibrate(1:end-1),mp);
-    difdd = diff(density);
     jj = find(difdd>0.03);
+    jf=[];
+    for i=1:length(jj)
+        jk=[max(jj(i)-1,1);jj(i);min(length(difdd),jj(i)+1)];
+        jk=unique(jk);
+        jl=find(difdd(jk)==min(difdd(jk)));
+        jf=[jf jj(i) jk(jl)];
+    end
     
-    %we know that we have to remove this data point, as the one at the
-    %lesser pressure has a density difference > 0.03
-    jf = jj;
+    for iij=length(fp.p_calibrate):-1:2
+        difdd(iij)=0;
+        
+        density = sw_pden(fp.s_raw(iij:-1:iij-1),fp.t_raw(iij:-1:iij-1),fp.p_calibrate(iij:-1:iij-1), ...
+            (fp.p_calibrate(iij)+fp.p_calibrate(iij-1))/2);
+        difdd(iij)=diff(density);
+        
+    end
     
-    %top to bottom
-    mp = fp.p_calibrate(2:end) + diff(fp.p_calibrate)/2;
-    density = sw_pden(fp.s_raw(2:end),fp.t_raw(2:end),fp.p_calibrate(2:end),mp);
-    difdd = diff(density);
-    jj = find(difdd < -0.03);
+    jj = find(difdd<-0.03);
     
-    jf = unique([jf,jj+1]);
+    for i=1:length(jj)
+        jk=[max(jj(i)-1,1);jj(i);min(length(difdd),jj(i)+1)];
+        jk=unique(jk);
+        jl=find(difdd(jk)==min(difdd(jk)));
+        jf=[jf jj(i) jk(jl)];
+    end
+    
     
     if (~isempty(jf))
-        % Have to reject value for both T & S
-        newv = repmat(4,1,length(jf));
+        % Have to reject value at both levels involved
+        newv = repmat(3,1,length(jf));
         fp.t_qc(jf) = max([fp.t_qc(jf); newv]);
         fp.s_qc(jf) = max([fp.s_qc(jf); newv]);
         fp.testsfailed(14) = 1;
     end
-    
+
     % Test15: Grey List Test
     %load up the grey list
     glist = load_greylist;
