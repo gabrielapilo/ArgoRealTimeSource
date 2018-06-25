@@ -32,8 +32,11 @@ ground = nan(1,lg);
 
 % Extraction of important parameters:
 for index=1:lg
-    latitude(index) = mean(float(index).lat);
-    longitude(index) = mean(float(index).lon);
+    %find the first occurrence of a good position
+    order = [1,2,0,5,8,9,7]; %what is 7 for?
+    [~,ia,~] = intersect(float(index).pos_qc,order);
+    latitude(index) = float(index).lat(ia);
+    longitude(index) = float(index).lon(ia);
     if isfield(float,'ground')
         ground(index) = mean(float(index).grounded);
     end
@@ -78,7 +81,7 @@ for index = 1 : lg
 end
 
 %grounded?
-ground = depth <= bathy_depth;
+ground = depth >= -1*bathy_depth;
 %
 % Realise the final plot
 %
@@ -219,15 +222,16 @@ plot(longitude(1) ,latitude(1) ,'d','markerfacecolor','green')
 plot(longitude(end) ,latitude(end) ,'d','markerfacecolor','red','markersize',10)
 plot(longitude(ground),latitude(ground),'r*')
 % Link every points
-plot(longitude,latitude,'-','color',[1,1,1])
+plot(longitude,latitude,'.-','color',[1,1,1])
 
 figure(H2);
-plot(longitude(1) ,latitude(1) ,'d','markerfacecolor','green')
-plot(longitude(end) ,latitude(end) ,'d','markerfacecolor','red','markersize',10)
-plot(longitude(ground),latitude(ground),'r*')
+p1 = plot(longitude(1) ,latitude(1) ,'d','markerfacecolor','green');
+p2 = plot(longitude(end) ,latitude(end) ,'d','markerfacecolor','red','markersize',10);
+p3 = plot(longitude(ground),latitude(ground),'r*');
+legend([p1,p2,p3],'Deploy location','Current location','Grounded')
 
 % Link every points
-plot(longitude,latitude,'-','color',[1,1,1])
+plot(longitude,latitude,'.-','color',[1,1,1])
 my_save_fig([fnm '/trajectory'],'clobber')
 clf
 end

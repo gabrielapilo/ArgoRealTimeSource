@@ -36,9 +36,11 @@ if ~isempty(im)
         float(im(g)).pos_qc = 7;
     end
 end
-ipos = find(cellfun(@(x) x==0,{float.pos_qc},'Uniformoutput',1)==1);
-ii = find(cellfun(@(x) x==8,{float.pos_qc},'Uniformoutput',1)==1);
-ij = find(cellfun(@(x) x==9,{float.pos_qc},'Uniformoutput',1)==1);
+
+%find the good positions and the missing and interpolated ones
+ipos = find(cellfun(@(x) any(x<2),{float.pos_qc},'Uniformoutput',1)==1);
+ii = find(cellfun(@(x) any(x==8),{float.pos_qc},'Uniformoutput',1)==1);
+ij = find(cellfun(@(x) any(x==9),{float.pos_qc},'Uniformoutput',1)==1);
 ik = sort([ii ij]);
 %keep the original values. If they are the same as the new ones, don't
 %regenerate the netcdf files.

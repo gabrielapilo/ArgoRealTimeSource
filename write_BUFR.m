@@ -57,9 +57,12 @@ end
 % build outfile - T_IOPx01_C_AMMC_YYYYMMDDHHMMSS_R5901111_016.bufr
 outstr=['T_IOP'];
 
+%find the first occurrence of a good position
+order = [1,2,0,5,8]; 
+[~,ia,~] = intersect(fp.pos_qc,order);
 % long and lat position to letter code
-lat=fp.lat(1);
-lon=fp.lon(1);
+lat=fp.lat(ia);
+lon=fp.lon(ia);
 if lon>180 & lon<=360; lon=-(360-lon); end
 
 if lat >= 0

@@ -62,33 +62,37 @@ end
 %  AT  Nov 2010
 
 % datvec = fp.datetime_vec(1,:);
+%find the first occurrence of a good position
+order = [1,2,0,5,8];
+[~,ia,~] = intersect(fp.pos_qc,order);
+
 datvec = gregorian(fp.jday_ascent_end);
-if(isempty(datvec));datvec = fp.datetime_vec(1,:);end
+if(isempty(datvec));datvec = fp.datetime_vec(ia,:);end
 yrdig = rem(datvec(1),10);  % last digit of year
 
-if fp.lon(1)>0 & fp.lon(1)<=180
-    if fp.lat(1)>0
+if fp.lon(ia)>0 & fp.lon(ia)<=180
+    if fp.lat(ia)>0
         hflg = '1';
     else
         hflg = '3';
     end
 else
-    if fp.lon(1)>180; fp.lon(1) = 360-fp.lon(1); end
-    if fp.lon(1)<0;   fp.lon(1) = abs(fp.lon(1)); end
-    if fp.lat(1)>0
+    if fp.lon(ia)>180; fp.lon(ia) = 360-fp.lon(ia); end
+    if fp.lon(ia)<0;   fp.lon(ia) = abs(fp.lon(ia)); end
+    if fp.lat(ia)>0
         hflg = '7';
     else
         hflg = '5';
     end
 end
-lon=fp.lon(1);
+lon=fp.lon(ia);
 if (dbdat.iridium) %add iridium tesac generation here..
 
     fprintf(fid,'SOF');
 
     % now for the A2 code
-    lat=fp.lat(1);
-    lon=fp.lon(1);
+    lat=fp.lat(ia);
+    lon=fp.lon(ia);
     if lon>180 & lon<=360; lon=-(360-lon); end
 
     if lat<-60
@@ -154,7 +158,7 @@ else
 end
 
 fprintf(fid,'KKYY %0.2d%0.2d%0.1d %0.2d%0.2d/ %c%0.5d %0.6d\n',datvec([3 2]),...
-    yrdig,datvec([4 5]),hflg,round(abs(fp.lat(1))*1000),round(abs(lon)*1000));
+    yrdig,datvec([4 5]),hflg,round(abs(fp.lat(ia))*1000),round(abs(lon)*1000));
 
 % Section 2   - profile data
 % Preceded by '888<k1><k2> IIIXX ' where:

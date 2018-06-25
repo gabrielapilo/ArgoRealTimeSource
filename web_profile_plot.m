@@ -80,11 +80,15 @@ fprintf(fid,'<th>Est Surfacing Time</th>\n');
 fprintf(fid,'<th>First Fix Time</th>\n');
 fprintf(fid,'<th>Battery</th> <th>C<sub>ratio</sub></th>\n');
 fprintf(fid,'<th>C<sub>ratio</sub>Calc</th></tr>\n\n');
-   
+
+%find the first occurrence of a good position
+order = [1,2,0,5,8,9,7]; %what is 7 for?
+[~,ia,~] = intersect(fp.pos_qc,order);
+
 str{1} = sprintf('%d',length(fp.jday));
 str{2} = sprintf('%d',length(~isnan(fp.lat)));
-str{3} = sprintf('%6.3f',-fp.lat(1));
-str{4} = sprintf('%6.3f',fp.lon(1));
+str{3} = sprintf('%6.3f',-fp.lat(ia));
+str{4} = sprintf('%6.3f',fp.lon(ia));
 str{5} = sprintf('%s',datestr(fp.jday_ascent_end-jul0));
 str{6} = sprintf('%s',datestr(fp.jday(1)-jul0));
 str{7} = sprintf('%4.1f',fp.voltage);

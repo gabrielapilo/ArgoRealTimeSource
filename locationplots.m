@@ -44,9 +44,13 @@ for kk=1:nprof
     else
         k=kk;
     end
+    %find the first occurrence of a good position
+    order = [1,2,0,5,8,9,7]; %what is 7 for?
+    [~,ia,~] = intersect(fpp(kk).pos_qc,order);
+    
     figure(9),hold on
-    if(~isempty(fpp(kk).lon) && ~isnan(fpp(kk).lon(1)) && ~isempty(fpp(kk).profile_number))
-        c(kk)=plot(fpp(kk).lon(1),fpp(kk).lat(1),'o','markersize',4,'color',cc(k,:));
+    if(~isempty(fpp(kk).lon) && ~isnan(fpp(kk).lon(ia)) && ~isempty(fpp(kk).profile_number))
+        c(kk)=plot(fpp(kk).lon(ia),fpp(kk).lat(ia),'o','markersize',4,'color',cc(k,:));
         set(c(kk),'Color',cc(k,:))
         lab(kk,:) =sprintf('%7i',fpp(kk).profile_number);
     end

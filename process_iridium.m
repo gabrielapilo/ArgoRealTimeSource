@@ -249,7 +249,7 @@ if any(stage==1)
             end
         end
     end
-    pro.position_accuracy='G';
+    pro.position_accuracy= repmat('G',1,length(pro.lat));
     pro.SN=dbdat.maker_id;
     ff=0;
     
@@ -1141,6 +1141,7 @@ if any(stage==1)
             pro.jday=jdays;
             pro.jday_ascent_end=jdays;
         end
+        pro.pos_qc = zeros(1,length(pro.lat),'uint8');
     end
         
     % after finish loading profile, check for rollover and
@@ -1587,7 +1588,7 @@ if any(stage==1)
         
         % Range check (just to alert our personnel to investigate)
         check_profile(float(np));
-        rejtests = [2 3 4 13];
+        rejtests = [1 2 3 4 13 15];
         
         if any(float(np).testsfailed(rejtests))
             % Will not transmit this profile because of failing critical tests
