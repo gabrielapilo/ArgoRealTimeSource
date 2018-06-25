@@ -482,7 +482,7 @@ if any(stage>=1)
       fp.datetime_vec = head(gdhed,1:6);
       fp.jday = jdays(gdhed);
       %fp.jday_qc = ones(size(gdhed));
-      %fp.position_qc = ones(size(gdhed));
+      fp.pos_qc = zeros(length(fp.lat),'uint8');
       fp.position_accuracy = char(head(gdhed,9));
       fp.satnam = satnam(gdhed);
       
@@ -497,9 +497,6 @@ if any(stage>=1)
       end
       if exist('float','var') & float(1).profile_number==0
 	 np = np+1;
-      end
-      if ~isfield(fp,'pos_qc')
-	  fp.pos_qc = '0';
       end
       
       float(np) = fp;      

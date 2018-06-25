@@ -472,6 +472,8 @@ if any(stage==1)
                 end
             end
         end
+        pro.pos_qc = zeros(1,length(pro.lat),'uint8');
+        
         %also need to check location information:
         if ~isempty(pro.lat) && ~isnan(pro.lat)
             if any(~isnan(pro.lat))

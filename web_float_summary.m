@@ -164,14 +164,17 @@ if(~isempty(float))
         % First load values into temporary vars so can put in missing-value-
         % markers where necessary.
         if ~isempty(float(kk).lat) & ~isempty(float(kk).datetime_vec)
+            %find the first occurrence of a good position
+            order = [1,2,0,5,8,9,7]; %what is 7 for?
+            [~,ia,~] = intersect(float(kk).pos_qc,order);
             %      str{1} = sprintf('%6.3f',-float(kk).lat(1));
-            str{1} = sprintf('%6.3f',float(kk).lat(1));
-            str{2} = sprintf('%6.3f',float(kk).lon(1));
-            str{3} = sprintf('%d',float(kk).datetime_vec(1,3));
-            str{4} = sprintf('%d',float(kk).datetime_vec(1,2));
-            str{5} = sprintf('%d',float(kk).datetime_vec(1,1));
-            str{6} = sprintf('%5.2f',float(kk).datetime_vec(1,4) + ...
-                float(kk).datetime_vec(1,5)/60.0);
+            str{1} = sprintf('%6.3f',float(kk).lat(ia));
+            str{2} = sprintf('%6.3f',float(kk).lon(ia));
+            str{3} = sprintf('%d',float(kk).datetime_vec(ia,3));
+            str{4} = sprintf('%d',float(kk).datetime_vec(ia,2));
+            str{5} = sprintf('%d',float(kk).datetime_vec(ia,1));
+            str{6} = sprintf('%5.2f',float(kk).datetime_vec(ia,4) + ...
+                float(kk).datetime_vec(ia,5)/60.0);
         else
             for ii = 1:6
                 str{ii} = '- -';

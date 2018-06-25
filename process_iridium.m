@@ -1141,6 +1141,7 @@ if any(stage==1)
             pro.jday=jdays;
             pro.jday_ascent_end=jdays;
         end
+        pro.pos_qc = zeros(1,length(pro.lat),'uint8');
     end
         
     % after finish loading profile, check for rollover and

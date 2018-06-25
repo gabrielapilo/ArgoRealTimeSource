@@ -110,7 +110,6 @@ fp.grounded = 'U';
 % is meant to be. [Scanned all old files and never found a case with empty
 % jday but useful profile data!]
 fp.jday = [];               % julian day of all transmitted messages.
-fp.jday_qc = [];               % julian day of all transmitted messages.
 fp.datetime_vec = [];       % [yr mon day hr min sec]  ^     ^      ^
 fp.lat = [];                % lat of all transmitted messages 
 fp.lon = [];                % lon    ^       ^        ^
@@ -627,7 +626,6 @@ if dbdat.maker==1 | dbdat.maker==4  %Webb of Seabird - similar formats
             fp.nsamps =                    [];
             fp.GPSfixtime =                [];
             fp.jday_location =             [];
-            fp.jday_location_qc =          [];
             fp.GPSsatellites =             [];
             fp.buoyancypumpcurrent =       [];
             fp.buoyancypumpvoltage =       [];
@@ -708,7 +706,6 @@ if dbdat.maker==1 | dbdat.maker==4  %Webb of Seabird - similar formats
             fp.nsamps =                    [];
             fp.GPSfixtime =                [];
             fp.jday_location =             [];
-            fp.jday_location_qc =          [];
             %hack here to cope with new floats
             if ~isempty(strfind(dbdat.controlboardnumstring,'fm'))
                 fp.GPSsatellites =             [];

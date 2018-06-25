@@ -51,12 +51,6 @@ for ii = ipf(:)'
             return
         end
     end
-    
-else
-        return
-end
-   end
-
    
    if  ~isempty(fp.p_raw)
       fp.p_qc = ones(size(fp.p_raw),'uint16');
@@ -158,443 +152,9 @@ end
        end
    end
    
-   %set all tests to zeros before starting
-   fp.testsperformed = zeros(1,19);
-   fp.testsfailed = zeros(1,19);
-
-   nlev = length(fp.p_raw);
-   if isfield(fp,'p_oxygen')
-       nlev2=length(fp.p_oxygen);
-   end
-      
-   
-   %test19 done first: Deepest pressure > 10% max p
-   fp.testsperformed(19) = 1;
-   jj=find(fp.p_raw>dbdat.profpres+(dbdat.profpres*.1));
-
-   if ~isempty(jj)
-      newv = repmat(4,1,length(jj));
-      fp.p_qc(jj) = max([fp.p_qc(jj); newv]);
-      fp.t_qc(jj) = max([fp.t_qc(jj); newv]);
-      fp.s_qc(jj) = max([fp.s_qc(jj); newv]);
-      fp.p_calibrate(jj)=NaN;
-      fp.testsfailed(19) = 1;      
-
-   end
-      
-   
-   % Test1:  Platform Identification
-   % Because of the way we check our platforms, this will always be OK
-   fp.testsperformed(1) = 1;
-
-
-   % Test2: Impossible Date Test:
-   % we have done this test earlier
-   fp.testsperformed(2) = 1;
-   [gtime]=gregorian(fp.jday(end));
-%    format long g
-%    whos gtime
-%    gtime=gtime
-%    fp.jday(end)
-   
-   if ~isempty(gtime)
-       [mno,dm,mm]=names_of_months(gtime(1,2));
-       if(gtime(1,1)<1998 | gtime(1,2)<1 | gtime(1,2)>12 | gtime(1,3)<1 | ...
-               gtime(1,3)>dm | gtime(1,4)<0 | gtime(1,4)>24 | gtime(1,5)<0 | gtime(1,5)>59)
-           if(gtime(1,2) ~= 2 & gtime(1,3) ~=29 & rem(gtime(1,1),4) ~=0) %check for feb 29 in leap years
-               fp.testsfailed(2) = 1;
-               fp.jday_qc = 3;
-           end
-       end
-   else
-       fp.testsfailed(2) = 1;
-       fp.jday_qc = 3;
-   end
-   % Test3: Impossible Location Test:
-   % We have done this test earlier
-   fp.testsperformed(3) = 1;
-   if(fp.lat(1)<-90 | fp.lat(1) > 90 | fp.lon(1)<0 | fp.lon(1) > 360)
-      fp.testsfailed(3) = 1;
-      if fp.pos_qc ~= 8 %interpolated
-          fp.pos_qc = 3;
-      end
-   end 
-   if(isnan(fp.lat(1)))
-       fp.pos_qc = 9;
-   end
-
-   % Test4: Position on Land Test:
-   % We have done this test earlier
-    fp.testsperformed(4) = 0;
-    if any(~isnan(fp.lat))
-        fp.testsperformed(4) = 1;
-        %use a small window
-        [maxdeps,mindeps] = get_ocean_depth(fp.lat,fp.lon,0.03);
-        deps = [maxdeps;mindeps];
-        if isnan(nansum(deps))
-            %outside the ranges of the topography files
-            fp.testsperformed(4) = 0;
-        else
-            
-            %index the locations that have both min and max depths < 0
-            jj = nansum(deps<0) > 1;
-            if any(jj)
-                fp.testsfailed(4)=1;
-                if fp.pos_qc ~= 8
-                    fp.pos_qc=4; %update to every jj later
-                    %                 fp.pos_qc(jj)=4;
-                end
-            end
-        end
-    end
-   % Test5: Impossible Speed Test:
-   % Test speed between profiles. If apparently wrong, try some variant
-   % tests and maybe remove our present 1st fix if it appears wrong. Could
-   % test more combinations of previous profiles and fix numbers, but 
-   % probably best to just eyeball any cases where this test fails.
-   
-   fp.testsperformed(5) = 1;
-      
-   % Find last good profile (this may also be used later)
-   lstp = ii-1;
-   while lstp>1 && (isempty(fpp(lstp).lat) || all(isnan(fpp(lstp).lat)) || isempty(fpp(lstp).jday))
-      lstp = lstp-1;
-   end
-
-  
-   if lstp<1 || isempty(fpp(lstp).lat) || all(isnan(fpp(lstp).lat)) 
-      % Could not find an earlier good position
-      lstp = [];
-   elseif isnan(fp.lat(1)) | isempty(fpp(lstp).jday)
-      % Cannot do test without positions
-   else
-      % We did find a previous profile with a valid position, so test
-      % speed between last fix, last profile and present fix1
-      ll = length(fpp(lstp).lat);
-      distance = sw_dist([fpp(lstp).lat(ll) fp.lat(1)],...
-			 [fpp(lstp).lon(ll) fp.lon(1)],'km')*1000;
-         if isempty(fp.jday)
-             jd=fp.jday_location;
-         else
-             jd=fp.jday(1);
-         end
-         try
-      timediff = abs(fpp(lstp).jday(ll)-jd)*86400;
-         catch
-      timediff = abs(fpp(lstp).jday(1)-jd)*86400;
-         end
-      speed = distance/timediff;
-
-      if speed>3 & ll>1
-	 % try present fix1 vs penultimate fix of last profile
-	 distance = sw_dist([fpp(lstp).lat(ll-1) fp.lat(1)],...
-			    [fpp(lstp).lon(ll-1) fp.lon(1)],'km')*1000;
-	 timediff = abs(fpp(lstp).jday(ll-1)-fp.jday(1))*86400;
-	 speed = distance/timediff;
-
-	 if speed>3 & length(fp.lat)>1
-	    % try last fix, last profile  vs  present fix2
-	    distance = sw_dist([fpp(lstp).lat(ll) fp.lat(2)],...
-			       [fpp(lstp).lon(ll) fp.lon(2)],'km')*1000;
-	    timediff = abs(fpp(lstp).jday(ll-1)-fp.jday(2))*86400;
-	    speed = distance/timediff;
-
-	    if speed<3
-	       % Now good speed indicates present first fix is wrong, so remove
-	       logerr(3,'QC_TESTS: Fix(1) rejected by speed wrt last profile');
-	       fp.jday(1) = [];
-	       fp.lat(1) = [];
-	       fp.lon(1) = [];
-	       fp.datetime_vec(1,:) = [];
-	       fp.position_accuracy(1) = [];
-	    end
-	 end
-      end
-      
-      if speed>3
-	 fp.testsfailed(5) = 1;
-      end
-   end
-
-
-   % Test6: Global Range Test:
-   fp.testsperformed(6) = 1;
-
-   jj = find(fp.t_raw<=-3.5 | fp.t_raw>40.);
-   kk = find(fp.s_raw<2.0 | fp.s_raw>41.);
-   if ~isempty(jj)
-      newv = repmat(4,1,length(jj));
-      fp.t_qc(jj) = max([fp.t_qc(jj); newv]);
-      fp.testsfailed(6) = 1;
-   end
-   if ~isempty(kk)
-      newv = repmat(4,1,length(kk));
-      fp.s_qc(kk) = max([fp.s_qc(kk); newv]);
-      fp.testsfailed(6) = 1;
-   end
-  
-   
-   if dbdat.oxy
-       jj = find(fp.oxy_raw<=-0.5 | fp.oxy_raw>600.);
-       if ~isempty(jj)
-           newv = repmat(4,1,length(jj));
-           fp.oxy_qc(jj) = max([fp.oxy_qc(jj); newv]);
-           fp.testsfailed(6) = 1;
-       end
-       if isfield(fp,'s_oxygen')
-           jj = find(fp.t_oxygen<=-3.5 | fp.t_oxygen>40.);
-           kk = find(fp.s_oxygen<2.0 | fp.s_oxygen>41.);
-           if ~isempty(jj)
-               newv = repmat(4,1,length(jj));
-               fp.t_oxygen_qc(jj) = max([fp.t_oxygen_qc(jj); newv]);
-               fp.testsfailed(6) = 1;
-           end
-           if ~isempty(kk)
-               newv = repmat(4,1,length(kk));
-               fp.s_oxygen_qc(kk) = max([fp.s_oxygen_qc(kk); newv]);
-               fp.testsfailed(6) = 1;
-           end
-       end
-           
-       if isfield(fp,'FLBBoxy_raw')
-           jj = find(fp.FLBBoxy_raw<=-0.5 | fp.FLBBoxy_raw>600.);
-           if ~isempty(jj)
-               newv = repmat(4,1,length(jj));
-               fp.FLBBoxy_qc(jj) = max([fp.FLBBoxy_qc(jj); newv]);
-               fp.testsfailed(6) = 1;
-           end
-       end
-   end
-   % Test7: Regional Parameter Test
-   % we won't do this one?
-
-
-   % Test8: Pressure Increasing Test
-   fp.testsperformed(8) = 1;
-   
-   gg = find(~isnan(fp.p_calibrate));
-   if any(diff(fp.p_calibrate(gg))==0)
-       fp.testsfailed(8) = 1;
-       jj=(diff(fp.p_calibrate(gg))==0);
-       newv = repmat(4,1,length(find(jj)));
-       if(~isempty(newv))
-           fp.p_qc(jj)=max([fp.p_qc(jj); newv]);
-           fp.t_qc(jj)=max([fp.t_qc(jj); newv]);
-           fp.s_qc(jj)=max([fp.s_qc(jj); newv]);
-       end
-   end
-%    if any(diff(fp.p_calibrate(gg))>=0)
-%       % non-monotonic p, reject all but last of any block of non-decreasing
-%       % datapoints.
-%       fp.testsfailed(8) = 1;
-%      
-%       bb = [];
-%       lp = fp.p_calibrate(gg(1));
-%       for jj = 2:length(gg)
-%          if fp.p_calibrate(gg(jj)) < lp
-%             lp = fp.p_calibrate(gg(jj));
-%          else
-%             bb = [bb gg(jj)];
-%          end
-%       end
-%       newv = repmat(4,1,length(bb));
-%       fp.s_qc(bb) = max([fp.s_qc(bb); newv]);
-%       fp.t_qc(bb) = max([fp.t_qc(bb); newv]);
-%       fp.p_qc(bb) = max([fp.p_qc(bb); newv]);
-%    end
-% 
-% modified to use new (unapproved) code that does a much better job... AT
-% 16/10/2008
-
-%new process from here:
-
-bb=[];
-kk=find(diff(fp.p_calibrate)>0);
-
-if length(kk)>0 
-    for jj=1:length(kk)
-       for l=kk(jj):kk(jj)+1    %max(2,kk(jj)):min(length(fp.p_calibrate)-2,kk(jj)+1)
-           if l>=length(fp.p_calibrate)-1
-               bb=[bb min(length(fp.p_calibrate),l+1)];
-           elseif l==1 
-               if fp.p_calibrate(l)< fp.p_calibrate(l+2)
-                bb=[bb l];               
-               else
-                   bb=[bb l+1];
-               end      
-           elseif(fp.p_calibrate(l)>=fp.p_calibrate(l-1) | fp.p_calibrate(l)<= fp.p_calibrate(l+2))
-               bb=[bb l];
-           end
-       end
-   end
-      newv = repmat(4,1,length(bb));
-      fp.s_qc(bb) = max([fp.s_qc(bb); newv]);
-      fp.t_qc(bb) = max([fp.t_qc(bb); newv]);
-      fp.p_qc(bb) = max([fp.p_qc(bb); newv]);
-end
-
-
-   % Test9: Spike Test
-   % testv is distance of v(n) outside the range of values v(n+1) and v(n-1).
-   % If -ve, v(n) is inside the range of those adjacent points.
-   fp.testsperformed(9) = 1;
-
-   bdt = findspike(fp.t_raw,fp.p_raw,'t');
-   if ~isempty(bdt)
-      newv = repmat(3,1,length(bdt));
-      fp.t_qc(bdt) = max([fp.t_qc(bdt); newv]);
-      fp.testsfailed(9) = 1;
-   end
-
-   bds = findspike(fp.s_raw,fp.p_raw,'s');
-   if ~isempty(bds)
-      newv = repmat(3,1,length(bds));
-      fp.s_qc(bds) = max([fp.s_qc(bds); newv]);
-      fp.testsfailed(9) = 1;
-   end
-   if dbdat.oxy
-       if length(fp.oxy_raw)~=length(fp.p_raw)
-           po=fp.p_oxygen;
-       else
-           po=fp.p_raw;
-       end
-
-       bdo = findspike(fp.oxy_raw,po,'o');
-       if ~isempty(bdo)
-           newv = repmat(3,1,length(bdo));
-           fp.oxy_qc(bdo) = max([fp.oxy_qc(bdo); newv]);
-           fp.testsfailed(9) = 1;
-       end
-       if isfield(fp,'FLBBoxy_raw')
-           po=fp.p_oxygen;
-           bdo = findspike(fp.FLBBoxy_raw,po,'o');
-           if ~isempty(bdo)
-               newv = repmat(3,1,length(bdo));
-               fp.FLBBoxy_qc(bdo) = max([fp.FLBBoxy_qc(bdo); newv]);
-               fp.testsfailed(9) = 1;
-           end
-       end
-         
-   end
-
-   % eliminate bottom spikes for this float only!!! Note  -test is rubbish
-   %  generally
-    if(fp.wmo_id==1901121)
-
-       [bdt,bbt] = findspike(fp.t_raw,fp.p_raw,'t');
-       if ~isempty(bbt)
-          newv = repmat(4,1,length(bbt));
-          fp.t_qc(bbt) = max([fp.t_qc(bbt); newv]);
-          fp.testsfailed(9) = 1;
-       end
-
-       [bds,bbs] = findspike(fp.s_raw,fp.p_raw,'s');
-       if ~isempty(bbs)
-          newv = repmat(4,1,length(bbs));
-          fp.s_qc(bbs) = max([fp.s_qc(bbs); newv]);
-          fp.testsfailed(9) = 1;
-       end
-       
-    end
-    if  ~isempty(fp.t_raw)
-        fp.t_qc = ones(size(fp.t_raw),'uint16');
-        jj = find(isnan(fp.t_raw));
-        fp.t_qc(jj) = 9;
-    end
-    if  ~isempty(fp.s_raw)
-        fp.s_qc = ones(size(fp.s_raw),'uint16');
-        jj = find(isnan(fp.s_raw));
-        fp.s_qc(jj) = 9;
-    end
-    if isfield(fp,'cndc_raw')
-        if  ~isempty(fp.cndc_raw)
-            fp.cndc_qc = ones(size(fp.cndc_raw),'uint16');
-            jj = find(isnan(fp.cndc_raw));
-            fp.cndc_qc(jj) = 9;
-        end
-    end
-    if isfield(fp,'oxy_raw')
-        if  ~isempty(fp.oxy_raw)
-            fp.oxy_qc = ones(size(fp.oxy_raw),'uint16');
-            jj = find(isnan(fp.oxy_raw));
-            fp.oxy_qc(jj) = 9;
-        end
-    end
-    if isfield(fp,'oxyT_raw')
-        if  ~isempty(fp.oxyT_raw)
-            fp.oxyT_qc = ones(size(fp.oxyT_raw),'uint16');
-            jj = find(isnan(fp.oxyT_raw));
-            fp.oxyT_qc(jj) = 9;
-        end
-    end
-    if isfield(fp,'tm_counts')
-        if ~isempty(fp.tm_counts)
-            fp.tm_qc = zeros(size(fp.tm_counts),'uint16');
-            jj = find(isnan(fp.tm_counts));
-            fp.tm_qc(jj) = 9;
-        end
-    end
-    if isfield(fp,'CP_raw')
-        if ~isempty(fp.CP_raw)
-            fp.CP_qc = zeros(size(fp.CP_raw),'uint16');
-            jj = find(isnan(fp.CP_raw));
-            fp.CP_qc(jj) = 9;
-        end
-    end
-    if isfield(fp,'CHLa_raw')
-        if ~isempty(fp.CHLa_raw)
-            fp.CHLa_qc = zeros(size(fp.CHLa_raw),'uint16');
-            jj = find(isnan(fp.CHLa_raw));
-            fp.CHLa_qc(jj) = 9;
-        end
-    end
-    if isfield(fp,'BBP700_raw')
-        if ~isempty(fp.BBP700_raw)
-            fp.BBP700_qc = zeros(size(fp.BBP700_raw),'uint16');
-            jj = find(isnan(fp.BBP700_raw));
-            fp.BBP700_qc(jj) = 9;
-        end
-    end
-    if isfield(fp,'CDOM_raw')
-        if ~isempty(fp.CDOM_raw)
-            fp.CDOM_qc = zeros(size(fp.CDOM_raw),'uint16');
-            jj = find(isnan(fp.CDOM_raw));
-            fp.CDOM_qc(jj) = 9;
-        end
-    end
-    if isfield(fp,'FLBBoxy_raw')
-        if ~isempty(fp.FLBBoxy_raw)
-            fp.FLBBoxy_qc = ones(size(fp.FLBBoxy_raw),'uint16');
-            jj = find(isnan(fp.FLBBoxy_raw));
-            fp.FLBBoxy_qc(jj) = 9;
-        end
-    end
-    if isfield(fp,'p_oxygen')
-        if  ~isempty(fp.p_oxygen)
-            fp.p_oxygen_qc = ones(size(fp.p_oxygen),'uint16');
-            jj = find(isnan(fp.p_oxygen));
-            fp.p_oxygen_qc(jj) = 9;
-        end
-    end
-    if isfield(fp,'t_oxygen')
-        if  ~isempty(fp.t_oxygen)
-            fp.t_oxygen_qc = ones(size(fp.t_oxygen),'uint16');
-            jj = find(isnan(fp.t_oxygen));
-            fp.t_oxygen_qc(jj) = 9;
-        end
-    end
-    if isfield(fp,'s_oxygen')
-        if  ~isempty(fp.s_oxygen)
-            fp.s_oxygen_qc = ones(size(fp.s_oxygen),'uint16');
-            jj = find(isnan(fp.s_oxygen));
-            fp.s_oxygen_qc(jj) = 9;
-        end
-    end
-    
     %set all tests to zeros before starting
     fp.testsperformed = zeros(1,19);
     fp.testsfailed = zeros(1,19);
-    fp.pos_qc = zeros(1);
     
     nlev = length(fp.p_raw);
     if isfield(fp,'p_oxygen')
@@ -657,8 +217,14 @@ end
     fp.testsperformed(3) = 1;
     jj = (fp.lat<-90 | fp.lat > 90 | fp.lon<0 | fp.lon > 360);
     if any(jj)
-        fp.testsfailed(3) = 1;
-        fp.pos_qc(jj) = 4;
+        if fp.pos_qc ~= 8 %interpolated
+            fp.testsfailed(3) = 1;
+            fp.pos_qc(jj) = 4;
+        end
+    end
+    jj = isnan(fp.lat);
+    if any(jj)
+        fp.pos_qc(jj) = 9;
     end
     
     % Test4: Position on Land Test:
@@ -679,12 +245,15 @@ end
             jj = sum(deps<0) > 1;
             if any(jj)
                 fp.testsfailed(4)=1;
-                fp.pos_qc(jj)=4;
+                if fp.pos_qc ~= 8
+                    fp.pos_qc(jj)=4;
+                end
             end
         end
     end
     
     % Test5: Impossible Speed Test:
+    % Do not use for Argos floats, use test 20 instead.
     % Test speed between profiles. If apparently wrong, try some variant
     % tests and maybe remove our present 1st fix if it appears wrong. Could
     % test more combinations of previous profiles and fix numbers, but
@@ -692,30 +261,41 @@ end
     %only look at previous profile, don't go backwards to others.
     
     fp.testsperformed(5) = 0; %can't perform if positions in current/previous not available.
-    if ii > 1
+    
+    if ii > 1 & dbdat.iridium == 1
         if isempty(fpp(ii-1).lat) || all(isnan(fpp(ii-1).lat))
             % Could not find an earlier good position
         elseif all(isnan(fp.lat)) | isempty(fpp(ii-1).jday)
             % Cannot do test without positions
+        elseif fp.pos_qc == 8
+            %interpolated, lets not bother testing here
         else
             %we will perform the test
             fp.testsperformed(5) = 1;
             
             %get last good location fix
-            igood = find(fpp(ii-1).pos_qc < 3);
+            igood = find(fpp(ii-1).pos_qc < 3 | fpp(ii-1).pos_qc == 8);
             ig = find(fp.pos_qc ~= 9);%don't look at missing values, but look at all, even if failed already
-            distance = sw_dist([fpp(ii-1).lat(igood) fp.lat(ig)],...
-                [fpp(ii-1).lon(igood) fp.lon(ig)],'km')*1000;
-            jd=[fpp(ii-1).jday_location(igood) fp.jday_location(ig)];
-            timediff = abs(diff(jd))*86400;
-            speed = distance./timediff;
-            
-            if any(speed>3)
-                ibad = find(speed > 3);
-                fp.testsfailed(5) = 1; %it failed for one of these positions.
-                fp.qc_pos(ibad -1) = 4;
+            if ~isempty(igood) & ~isempty(ig) %need both values to continue
+                distance = sw_dist([fpp(ii-1).lat(igood) fp.lat(ig)],...
+                    [fpp(ii-1).lon(igood) fp.lon(ig)],'km')*1000;
+                jd=[fpp(ii-1).jday_location(igood) fp.jday_location(ig)];
+                timediff = abs(diff(jd))*86400;
+                speed = distance./timediff;
+                
+                if any(speed>3)
+                    ibad = find(speed > 3);
+                    fp.testsfailed(5) = 1; %it failed for one of these positions.
+                    fp.pos_qc(ibad -1) = 4;
+                end
             end
         end
+    end
+    
+    %Now set the pos_qc flags that have passed the tests to 1
+    if any(fp.testsperformed(2:5) == 1) %we have performed at least one of the tests on positions
+        jj = fp.pos_qc == 0;
+        fp.pos_qc(jj) = 1;
     end
     
     % Test6: Global Range Test:
@@ -775,7 +355,7 @@ end
     % Test7: Regional Parameter Test
     % we won't do this one?
     
-    
+   
     % Test8: Pressure Increasing Test
     fp.testsperformed(8) = 1;
     
@@ -1285,11 +865,9 @@ end
         fp.oxyT_qc=QC.t;
         %        fp.s_oxygen_qc=QC.s;
     end
-    fpp(ii).testsperformed=[];
-    fpp(ii).testsfailed=[];
-    fpp(ii).grounded=[];
-    fpp(ii).pos_qc=[];
+
     
+    %copy the profile back to the main structure
     fpp(ii) = fp;
 end
 
