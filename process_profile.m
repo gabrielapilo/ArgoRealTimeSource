@@ -482,7 +482,7 @@ if any(stage>=1)
       fp.datetime_vec = head(gdhed,1:6);
       fp.jday = jdays(gdhed);
       %fp.jday_qc = ones(size(gdhed));
-      fp.pos_qc = zeros(length(fp.lat),'uint8');
+      fp.pos_qc = zeros(1,length(fp.lat),'uint8');
       fp.position_accuracy = char(head(gdhed,9));
       fp.satnam = satnam(gdhed);
       
