@@ -41,22 +41,22 @@ if isfield(ARGO_SYS_PARAM,'processor')
         cd(ftp_conn,'iridium_data');
         mput(ftp_conn,fn);
         close(ftp_conn);
-    elseif ~isempty(strfind(ARGO_SYS_PARAM.processor,'BOM'))        
-        %BOM are retrieving the data from the FTP
-        ftp_conn = ftp(ARGO_SYS_PARAM.ftp.ftp,ARGO_SYS_PARAM.ftp.name,ARGO_SYS_PARAM.ftp.pswd);
-        fils = dir(ftp_conn,'/iridium_data/*');
-        
-        %now go get the other iridiums
-        eval(['cd ' ARGO_SYS_PARAM.iridium_path]);
-        cd(ftp_conn,'iridium_data');
-        mget(ftp_conn,'*');
-        
-        %now that they have all the data downloaded, delete them. Copies in
-        %stampdated files if needed
-        for aa = 1:length(fils)
-            delete(ftp_conn,fils(aa).name);
-        end
-        close(ftp_conn);
+%     elseif ~isempty(strfind(ARGO_SYS_PARAM.processor,'BOM'))        
+%         %BOM are retrieving the data from the FTP
+%         ftp_conn = ftp(ARGO_SYS_PARAM.ftp.ftp,ARGO_SYS_PARAM.ftp.name,ARGO_SYS_PARAM.ftp.pswd);
+%         fils = dir(ftp_conn,'/iridium_data/*');
+%         
+%         %now go get the other iridiums
+%         eval(['cd ' ARGO_SYS_PARAM.iridium_path]);
+%         cd(ftp_conn,'iridium_data');
+%         mget(ftp_conn,'*');
+%         
+%         %now that they have all the data downloaded, delete them. Copies in
+%         %stampdated files if needed
+%         for aa = 1:length(fils)
+%             delete(ftp_conn,fils(aa).name);
+%         end
+%         close(ftp_conn);
     end
 end
 % do nothing if you are not BOM or CSIRO.

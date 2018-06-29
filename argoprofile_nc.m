@@ -753,14 +753,14 @@ for ii = 1:nin
         case '841'
             aa = ['PROVOR'];
         case '839'
-            aa = ['PROVOR_II']
+            aa = ['PROVOR_II'];
         case '844'
             aa = ['ARVOR '];
         case '851'
             aa = ['SOLO_W '];
         case '863'
             aa = ['NAVIS_A '];
-        case '853'
+        case '854'
             aa = ['S2A '];
     end
     
