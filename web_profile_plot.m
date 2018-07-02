@@ -87,8 +87,8 @@ order = [1,2,0,5,8,9,7]; %what is 7 for?
 
 str{1} = sprintf('%d',length(fp.jday));
 str{2} = sprintf('%d',length(~isnan(fp.lat)));
-str{3} = sprintf('%6.3f',-fp.lat(ia));
-str{4} = sprintf('%6.3f',fp.lon(ia));
+str{3} = sprintf('%6.3f',-fp.lat(ia(1)));
+str{4} = sprintf('%6.3f',fp.lon(ia(1)));
 str{5} = sprintf('%s',datestr(fp.jday_ascent_end-jul0));
 str{6} = sprintf('%s',datestr(fp.jday(1)-jul0));
 str{7} = sprintf('%4.1f',fp.voltage);

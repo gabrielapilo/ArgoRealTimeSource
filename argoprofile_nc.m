@@ -787,7 +787,7 @@ for ii = 1:nin
     [~,ia,~] = intersect(fp.pos_qc,order);
     
     if isfield(fp,'jday_location') & ~isempty(fp.jday_location)
-        jday_ref_1950 = fp.jday_location(ia) - julian([1950 1 1 0 0 0]);
+        jday_ref_1950 = fp.jday_location(ia(1)) - julian([1950 1 1 0 0 0]);
     else
         jday_ref_1950 = fp.jday(1) - julian([1950 1 1 0 0 0]);
     end
@@ -802,19 +802,19 @@ for ii = 1:nin
     netcdf.putVar(ncid,NJULDID,ii-1,length(jday_asc_end_1950),jday_asc_end_1950);
     netcdf.putVar(ncid,NJULDQCID,ii-1,1,'1');
     netcdf.putVar(ncid,NJULDLOCID,ii-1,length(jday_ref_1950),jday_ref_1950);
-    if ~isnan(fp.lat(ia))
-        netcdf.putVar(ncid,NLATID,ii-1,length(fp.lat(ia)),fp.lat(ia));
-        lonl = fp.lon(ia);
+    if ~isnan(fp.lat(ia(1)))
+        netcdf.putVar(ncid,NLATID,ii-1,length(fp.lat(ia(1))),fp.lat(ia(1)));
+        lonl = fp.lon(ia(1));
         if lonl > 180
             lonl = lonl - 360;
         end
         netcdf.putVar(ncid,NLONGID,ii-1,length(lonl),lonl);
         if isfield(fp,'pos_qc')           
-            if fp.pos_qc(ia)~=0;
-                if fp.pos_qc(ia)==7
+            if fp.pos_qc(ia(1))~=0;
+                if fp.pos_qc(ia(1))==7
                     netcdf.putVar(ncid,NPOSID,ii-1,1,'2');
                 else
-                    netcdf.putVar(ncid,NPOSID,ii-1,length(num2str(fp.pos_qc(ia))),num2str(fp.pos_qc(ia)));
+                    netcdf.putVar(ncid,NPOSID,ii-1,length(num2str(fp.pos_qc(ia(1)))),num2str(fp.pos_qc(ia(1))));
                 end
             else
                 netcdf.putVar(ncid,NPOSID,ii-1,1,'1');

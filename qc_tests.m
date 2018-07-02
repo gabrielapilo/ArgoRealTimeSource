@@ -279,7 +279,11 @@ for ii = ipf(:)'
             if ~isempty(igood) & ~isempty(ig) %need both values to continue
                 distance = sw_dist([fpp(ii-1).lat(igood) fp.lat(ig)],...
                     [fpp(ii-1).lon(igood) fp.lon(ig)],'km')*1000;
-                jd=[fpp(ii-1).jday_location(igood) fp.jday_location(ig)];
+                try
+                    jd=[fpp(ii-1).jday_location(igood) fp.jday_location(ig)];
+                catch
+                    jd=[fpp(ii-1).jday fp.jday_location(ig)];
+                end                    
                 timediff = abs(diff(jd))*86400;
                 speed = distance./timediff;
                 
@@ -527,24 +531,6 @@ for ii = ipf(:)'
                 fp.oxy_qc(kk+1) = max([fp.oxy_qc(kk+1); newv]);
                 fp.testsfailed(11) = 1;
             end
-            if isfield(fp,'oxyT_raw')
-                testv = abs(fp.oxyT_raw(jjo) - (fp.oxyT_raw(jjo+1)+fp.oxyT_raw(jjo-1))/2);
-                kk = find(testv>9 | (po(jjo)>500 & testv>3));
-                if ~isempty(kk)
-                    newv = repmat(4,1,length(kk));
-                    fp.oxyT_qc(kk+1) = max([fp.oxyT_qc(kk+1); newv]);
-                    fp.testsfailed(11) = 1;
-                end
-            end
-            if isfield(fp,'t_oxygen')
-                testv = abs(fp.t_oxygen(jjo) - (fp.t_oxygen(jjo+1)+fp.t_oxygen(jjo-1))/2);
-                kk = find(testv>9 | (po(jjo)>500 & testv>3));
-                if ~isempty(kk)
-                    newv = repmat(4,1,length(kk));
-                    fp.t_oxygen_qc(kk+1) = max([fp.t_oxygen_qc(kk+1); newv]);
-                    fp.testsfailed(11) = 1;
-                end
-            end
             if isfield(fp,'FLBBoxy_raw')
                 if length(fp.FLBBoxy_raw)>2
                     jjo=2:length(fp.FLBBoxy_raw)-1;
@@ -630,7 +616,7 @@ for ii = ipf(:)'
 % new test from ADMT12: density calculated relative to neighboring points,
 % not surface reference level...:    
     fp.testsperformed(14) = 1;
-    
+    difdd = 0;   
     for iij=1:length(fp.p_calibrate)-1
         difdd(iij)=0;
         
