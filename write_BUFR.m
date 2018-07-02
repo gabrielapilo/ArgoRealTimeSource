@@ -20,8 +20,12 @@
 function write_BUFR(dbdat,fp)
 
 global ARGO_SYS_PARAM
+%position information
+%find the first occurrence of a good position
+order = [1,2,0,5,8,9]; 
+[~,ia,~] = intersect(fp.pos_qc,order);
 
-if(isnan(fp.lat(1))) | strcmp('evil',dbdat.status) | strcmp('hold',dbdat.status)
+if(fp.pos_qc(ia(1)) == 9) | strcmp('evil',dbdat.status) | strcmp('hold',dbdat.status)
     return
 end
 
@@ -57,12 +61,9 @@ end
 % build outfile - T_IOPx01_C_AMMC_YYYYMMDDHHMMSS_R5901111_016.bufr
 outstr=['T_IOP'];
 
-%find the first occurrence of a good position
-order = [1,2,0,5,8]; 
-[~,ia,~] = intersect(fp.pos_qc,order);
 % long and lat position to letter code
-lat=fp.lat(ia);
-lon=fp.lon(ia);
+lat=fp.lat(ia(1));
+lon=fp.lon(ia(1));
 if lon>180 & lon<=360; lon=-(360-lon); end
 
 if lat >= 0
@@ -133,9 +134,9 @@ outstr=[outstr '_R' int2str(dbdat.wmo_id) '_' pno '.bin'];
 
 outfile=[ARGO_SYS_PARAM.BUFR_delivery_path outstr]
 if ~isempty(biofname)   
-[status,ww] = system(['perl ' ARGO_SYS_PARAM.root_dir 'src/ArgoNetCDFp2BUFR_v3.1.pl ' outfile ' ' fname ' ' biofname])
+[status,ww] = system(['perl ' ARGO_SYS_PARAM.root_dir 'src/ArgoNetCDFp2BUFR_v3.1.pl ' outfile ' ' fname ' ' biofname]);
 else
-    [status,ww] = system(['perl ' ARGO_SYS_PARAM.root_dir 'src/ArgoNetCDFp2BUFR_v3.1.pl ' outfile ' ' fname])
+    [status,ww] = system(['perl ' ARGO_SYS_PARAM.root_dir 'src/ArgoNetCDFp2BUFR_v3.1.pl ' outfile ' ' fname]);
 end
 if status~=0
    logerr(3,['Creation of ' outfile ' from ' fname ' failed:' ww]);

@@ -658,7 +658,7 @@ end
                 if gennc(g) > 0
                     if ~isempty(float(gennc(g)).jday) & ~isempty(float(gennc(g)).wmo_id)
                         argoprofile_nc(dbdat,float(gennc(g)));
-                        write_tesac(dbdat,float(gennc(g)));
+                        %                         write_tesac(dbdat,float(gennc(g)));
                     end
                 end
             end
@@ -673,10 +673,10 @@ end
         
         if any(float(np).testsfailed(rejtests))
             % Will not transmit this profile because of failing critical tests
-            logerr(3,'Failed critical QC, so no TESAC msg sent!');
+            logerr(3,'Failed critical QC, so no BUFR msg sent!');
         elseif opts.rtmode && ~strcmp('suspect',dbdat.status)
             % If not reprocessing, and not a "suspect" float, create tesac file
-            write_tesac(dbdat,float(np));
+%             write_tesac(dbdat,float(np));
             
             % BOM write BUFR call
             BOM_write_BUFR;

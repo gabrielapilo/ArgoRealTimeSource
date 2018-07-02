@@ -1577,7 +1577,6 @@ if any(stage==1)
                 if gennc(g) > 0
                     if ~isempty(float(gennc(g)).jday) & ~isempty(float(gennc(g)).wmo_id)
                         argoprofile_nc(dbdat,float(gennc(g)));
-                        write_tesac(dbdat,float(gennc(g)));
                     end
                 end
             end
@@ -1592,16 +1591,18 @@ if any(stage==1)
         
         if any(float(np).testsfailed(rejtests))
             % Will not transmit this profile because of failing critical tests
-            logerr(3,'Failed critical QC, so no TESAC msg sent!');
-        elseif opts.rtmode && ~strcmp('suspect',dbdat.status)
-            % If not reprocessing, and not a "suspect" float, create tesac file
-            write_tesac(dbdat,float(np));
+            logerr(3,'Failed critical QC, so no BUFR msg sent!');
+        elseif opts.rtmode && ~strcmp('suspect',dbdat.status) & ~strcmp('evil',dbdat.status) & ...
+                ~strcmp('hold',dbdat.status)
+            % If not reprocessing, and not a "suspect" float, create tesac file. Disabled, 2 July, 2018
+%             write_tesac(dbdat,float(np));
             
             % BOM write BUFR call
             BOM_write_BUFR;
             
             prec.gts_count = 0;
-        elseif strcmp('dead',dbdat.status) | strcmp('exhausted',dbdat.status)
+        end
+        if strcmp('dead',dbdat.status) | strcmp('exhausted',dbdat.status)
             % dead float returned - send email to alert operator -
             mail_out_dead_float(dbdat.wmo_id);
         end

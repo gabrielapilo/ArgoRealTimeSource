@@ -2,23 +2,24 @@
 %   and GDAC netCDF files to transmit, organise transmission, update records.
 %
 % INPUT  
-%    reads Argo_proc_records.mat,  finds .tesac and .nc files
+%    reads Argo_proc_records.mat,  finds .bin (BUFR) and .nc files
 %
 % OUTPUT
-%    updates Argo_proc_records.mat, emails tesac, calls writeGDACfiles to
+%    updates Argo_proc_records.mat, emails BUFR, calls writeGDACfiles to
 %    ftp the netCDF files
 %   
 % Author: Jeff Dunn CMAR/BoM Sep-Oct 2006
+%       : Updated Bec Cowley, July, 2018 to only deliver BUFR
 %
 % CALLED BY:  strip_argos_msg  (or can be used standalone)
 %
-% SEE ALSO:  write_tesac.m   *_nc.m    writeGDACfiles
+% SEE ALSO:  write_BUFR.m   *_nc.m    writeGDACfiles
 %
 % USAGE:  export_argo
 
 function export_argo
 
-global ARGO_SYS_PARAM
+global ARGO_SYS_PARAM PROC_RECORDS
 
 if isempty(ARGO_SYS_PARAM)
    set_argo_sys_params;
@@ -33,16 +34,12 @@ pp1 = {'prof','tech','meta','Rtraj'};
 
 if ispc
     edir = [ARGO_SYS_PARAM.root_dir 'export\'];
-    eIdir = [ARGO_SYS_PARAM.root_dir 'exportIridium\'];
     eBUFRdir = [ARGO_SYS_PARAM.root_dir 'exportBUFR\'];
     ndir = [ARGO_SYS_PARAM.root_dir 'netcdf\'];
-    tdir = [ARGO_SYS_PARAM.root_dir 'tesac\'];
 else
     edir = [ARGO_SYS_PARAM.root_dir 'export/'];
-    eIdir = [ARGO_SYS_PARAM.root_dir 'exportIridium/'];
     eBUFRdir = [ARGO_SYS_PARAM.root_dir 'exportBUFR/'];
     ndir = [ARGO_SYS_PARAM.root_dir 'netcdf/'];
-    tdir = [ARGO_SYS_PARAM.root_dir 'tesac/'];
 end
 
 % Load the proc_record array. Do not use the global version of PROC_RECORDS
@@ -60,36 +57,28 @@ for ii = 1:length(PROC_RECORDS)
     
     [fpp,dbdat]=getargo(pr.wmo_id);
     if ~strcmp('evil',dbdat.status) & ~strcmp('hold',dbdat.status)
-        % GTS message
+        % GTS BUFR message
         pnum = pr.profile_number;
         pno=sprintf('%3.3i',pnum);
         
-        fnm = [tdir 'R' num2str(pr.wmo_id) '_' pno '.tesac'];   %num2str(pr.profile_number) '.tesac'];
+        [status,fnm] = system(['find ' eBUFRdir '*R' num2str(pr.wmo_id) '_' pno '.bin']);
         if pr.gts_count < ARGO_SYS_PARAM.gts_max
-            if ~exist(fnm,'file')
+            if status ~= 0
                 logerr(2,['Cannot find ' fnm]);
             else
-                if today-fpp(pnum).jday(1)<=40
-                    if dbdat.iridium
-                        [st,ww] = system(['cp -f ' fnm ' ' eIdir]);
-                    else
-                        mail_out_TESAC
-                        if st==0
-                            delete(fnm);
-                        end
+                if today-fpp(pnum).jday(1)>40 %outside GTS delivery window
+                    %remove from the BUFR delivery directory
+                    [~,ii] = regexp( fnm, '[^\w/.]', 'match' ); %how many files?
+                    s = 1;
+                    for a = 1:length(ii)
+                        [status,~]=system(['rm -f ' fnm(s:ii(a))]);
+                        s = ii(a)+1;
+                        logerr(2,['Old file in BUFR directory, removing ' fnm(s:ii(a))]);
                     end
+                    
                 else
-                    st=[];
-                end
-                
-                if isempty(st)
-                else
-                    if st ~= 0
-                        logerr(2,['Mail ' fnm ' to GTS failed: ' ww]);
-                    else
-                        pr.gts_count = pr.gts_count + 1;
-                        cnts(1) = cnts(1)+1;
-                    end
+                    pr.gts_count = pr.gts_count + 1;
+                    cnts(1) = cnts(1)+1;
                 end
             end
         elseif pr.gts_count ~= DoneFlag
@@ -203,35 +192,32 @@ logerr(5,['Files to send: GTS, profile, tech, meta, trajectory: ' num2str(cnts)]
 
 
 % Check for files that have slipped through the system and are hanging around
-[status,ww] = system(['find ' tdir ' -mtime +2 -print']);
+[status,ww] = system(['find ' eBUFRdir ' -mtime +2 -print']);
 if ~isempty(ww)
-    [pp,ff] = fileparts(ww(1,:));
-    logerr(2,['Old files in tesac/, first is ' ff]);
-    [status,ww]=system(['rm -f ' tdir '*.tesac']);
-end
-
-[status,ww] = system(['find ' edir ' -mtime +1 -print']);
-if ~isempty(ww)
-    [pp,ff] = fileparts(ww(1,:));
-    logerr(2,['Old files in export/, first is ' ff]);
-end
-
-% export_Iridium_tesac call
-[status,ww] = system(['ls ' eIdir]);
-if ~isempty(ww)
-    if ispc
-        [status,ww] = system([ARGO_SYS_PARAM.root_dir 'src\GroupSpecific\write_Iridium_tesac']);
-    else
-        [status,ww] = system([ARGO_SYS_PARAM.root_dir 'src/GroupSpecific/write_Iridium_tesac']);
+    [~,ii] = regexp( ww, '[^\w/.]', 'match' ); %how many files?
+    s = 1;
+    for a = 1:length(ii)
+        [status,~]=system(['rm -f ' ww(s:ii(a))]);
+        s = ii(a)+1;
+        logerr(2,['Old files in exportBUFR/, removing ' ww(s:ii(a))]);
     end
-    if(status~=0)
-        logerr(2,['Send of Iridium tesac failed, reason is ' ww]);
+end
+
+% Now look at any old time-stamped netcdf files so we don't deliver them to
+% GDAC by accident
+[status,ww] = system(['find ' edir ' -mtime +2 -print']);
+if ~isempty(ww)
+    [~,ii] = regexp( ww, '[^\w/.]', 'match' ); %how many files?
+    s = 1;
+    for a = 1:length(ii)
+        [status,~]=system(['rm -f ' ww(s:ii(a))]);
+        s = ii(a)+1;
+        logerr(2,['Old netcdf files in export/, removing ' ww(s:ii(a))]);
     end
 end
 
 
-%%%%%%%%%%%%%%%% BOM ONLY %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% export_BUFR call
+% export_BUFR call - deliver BUFR messages to GTS
 [status,ww] = system(['ls ' eBUFRdir]);
 if ~isempty(ww)
     if ispc
@@ -239,8 +225,8 @@ if ~isempty(ww)
     else
         [status,ww] = system([ARGO_SYS_PARAM.root_dir 'src/GroupSpecific/write_BUFR_ftp']);
     end
-    if(status==0)
-        logerr(2,['Send of BUFR nc messages failed, reason is ' ww]);
+    if(status~=0) %write to BOM ftp fails if status ~= 0
+        logerr(2,['Send of BUFR messages failed, reason is ' ww]);
     end
 end
 

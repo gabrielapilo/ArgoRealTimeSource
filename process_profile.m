@@ -584,16 +584,17 @@ if any(stage>=1)
 
 	 if any(float(np).testsfailed(rejtests))
 	    % Will not transmit this profile because of failing critical tests	 
-	    logerr(3,'Failed critical QC, so no TESAC msg sent!'); 
+	    logerr(3,'Failed critical QC, so no BUFR msg sent!'); 
 	 elseif ~strcmp('hold',dbdat.status) & ~strcmp('evil',dbdat.status) & ...
             opts.rtmode && ~strcmp('suspect',dbdat.status) && ~any(stage==2) && ~opts.redo
-	    % If not reprocessing, and not a "suspect" float, create tesac file
-	    write_tesac(dbdat,float(np));	 
+	    % If not reprocessing, and not a "suspect" float, create tesac
+	    % file. Disabled, 2 July, 2018
+% 	    write_tesac(dbdat,float(np));	 
 	    prec.gts_count = 0;
 
 	    BOM_write_BUFR;
 	 end
-	 export_text_files
+% 	 export_text_files
         
 	 prec.prof_nc_count = 0;	 
 	 if opts.rtmode && any(stage>=1)

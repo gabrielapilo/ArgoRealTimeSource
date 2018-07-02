@@ -2,7 +2,7 @@
 % new data, processes it before sending strip_argos_msg
 
 global  ARGO_SYS_PARAM
-global THE_ARGO_FLOAT_DB  ARGO_ID_CROSSREF
+global PROC_REC_WMO PROC_RECORDS
 
 % System tuning parameters (could be shifted to ARGO_SYS_PARAM ?)
 Too_Old_Days = 11;         % Realtime: no interested beyond 10 and a bit days. 
