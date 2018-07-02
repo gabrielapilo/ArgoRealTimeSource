@@ -68,12 +68,12 @@ for ii = 1:length(PROC_RECORDS)
             else
                 if today-fpp(pnum).jday(1)>40 %outside GTS delivery window
                     %remove from the BUFR delivery directory
-                    [~,ii] = regexp( fnm, '[^\w/.]', 'match' ); %how many files?
+                    [~,ij] = regexp( fnm, '[^\w/.]', 'match' ); %how many files?
                     s = 1;
-                    for a = 1:length(ii)
-                        [status,~]=system(['rm -f ' fnm(s:ii(a))]);
-                        s = ii(a)+1;
-                        logerr(2,['Old file in BUFR directory, removing ' fnm(s:ii(a))]);
+                    for a = 1:length(ij)
+                        [status,~]=system(['rm -f ' strtrim(fnm(s:ij(a)))]);
+                        s = ij(a)+1;
+                        logerr(2,['Old file in BUFR directory, removing ' strtrim(fnm(s:ij(a)))]);
                     end
                     
                 else
@@ -84,8 +84,14 @@ for ii = 1:length(PROC_RECORDS)
         elseif pr.gts_count ~= DoneFlag
             % Flag that finished with this message, and remove it.
             pr.gts_count = DoneFlag;
-            if exist(fnm,'file')
-                delete(fnm);
+            %remove from the BUFR delivery directory, file already sent to
+            %the GTS.
+            [~,ij] = regexp( fnm, '[^\w/.]', 'match' ); %how many files?
+            s = 1;
+            for a = 1:length(ij)
+                [status,~]=system(['rm -f ' strtrim(fnm(s:ij(a)))]);
+                s = ij(a)+1;
+                logerr(2,['Old file in BUFR directory, removing ' strtrim(fnm(s:ij(a)))]);
             end
         end
         
@@ -182,6 +188,8 @@ else
 end
 if status ~= 0
     logerr(2,['initiating writeGDAC failed: ' ww]);
+else
+    logerr(2,'Send of netcdf files to GDACs successful');
 end
 
 % Save the updated proc_record
@@ -197,9 +205,9 @@ if ~isempty(ww)
     [~,ii] = regexp( ww, '[^\w/.]', 'match' ); %how many files?
     s = 1;
     for a = 1:length(ii)
-        [status,~]=system(['rm -f ' ww(s:ii(a))]);
+        [status,~]=system(['rm -f ' strtrim(ww(s:ii(a)))]);
         s = ii(a)+1;
-        logerr(2,['Old files in exportBUFR/, removing ' ww(s:ii(a))]);
+        logerr(2,['Old files in exportBUFR/, removing ' strtrim(ww(s:ii(a)))]);
     end
 end
 
@@ -210,9 +218,9 @@ if ~isempty(ww)
     [~,ii] = regexp( ww, '[^\w/.]', 'match' ); %how many files?
     s = 1;
     for a = 1:length(ii)
-        [status,~]=system(['rm -f ' ww(s:ii(a))]);
+        [status,~]=system(['rm -f ' strtrim(ww(s:ii(a)))]);
         s = ii(a)+1;
-        logerr(2,['Old netcdf files in export/, removing ' ww(s:ii(a))]);
+        logerr(2,['Old netcdf files in export/, removing ' strtrim(ww(s:ii(a)))]);
     end
 end
 
@@ -227,6 +235,8 @@ if ~isempty(ww)
     end
     if(status~=0) %write to BOM ftp fails if status ~= 0
         logerr(2,['Send of BUFR messages failed, reason is ' ww]);
+    else
+        logerr(2,'Send of BUFR messages to GTS successful');
     end
 end
 
