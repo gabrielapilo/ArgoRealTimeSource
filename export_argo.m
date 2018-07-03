@@ -36,10 +36,12 @@ if ispc
     edir = [ARGO_SYS_PARAM.root_dir 'export\'];
     eBUFRdir = [ARGO_SYS_PARAM.root_dir 'exportBUFR\'];
     ndir = [ARGO_SYS_PARAM.root_dir 'netcdf\'];
+    backupdir = [ARGO_SYS_PARAM.root_dir 'textfiles\'];
 else
     edir = [ARGO_SYS_PARAM.root_dir 'export/'];
     eBUFRdir = [ARGO_SYS_PARAM.root_dir 'exportBUFR/'];
     ndir = [ARGO_SYS_PARAM.root_dir 'netcdf/'];
+    backupdir = [ARGO_SYS_PARAM.root_dir 'textfiles/'];
 end
 
 % Load the proc_record array. Do not use the global version of PROC_RECORDS
@@ -61,10 +63,23 @@ for ii = 1:length(PROC_RECORDS)
         pnum = pr.profile_number;
         pno=sprintf('%3.3i',pnum);
         
-        [status,fnm] = system(['find ' eBUFRdir '*R' num2str(pr.wmo_id) '_' pno '.bin']);
+        [status,fnm] = system(['find ' eBUFRdir ' -name ''*R' num2str(pr.wmo_id) '_' pno '.bin'' -print']);
         if pr.gts_count < ARGO_SYS_PARAM.gts_max
-            if status ~= 0
-                logerr(2,['Cannot find ' fnm]);
+            if status ~= 0 | isempty(fnm)
+                %check if we have a backup copy, if so, assume it has been
+                %sent.
+                [st2,fnm2] = system(['find ' backupdir '/' num2str(pr.wmo_id) ' -name ''*R' num2str(pr.wmo_id) '_' pno '.bin'' -print']);
+                if st2 ~= 0 | isempty(fnm2)
+                    if today-fpp(pnum).jday(1)<=40 %only warn us if inside GTS delivery window
+                        logerr(5,['Cannot find BUFR file for ' num2str(pr.wmo_id)]);
+                    else
+                        %reset GTS counts
+                        pr.gts_count = DoneFlag;
+                    end
+                else
+                    %reset GTS counts
+                    pr.gts_count = DoneFlag;
+                end
             else
                 if today-fpp(pnum).jday(1)>40 %outside GTS delivery window
                     %remove from the BUFR delivery directory
@@ -73,7 +88,7 @@ for ii = 1:length(PROC_RECORDS)
                     for a = 1:length(ij)
                         [status,~]=system(['rm -f ' strtrim(fnm(s:ij(a)))]);
                         s = ij(a)+1;
-                        logerr(2,['Old file in BUFR directory, removing ' strtrim(fnm(s:ij(a)))]);
+                        logerr(5,['Old file in BUFR directory, removing: ' num2str(pr.wmo_id) ' profile ' num2str(pr.profile_number)]);
                     end
                     
                 else
@@ -86,12 +101,14 @@ for ii = 1:length(PROC_RECORDS)
             pr.gts_count = DoneFlag;
             %remove from the BUFR delivery directory, file already sent to
             %the GTS.
-            [~,ij] = regexp( fnm, '[^\w/.]', 'match' ); %how many files?
-            s = 1;
-            for a = 1:length(ij)
-                [status,~]=system(['rm -f ' strtrim(fnm(s:ij(a)))]);
-                s = ij(a)+1;
-                logerr(2,['Old file in BUFR directory, removing ' strtrim(fnm(s:ij(a)))]);
+            if ~isempty(fnm)
+                [~,ij] = regexp( fnm, '[^\w/.]', 'match' ); %how many files?
+                s = 1;
+                for a = 1:length(ij)
+                    [status,~]=system(['rm -f ' strtrim(fnm(s:ij(a)))]);
+                    s = ij(a)+1;
+                    logerr(5,['Old file in BUFR directory, removing: ' num2str(pr.wmo_id) ' profile ' num2str(pr.profile_number)]);
+                end
             end
         end
         
@@ -189,7 +206,7 @@ end
 if status ~= 0
     logerr(2,['initiating writeGDAC failed: ' ww]);
 else
-    logerr(2,'Send of netcdf files to GDACs successful');
+    logerr(5,'Send of netcdf files to GDACs successful');
 end
 
 % Save the updated proc_record
@@ -207,7 +224,7 @@ if ~isempty(ww)
     for a = 1:length(ii)
         [status,~]=system(['rm -f ' strtrim(ww(s:ii(a)))]);
         s = ii(a)+1;
-        logerr(2,['Old files in exportBUFR/, removing ' strtrim(ww(s:ii(a)))]);
+        logerr(5,['Old files in exportBUFR/, removing ' strtrim(ww(s:ii(a)))]);
     end
 end
 
@@ -220,7 +237,7 @@ if ~isempty(ww)
     for a = 1:length(ii)
         [status,~]=system(['rm -f ' strtrim(ww(s:ii(a)))]);
         s = ii(a)+1;
-        logerr(2,['Old netcdf files in export/, removing ' strtrim(ww(s:ii(a)))]);
+        logerr(5,['Old netcdf files in export/, removing ' strtrim(ww(s:ii(a)))]);
     end
 end
 
@@ -236,7 +253,7 @@ if ~isempty(ww)
     if(status~=0) %write to BOM ftp fails if status ~= 0
         logerr(2,['Send of BUFR messages failed, reason is ' ww]);
     else
-        logerr(2,'Send of BUFR messages to GTS successful');
+        logerr(5,'Send of BUFR messages to GTS successful');
     end
 end
 

@@ -17,12 +17,14 @@
 % USAGE: write_BUFR(dbdat,fp)
 %
 
-function write_BUFR(dbdat,fp)
+function [outcome] = write_BUFR(dbdat,fp)
 
 global ARGO_SYS_PARAM
+outcome = 0;
+
 %position information
 %find the first occurrence of a good position
-order = [1,2,0,5,8,9]; 
+order = [1,2,0,5,8,9];
 [~,ia,~] = intersect(fp.pos_qc,order);
 
 if(fp.pos_qc(ia(1)) == 9) | strcmp('evil',dbdat.status) | strcmp('hold',dbdat.status)
@@ -140,6 +142,8 @@ else
 end
 if status~=0
    logerr(3,['Creation of ' outfile ' from ' fname ' failed:' ww]);
+else
+    outcome = 1;
 end
 
 % text file directory
