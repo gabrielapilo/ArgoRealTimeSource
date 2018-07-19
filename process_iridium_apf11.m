@@ -352,7 +352,7 @@ if any(stage==1)
     
  % need to store CP surface offset value for RBR flaot into correct place:
  % assume this is always and only the last CP point...
- if dbdat.RBR
+ if dbdat.RBR & ~isempty(p_raw)
      pro.surfpresCP=pro.p_raw(end);
      pro.surf_TCP=pro.t_raw(end);
      pro.surf_SCP=pro.s_raw(end);
