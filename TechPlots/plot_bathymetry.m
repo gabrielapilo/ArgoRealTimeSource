@@ -35,6 +35,9 @@ for index=1:lg
     %find the first occurrence of a good position
     order = [1,2,0,5,8,9,7]; %what is 7 for?
     [~,ia,~] = intersect(float(index).pos_qc,order);
+    if isempty(ia)
+        continue
+    end
     latitude(index) = float(index).lat(ia);
     longitude(index) = float(index).lon(ia);
     if isfield(float,'ground')
