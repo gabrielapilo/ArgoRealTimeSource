@@ -62,159 +62,140 @@ if isempty(THE_ARGO_FLOAT_DB)
    end
       
    fid = fopen(fnm,'r');
-   tmpdb = textscan(fid,'%s','delimiter',',');  %,'bufsize',10000);
+   %35 columns. Edit here if we need to add/remove columns
+   tmpdb = textscan(fid,repmat('%s',1,35),'delimiter',',','headerlines',2);  
    fclose(fid);
-   
-   tmpdb = tmpdb{1};
-   
-   ientry = 0;
-   ifld = 1;
 
-   while ifld<length(tmpdb)
-      ifld = ifld+1;
-      if ~isempty(tmpdb{ifld})
-	 fld = lower(tmpdb{ifld});
-
-	 if ~isempty(strfind(fld,'column1'))
-	    % This field is the start-of-row marker - ie start of new float
-	    ncol = 0;        % reset the column count
-	    ientry = ientry+1;
-	 end
-      end
-
-      if ientry>0
-	 % (if ientry==0 then we are still in the header rows)
-	 ncol = ncol+1;
-	 if isempty(tmpdb{ifld})
-	    if any(ncol==[2 6 7 8 10 12 14 18 20 24 26 27 28 30])
-	       logerr(2,['GETDBASE: Mandatory fields missed in spreadsheet' ...
-			 ' row/col: ' num2str([ientry ncol])]);
-	    end
-	    fld = '';
-	 end
-	
-	 switch ncol
-	   case 1
-	     % Just the start of line marker
-	   case 2 
-	     T(ientry).status = fld;
-	   case 3
-           tmp=num2str(fld);
-	     T(ientry).launchdate = tmp;
-	   case 4
-	     T(ientry).launch_lat = str2num(fld);
-	   case 5
-	     T(ientry).launch_lon = str2num(fld);
-	   case 6
-	     T(ientry).argos_id = str2num(fld);
-	   case 7
-	     T(ientry).wmo_id = str2num(fld);
-	   case 8
-	     T(ientry).maker_id =  str2num(fld);
-	   case 9
-	     T(ientry).argos_hex_id = fld;
-	   case 10
-	     T(ientry).deploy_num = str2num(fld);
-	   case 11
-	     T(ientry).owner = fld;
-	   case 12
-	     T(ientry).wmo_inst_type = fld;
-	   case 13
-	     T(ientry).ctd_sensor_type = fld;
-         T(ientry).RBR = ~isempty(strfind(lower(fld),'rbr'));
-	   case 14
-	     T(ientry).sbe_snum = str2num(fld);
-	   case 15
-           dt=strfind(fld,'-');
-           if isempty(dt);dt=0;end
-	     T(ientry).controlboardnum = str2num(fld(dt+1:end));
-	     T(ientry).controlboardnumstring = fld;
-         if(isempty(fld))
-             T(ientry).boardtype = [];
-         elseif(dt==0)
-             T(ientry).boardtype = 8;
-         else
-             try
-                 T(ientry).boardtype = str2num(fld(1:dt-2));
-             catch
-                 T(ientry).boardtype = [];
-             end
-         end
-            T(ientry).iridium = ~isempty(strfind(lower(fld),'i'));
-	   case 16
-	     T(ientry).oxysens_snum = str2num(fld);
-	   case 17
-	     T(ientry).psens_snum = str2num(fld);
-	   case 18
-	     T(ientry).reprate = str2num(fld);
-	   case 19
-	     T(ientry).parktime = str2num(fld);
-	   case 20
-	     T(ientry).asctime = str2num(fld);
-	   case 21
-	     T(ientry).surftime = str2num(fld);
-	   case 22
-	     T(ientry).parkpres = str2num(fld);
-	   case 23
-	     T(ientry).uptime = str2num(fld);
-	   case 24
-	     T(ientry).profpres = str2num(fld);
-	   case 25
-	     T(ientry).launch_platform = fld;
-	   case 26
-	     T(ientry).np0 = str2num(fld);
-	   case 27
-	     if ~isempty(strfind(fld,'webb'))
-		T(ientry).maker = 1;
-	     elseif ~isempty(strfind(lower(fld),'provor'))
-		T(ientry).maker = 2;
-	     elseif ~isempty(strfind(lower(fld),'arvor'))
-		T(ientry).maker = 2;
-	     elseif ~isempty(strfind(fld,'seabird'))
-		T(ientry).maker = 4;
-             elseif ~isempty(strfind(fld,'soloii'))
-                T(ientry).maker = 5;     
-	     elseif ~isempty(strfind(fld,'solo'))
-		T(ientry).maker = 3;
-	     else
-		T(ientry).maker = 0;
-		if isempty(fld)
-		   disp(['GETDBASE: Error - empty Manufacturer field, row' ...
-			 num2str(ientry)]);
-		else
-		   disp(['GETDBASE: Error - Manufacturer=' fld ...
-			', in row ' num2str(ientry)]);
-		end
-	     end
-	   case 28
-	     T(ientry).subtype = str2num(fld);
-	   case 29
-	     T(ientry).ice = ~isempty(strfind(fld,'i'));
-	     T(ientry).oxy = ~isempty(strfind(fld,'o'));
-	     T(ientry).tmiss = ~isempty(strfind(fld,'t'));
-         T(ientry).flbb = ~isempty(strfind(fld,'f'));
-         T(ientry).em = ~isempty(strfind(fld,'e'));
-         T(ientry).suna = ~isempty(strfind(fld,'s'));
-         T(ientry).flbb2 = ~isempty(strfind(fld,'f2'));  %flbb with chl and 2 BB sensors
-         T(ientry).eco = ~isempty(strfind(fld,'x'));  %eco puck with three BB sensors
-         T(ientry).irr = ~isempty(strfind(fld,'r'));  %upward and downward irradiance sensors
-         T(ientry).irr2 = ~isempty(strfind(fld,'r2'));  %downward irradiance sensors with PAR
-         T(ientry).pH = ~isempty(strfind(fld,'p'));  %pH sensor
-       case 30
-         fld = upper(fld);           
-         T(ientry).pressure_sensor = fld;      
-	   case 31
-	     % Check the end-of-row marker (not really necessary, but safer)
-	     if isempty(strfind(fld,'endrow'))
-		disp(['GETDBASE: No "endrow" at col 31, row ' num2str(ientry)]);
-	     end
-	   otherwise
-	     % we don't need these other fields (for now)
-	     
-	 end    % end of 'switch'
-      end     % end of 'ientry>0  (ie have got past headers, started float rows)
-   end      % end of looping on every field read
-
+   % stick with this setup, probably more efficient ways of doing it...
+   for ientry = 1:length(tmpdb{1})
+       for ncol = 1:length(tmpdb)
+           fld = tmpdb{ncol}{ientry};
+           switch ncol
+               case 1
+                   % Just the start of line marker
+               case 2
+                   T(ientry).status = fld;
+               case 3
+                   tmp=fld;
+                   T(ientry).launchdate = tmp;
+               case 4
+                   T(ientry).launch_lat = str2num(fld);
+               case 5
+                   T(ientry).launch_lon = str2num(fld);
+               case 6
+                   T(ientry).argos_id = str2num(fld);
+               case 7
+                   T(ientry).wmo_id = str2num(fld);
+               case 8
+                   T(ientry).maker_id =  str2num(fld);
+               case 9
+                   T(ientry).argos_hex_id = fld;
+               case 10
+                   T(ientry).deploy_num = str2num(fld);
+               case 11
+                   T(ientry).owner = fld;
+               case 15
+                   T(ientry).PI = fld;
+               case 16
+                   T(ientry).wmo_inst_type = fld;
+               case 17
+                   T(ientry).ctd_sensor_type = fld;
+                   T(ientry).RBR = ~isempty(strfind(lower(fld),'rbr'));
+               case 18
+                   T(ientry).sbe_snum = str2num(fld);
+               case 19
+                   dt=strfind(fld,'-');
+                   if isempty(dt);dt=0;end
+                   T(ientry).controlboardnum = str2num(fld(dt+1:end));
+                   T(ientry).controlboardnumstring = fld;
+                   if(isempty(fld))
+                       T(ientry).boardtype = [];
+                   elseif(dt==0)
+                       T(ientry).boardtype = 8;
+                   else
+                       try
+                           T(ientry).boardtype = str2num(fld(1:dt-2));
+                       catch
+                           T(ientry).boardtype = [];
+                       end
+                   end
+                   T(ientry).iridium = ~isempty(strfind(lower(fld),'i'));
+               case 20
+                   T(ientry).oxysens_snum = str2num(fld);
+               case 21
+                   T(ientry).psens_snum = str2num(fld);
+               case 22
+                   T(ientry).reprate = str2num(fld);
+               case 23
+                   T(ientry).parktime = str2num(fld);
+               case 24
+                   T(ientry).asctime = str2num(fld);
+               case 25
+                   T(ientry).surftime = str2num(fld);
+               case 26
+                   T(ientry).parkpres = str2num(fld);
+               case 27
+                   T(ientry).uptime = str2num(fld);
+               case 28
+                   T(ientry).profpres = str2num(fld);
+               case 29
+                   T(ientry).launch_platform = fld;
+               case 30
+                   T(ientry).np0 = str2num(fld);
+               case 31
+                   fld = lower(fld);
+                   if ~isempty(strfind(fld,'webb'))
+                       T(ientry).maker = 1;
+                   elseif ~isempty(strfind(lower(fld),'provor'))
+                       T(ientry).maker = 2;
+                   elseif ~isempty(strfind(lower(fld),'arvor'))
+                       T(ientry).maker = 2;
+                   elseif ~isempty(strfind(fld,'seabird'))
+                       T(ientry).maker = 4;
+                   elseif ~isempty(strfind(fld,'soloii'))
+                       T(ientry).maker = 5;
+                   elseif ~isempty(strfind(fld,'solo'))
+                       T(ientry).maker = 3;
+                   else
+                       T(ientry).maker = 0;
+                       if isempty(fld)
+                           disp(['GETDBASE: Error - empty Manufacturer field, row' ...
+                               num2str(ientry)]);
+                       else
+                           disp(['GETDBASE: Error - Manufacturer=' fld ...
+                               ', in row ' num2str(ientry)]);
+                       end
+                   end
+               case 32
+                   T(ientry).subtype = str2num(fld);
+               case 33
+                   fld = lower(fld);
+                   T(ientry).ice = ~isempty(strfind(fld,'i'));
+                   T(ientry).oxy = ~isempty(strfind(fld,'o'));
+                   T(ientry).tmiss = ~isempty(strfind(fld,'t'));
+                   T(ientry).flbb = ~isempty(strfind(fld,'f'));
+                   T(ientry).em = ~isempty(strfind(fld,'e'));
+                   T(ientry).suna = ~isempty(strfind(fld,'s'));
+                   T(ientry).flbb2 = ~isempty(strfind(fld,'f2'));  %flbb with chl and 2 BB sensors
+                   T(ientry).eco = ~isempty(strfind(fld,'x'));  %eco puck with three BB sensors
+                   T(ientry).irr = ~isempty(strfind(fld,'r'));  %upward and downward irradiance sensors
+                   T(ientry).irr2 = ~isempty(strfind(fld,'r2'));  %downward irradiance sensors with PAR
+                   T(ientry).pH = ~isempty(strfind(fld,'p'));  %pH sensor
+               case 34
+                   fld = upper(fld);
+                   T(ientry).pressure_sensor = fld;
+               case 35
+                   fld = lower(fld);
+                   % Check the end-of-row marker (not really necessary, but safer)
+                   if isempty(strfind(fld,'endrow'))
+                       disp(['GETDBASE: No "endrow" at col 31, row ' num2str(ientry)]);
+                   end
+               otherwise
+                   % we don't need these other fields (for now)
+                   
+           end    % end of 'switch'
+       end     % end of 'ientry>0  (ie have got past headers, started float rows)
+   end
    
    
    % Create a WMO ID lookup table (and an ID cross-ref table)

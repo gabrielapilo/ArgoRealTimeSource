@@ -162,7 +162,7 @@ else
     ncwrite(fname,'PROJECT_NAME',ARGO_SYS_PARAM.Proj);
 end
 
-ncwrite(fname,'PI_NAME',ARGO_SYS_PARAM.PI_Name);
+ncwrite(fname,'PI_NAME',dbdat.PI);
 
 ncwrite(fname,'WMO_INST_TYPE',dbdat.wmo_inst_type);
 ncwrite(fname,'POSITIONING_SYSTEM','GPS');

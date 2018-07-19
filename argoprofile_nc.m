@@ -666,7 +666,7 @@ for ii = 1:nin
     if isfield(fp,'PI')
         netcdf.putVar(ncid,NPINAID,[0,ii-1],[length(fp.PI),1],fp.PI);
     else
-        netcdf.putVar(ncid,NPINAID,[0,ii-1],[length(ARGO_SYS_PARAM.PI_Name),1],ARGO_SYS_PARAM.PI_Name) ;  %'Susan Wijffels';
+        netcdf.putVar(ncid,NPINAID,[0,ii-1],[length(dbdat.PI),1],dbdat.PI) ; 
     end
     
     netcdf.putVar(ncid,NSTAPARAID,[0,0,ii-1],[length('PRES'),1,1],'PRES');
