@@ -803,7 +803,7 @@ end
 if isfield(fpp,'PI')
     netcdf.putVar(ncid,NPINAID,0,length(fpp(1).PI),fpp(1).PI);
 else
-    netcdf.putVar(ncid,NPINAID,0,length(ARGO_SYS_PARAM.PI_Name),ARGO_SYS_PARAM.PI_Name) ;  %'Susan Wijffels';
+    netcdf.putVar(ncid,NPINAID,0,length(dbdat.PI),dbdat.PI) ;  %'Susan Wijffels';
 end
 
 ll = length(dbdat.wmo_inst_type);
