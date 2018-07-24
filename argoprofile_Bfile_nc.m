@@ -897,7 +897,6 @@ if dbdat.oxy %  & dbdat.subtype~=1006
 
         NBPHASEDOXYID=netcdf.defVar(ncid,'BPHASE_DOXY','NC_FLOAT',[N_LEVELSID,N_PROFID]);
         netcdf.putAtt(ncid,NBPHASEDOXYID,'long_name','Uncalibrated phase shift reported by oxygen sensor');
-        netcdf.putAtt(ncid,NBPHASEDOXYID,'standard_name','-');
         netcdf.putAtt(ncid,NBPHASEDOXYID,'units','degree');
         netcdf.putAtt(ncid,NBPHASEDOXYID,'_FillValue',single(fval));
         netcdf.putAtt(ncid,NBPHASEDOXYID,'valid_min',single(10.));
@@ -961,7 +960,6 @@ if dbdat.oxy %  & dbdat.subtype~=1006
 
         NPHASEDOXYID=netcdf.defVar(ncid,'PHASE_DELAY_DOXY','NC_FLOAT',[N_LEVELSID,N_PROFID]);
         netcdf.putAtt(ncid,NPHASEDOXYID,'long_name','Phase delay reported by oxygen sensor');
-        netcdf.putAtt(ncid,NPHASEDOXYID,'standard_name','-');
         netcdf.putAtt(ncid,NPHASEDOXYID,'units','microsecond');
         netcdf.putAtt(ncid,NPHASEDOXYID,'_FillValue',single(fval));
         netcdf.putAtt(ncid,NPHASEDOXYID,'valid_min',single(0.));
@@ -980,11 +978,8 @@ if dbdat.oxy %  & dbdat.subtype~=1006
             
             NTEMPVOLDOXYID=netcdf.defVar(ncid,'TEMP_VOLTAGE_DOXY','NC_FLOAT',[N_LEVELSID,N_PROFID]);
             netcdf.putAtt(ncid,NTEMPVOLDOXYID,'long_name','Thermistor voltage reported by oxygen sensor');
-            netcdf.putAtt(ncid,NTEMPVOLDOXYID,'standard_name','-');
             netcdf.putAtt(ncid,NTEMPVOLDOXYID,'units','volt');
             netcdf.putAtt(ncid,NTEMPVOLDOXYID,'_FillValue',single(fval));
-            netcdf.putAtt(ncid,NTEMPVOLDOXYID,'valid_min',single(0.));
-            netcdf.putAtt(ncid,NTEMPVOLDOXYID,'valid_max',single(100.));
             netcdf.putAtt(ncid,NTEMPVOLDOXYID,'C_format','%9.6f');
             netcdf.putAtt(ncid,NTEMPVOLDOXYID,'FORTRAN_format','F9.6');
             netcdf.putAtt(ncid,NTEMPVOLDOXYID,'resolution',single(0.01));
@@ -1032,7 +1027,7 @@ if dbdat.flbb
     netcdf.putAtt(ncid,NCHLAID,'_FillValue',single(fval));
     netcdf.putAtt(ncid,NCHLAID,'C_format','%9.5f');
     netcdf.putAtt(ncid,NCHLAID,'FORTRAN_format','F9.5');
-    netcdf.putAtt(ncid,NCHLAID,'resolution',' ');
+    netcdf.putAtt(ncid,NCHLAID,'resolution',single(0.00001));
     
     NCHLAADID=netcdf.defVar(ncid,'CHLA_ADJUSTED','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NCHLAADID,'long_name','Chlorophyll-A');
@@ -1041,7 +1036,7 @@ if dbdat.flbb
     netcdf.putAtt(ncid,NCHLAADID,'_FillValue',single(fval));
     netcdf.putAtt(ncid,NCHLAADID,'C_format','%9.5f');
     netcdf.putAtt(ncid,NCHLAADID,'FORTRAN_format','F9.5');
-    netcdf.putAtt(ncid,NCHLAADID,'resolution',' ');
+    netcdf.putAtt(ncid,NCHLAADID,'resolution',single(0.00001));
     
     NCHLAQCID=netcdf.defVar(ncid,'CHLA_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NCHLAQCID,'long_name','quality flag');
@@ -1058,7 +1053,7 @@ if dbdat.flbb
     netcdf.putAtt(ncid,NCHLAADERRID,'units','mg/m3');
     netcdf.putAtt(ncid,NCHLAADERRID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NCHLAADERRID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NCHLAADERRID,'resolution',' ');
+    netcdf.putAtt(ncid,NCHLAADERRID,'resolution',single(0.1));
     netcdf.putAtt(ncid,NCHLAADERRID,'_FillValue',single(fval));
     
     NFLUOCHLAID=netcdf.defVar(ncid,'FLUORESCENCE_CHLA','NC_FLOAT',[N_LEVELSID,N_PROFID]);
@@ -1066,7 +1061,6 @@ if dbdat.flbb
     %         netcdf.putAtt(ncid,NFLUOCHLAID,'standard_name','mass_concentration_of_chlorophyll_a_in_sea_water');
     netcdf.putAtt(ncid,NFLUOCHLAID,'units','count');
     netcdf.putAtt(ncid,NFLUOCHLAID,'_FillValue',single(fval));
-    netcdf.putAtt(ncid,NFLUOCHLAID,'valid_min',single(0.));
     netcdf.putAtt(ncid,NFLUOCHLAID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NFLUOCHLAID,'FORTRAN_format','F9.3');
     netcdf.putAtt(ncid,NFLUOCHLAID,'resolution',single(1.));
@@ -1084,7 +1078,7 @@ if dbdat.flbb
     %         netcdf.putAtt(ncid,NBBP700ID,'valid_max','');
     netcdf.putAtt(ncid,NBBP700ID,'C_format','%10.8f');
     netcdf.putAtt(ncid,NBBP700ID,'FORTRAN_format','F10.8');
-    netcdf.putAtt(ncid,NBBP700ID,'resolution',' ');
+    netcdf.putAtt(ncid,NBBP700ID,'resolution',single(0.00000001));
     
     NBBP700ADID=netcdf.defVar(ncid,'BBP700_ADJUSTED','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NBBP700ADID,'long_name','Particle backscattering at 700 nanometers');
@@ -1095,7 +1089,7 @@ if dbdat.flbb
     %         netcdf.putAtt(ncid,NBBP700ADID,'valid_max','');
     netcdf.putAtt(ncid,NBBP700ADID,'C_format','%10.8f');
     netcdf.putAtt(ncid,NBBP700ADID,'FORTRAN_format','F10.8');
-    netcdf.putAtt(ncid,NBBP700ADID,'resolution',' ');
+    netcdf.putAtt(ncid,NBBP700ADID,'resolution',single(0.00000001));
     
     NBBP700QCID=netcdf.defVar(ncid,'BBP700_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NBBP700QCID,'long_name','quality flag');
@@ -1112,7 +1106,7 @@ if dbdat.flbb
     netcdf.putAtt(ncid,NBBP700ADERRID,'units','m-1');
     netcdf.putAtt(ncid,NBBP700ADERRID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NBBP700ADERRID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NBBP700ADERRID,'resolution',' ');
+    netcdf.putAtt(ncid,NBBP700ADERRID,'resolution',single(0.1));
     netcdf.putAtt(ncid,NBBP700ADERRID,'_FillValue',single(fval));
     
     NBETABACK700ID=netcdf.defVar(ncid,'BETA_BACKSCATTERING700','NC_FLOAT',[N_LEVELSID,N_PROFID]);
@@ -1120,7 +1114,6 @@ if dbdat.flbb
     %         netcdf.putAtt(ncid,NBETABACK700ID,'standard_name','moles_of_oxygen_per_unit_mass_in_sea_water');
     netcdf.putAtt(ncid,NBETABACK700ID,'units','count');
     netcdf.putAtt(ncid,NBETABACK700ID,'_FillValue',single(fval));
-    netcdf.putAtt(ncid,NBETABACK700ID,'valid_min',single(0.));
     %         netcdf.putAtt(ncid,NBETABACK700ID,'valid_max',single(99999.));
     netcdf.putAtt(ncid,NBETABACK700ID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NBETABACK700ID,'FORTRAN_format','F9.3');
@@ -1158,7 +1151,7 @@ if dbdat.flbb
         %         netcdf.putAtt(ncid,NBBP532ID,'valid_max','');
         netcdf.putAtt(ncid,NBBP532ID,'C_format','%10.8f');
         netcdf.putAtt(ncid,NBBP532ID,'FORTRAN_format','F10.8');
-        netcdf.putAtt(ncid,NBBP532ID,'resolution',' ');
+        netcdf.putAtt(ncid,NBBP532ID,'resolution',single(0.00000001));
         
         NBBP532ADID=netcdf.defVar(ncid,'BBP532_ADJUSTED','NC_FLOAT',[N_LEVELSID,N_PROFID]);
         netcdf.putAtt(ncid,NBBP532ADID,'long_name','Particle backscattering at 532 nanometers');
@@ -1169,7 +1162,7 @@ if dbdat.flbb
         %         netcdf.putAtt(ncid,NBBP532ADID,'valid_max','');
         netcdf.putAtt(ncid,NBBP532ADID,'C_format','%10.8f');
         netcdf.putAtt(ncid,NBBP532ADID,'FORTRAN_format','F10.8');
-        netcdf.putAtt(ncid,NBBP532ADID,'resolution',' ');
+        netcdf.putAtt(ncid,NBBP532ADID,'resolution',single(0.00000001));
         
         NBBP532QCID=netcdf.defVar(ncid,'BBP532_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
         netcdf.putAtt(ncid,NBBP532QCID,'long_name','quality flag');
@@ -1186,7 +1179,7 @@ if dbdat.flbb
         netcdf.putAtt(ncid,NBBP532ADERRID,'units','m-1');
         netcdf.putAtt(ncid,NBBP532ADERRID,'C_format','%9.3f');
         netcdf.putAtt(ncid,NBBP532ADERRID,'FORTRAN_format','F9.3');
-        netcdf.putAtt(ncid,NBBP532ADERRID,'resolution',' ');
+        netcdf.putAtt(ncid,NBBP532ADERRID,'resolution',single(0.1));
         netcdf.putAtt(ncid,NBBP532ADERRID,'_FillValue',single(fval));
         
         NBETABACK532ID=netcdf.defVar(ncid,'BETA_BACKSCATTERING532','NC_FLOAT',[N_LEVELSID,N_PROFID]);
@@ -1194,8 +1187,6 @@ if dbdat.flbb
         %         netcdf.putAtt(ncid,NBETABACK532ID,'standard_name','moles_of_oxygen_per_unit_mass_in_sea_water');
         netcdf.putAtt(ncid,NBETABACK532ID,'units','count');
         netcdf.putAtt(ncid,NBETABACK532ID,'_FillValue',single(fval));
-        netcdf.putAtt(ncid,NBETABACK532ID,'valid_min',single(0.));
-        %         netcdf.putAtt(ncid,NBETABACK532ID,'valid_max',single(99999.));
         netcdf.putAtt(ncid,NBETABACK532ID,'C_format','%9.3f');
         netcdf.putAtt(ncid,NBETABACK532ID,'FORTRAN_format','F9.3');
         netcdf.putAtt(ncid,NBETABACK532ID,'resolution',single(1.));
@@ -1218,7 +1209,7 @@ if dbdat.flbb
         %         netcdf.putAtt(ncid,NCDOMID,'valid_max','');
         netcdf.putAtt(ncid,NCDOMID,'C_format','%9.5f');
         netcdf.putAtt(ncid,NCDOMID,'FORTRAN_format','F9.5');
-        netcdf.putAtt(ncid,NCDOMID,'resolution',' ');
+        netcdf.putAtt(ncid,NCDOMID,'resolution',single(0.0001));
         
         NCDOMADID=netcdf.defVar(ncid,'CDOM_ADJUSTED','NC_FLOAT',[N_LEVELSID,N_PROFID]);
         netcdf.putAtt(ncid,NCDOMADID,'long_name','Concentration of coloured dissolved organic matter in sea water');
@@ -1229,7 +1220,7 @@ if dbdat.flbb
         %         netcdf.putAtt(ncid,NCDOMADID,'valid_max','');
         netcdf.putAtt(ncid,NCDOMADID,'C_format','%9.5f');
         netcdf.putAtt(ncid,NCDOMADID,'FORTRAN_format','F9.5');
-        netcdf.putAtt(ncid,NCDOMADID,'resolution',' ');
+        netcdf.putAtt(ncid,NCDOMADID,'resolution',single(0.0001));
         
         NCDOMQCID=netcdf.defVar(ncid,'CDOM_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
         netcdf.putAtt(ncid,NCDOMQCID,'long_name','quality flag');
@@ -1246,7 +1237,7 @@ if dbdat.flbb
         netcdf.putAtt(ncid,NCDOMADERRID,'units','ppb');
         netcdf.putAtt(ncid,NCDOMADERRID,'C_format','%9.3f');
         netcdf.putAtt(ncid,NCDOMADERRID,'FORTRAN_format','F9.3');
-        netcdf.putAtt(ncid,NCDOMADERRID,'resolution',' ');
+        netcdf.putAtt(ncid,NCDOMADERRID,'resolution',single(0.1));
         netcdf.putAtt(ncid,NCDOMADERRID,'_FillValue',single(fval));
         
         NFLUOCDOMID=netcdf.defVar(ncid,'FLUORESCENCE_CDOM','NC_FLOAT',[N_LEVELSID,N_PROFID]);
@@ -1254,8 +1245,6 @@ if dbdat.flbb
         %         netcdf.putAtt(ncid,NFLUOCDOMID,'standard_name','mass_concentration_of_chlorophyll_a_in_sea_water');
         netcdf.putAtt(ncid,NFLUOCDOMID,'units','count');
         netcdf.putAtt(ncid,NFLUOCDOMID,'_FillValue',single(fval));
-        netcdf.putAtt(ncid,NFLUOCDOMID,'valid_min',single(0.));
-        %         netcdf.putAtt(ncid,NFLUOCDOMID,'valid_max',single(99999.));
         netcdf.putAtt(ncid,NFLUOCDOMID,'C_format','%9.5f');
         netcdf.putAtt(ncid,NFLUOCDOMID,'FORTRAN_format','F9.5'); %%%%%%%%%%%%%%%%%%²»Í¬%%%%%%%%%%%
         netcdf.putAtt(ncid,NFLUOCDOMID,'resolution',single(1.));
@@ -1278,7 +1267,7 @@ if dbdat.tmiss
     %         netcdf.putAtt(ncid,NCP660ID,'valid_max','');
     netcdf.putAtt(ncid,NCP660ID,'C_format','%9.6f');
     netcdf.putAtt(ncid,NCP660ID,'FORTRAN_format','F9.6');
-    netcdf.putAtt(ncid,NCP660ID,'resolution',' ');
+    netcdf.putAtt(ncid,NCP660ID,'resolution',single(0.000001));
     
     NCP660ADID=netcdf.defVar(ncid,'CP660_ADJUSTED','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NCP660ADID,'long_name','Particle beam attenuation at 660 nanometers');
@@ -1289,7 +1278,7 @@ if dbdat.tmiss
     %         netcdf.putAtt(ncid,NCP660ADID,'valid_max','');
     netcdf.putAtt(ncid,NCP660ADID,'C_format','%9.6f');
     netcdf.putAtt(ncid,NCP660ADID,'FORTRAN_format','F9.6');
-    netcdf.putAtt(ncid,NCP660ADID,'resolution',' ');
+    netcdf.putAtt(ncid,NCP660ADID,'resolution',single(0.000001));
     
     NCP660QCID=netcdf.defVar(ncid,'CP660_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NCP660QCID,'long_name','quality flag');
@@ -1306,7 +1295,7 @@ if dbdat.tmiss
     netcdf.putAtt(ncid,NCP660ADERRID,'units','m-1');
     netcdf.putAtt(ncid,NCP660ADERRID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NCP660ADERRID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NCP660ADERRID,'resolution',' ');
+    netcdf.putAtt(ncid,NCP660ADERRID,'resolution',single(0.1));
     netcdf.putAtt(ncid,NCP660ADERRID,'_FillValue',single(fval));
     
     NTRANSPARBEATT660ID=netcdf.defVar(ncid,'TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660','NC_FLOAT',[N_LEVELSID,N_PROFID]);
@@ -1337,7 +1326,7 @@ if dbdat.eco
         %         netcdf.putAtt(ncid,NBBP7002ID,'valid_max','');
         netcdf.putAtt(ncid,NBBP7002ID,'C_format','%10.8f');
         netcdf.putAtt(ncid,NBBP7002ID,'FORTRAN_format','F10.8');
-        netcdf.putAtt(ncid,NBBP7002ID,'resolution',' ');
+        netcdf.putAtt(ncid,NBBP7002ID,'resolution',single(0.00000001));
         
         NBBP7002ADID=netcdf.defVar(ncid,'BBP700_2_ADJUSTED','NC_FLOAT',[N_LEVELSID,N_PROFID]);
         netcdf.putAtt(ncid,NBBP7002ADID,'long_name','Particle backscattering at 700 nanometers');
@@ -1348,7 +1337,7 @@ if dbdat.eco
         %         netcdf.putAtt(ncid,NBBP7002ADID,'valid_max','');
         netcdf.putAtt(ncid,NBBP7002ADID,'C_format','%10.8f');
         netcdf.putAtt(ncid,NBBP7002ADID,'FORTRAN_format','F10.8');
-        netcdf.putAtt(ncid,NBBP7002ADID,'resolution',' ');       
+        netcdf.putAtt(ncid,NBBP7002ADID,'resolution',single(0.00000001));       
         
         NBBP7002QCID=netcdf.defVar(ncid,'BBP700_2_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
         netcdf.putAtt(ncid,NBBP7002QCID,'long_name','quality flag');
@@ -1365,7 +1354,7 @@ if dbdat.eco
         netcdf.putAtt(ncid,NBBP7002ADERRID,'units','m-1');
         netcdf.putAtt(ncid,NBBP7002ADERRID,'C_format','%10.8f');
         netcdf.putAtt(ncid,NBBP7002ADERRID,'FORTRAN_format','F10.8');
-        netcdf.putAtt(ncid,NBBP7002ADERRID,'resolution',' '); 
+        netcdf.putAtt(ncid,NBBP7002ADERRID,'resolution',single(0.1)); 
         netcdf.putAtt(ncid,NBBP7002ADERRID,'_FillValue',single(fval));  
         
         NBETABACK7002ID=netcdf.defVar(ncid,'BETA_BACKSCATTERING700_2','NC_FLOAT',[N_LEVELSID,N_PROFID]);
@@ -1373,8 +1362,6 @@ if dbdat.eco
 %         netcdf.putAtt(ncid,NBETABACK7002ID,'standard_name','moles_of_oxygen_per_unit_mass_in_sea_water');
         netcdf.putAtt(ncid,NBETABACK7002ID,'units','count');
         netcdf.putAtt(ncid,NBETABACK7002ID,'_FillValue',single(fval));
-        netcdf.putAtt(ncid,NBETABACK7002ID,'valid_min',single(0.));
-%         netcdf.putAtt(ncid,NBETABACK7002ID,'valid_max',single(99999.));
         netcdf.putAtt(ncid,NBETABACK7002ID,'C_format','%9.3f');
         netcdf.putAtt(ncid,NBETABACK7002ID,'FORTRAN_format','F9.3');
         netcdf.putAtt(ncid,NBETABACK7002ID,'resolution',single(1.));   
@@ -1395,7 +1382,7 @@ if dbdat.eco
         %         netcdf.putAtt(ncid,NBBP700ID,'valid_max','');
         netcdf.putAtt(ncid,NBBP700ID,'C_format','%10.8f');
         netcdf.putAtt(ncid,NBBP700ID,'FORTRAN_format','F10.8');
-        netcdf.putAtt(ncid,NBBP700ID,'resolution',' ');
+        netcdf.putAtt(ncid,NBBP700ID,'resolution',single(0.00000001));
         
         NBBP700ADID=netcdf.defVar(ncid,'BBP700_ADJUSTED','NC_FLOAT',[N_LEVELSID,N_PROFID]);
         netcdf.putAtt(ncid,NBBP700ADID,'long_name','Particle backscattering at 700 nanometers');
@@ -1406,7 +1393,7 @@ if dbdat.eco
         %         netcdf.putAtt(ncid,NBBP700ADID,'valid_max','');
         netcdf.putAtt(ncid,NBBP700ADID,'C_format','%10.8f');
         netcdf.putAtt(ncid,NBBP700ADID,'FORTRAN_format','F10.8');
-        netcdf.putAtt(ncid,NBBP700ADID,'resolution',' ');
+        netcdf.putAtt(ncid,NBBP700ADID,'resolution',single(0.00000001));
         
         NBBP700QCID=netcdf.defVar(ncid,'BBP700_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
         netcdf.putAtt(ncid,NBBP700QCID,'long_name','quality flag');
@@ -1423,7 +1410,7 @@ if dbdat.eco
         netcdf.putAtt(ncid,NBBP700ADERRID,'units','m-1');
         netcdf.putAtt(ncid,NBBP700ADERRID,'C_format','%9.3f');
         netcdf.putAtt(ncid,NBBP700ADERRID,'FORTRAN_format','F9.3');
-        netcdf.putAtt(ncid,NBBP700ADERRID,'resolution',' '); 
+        netcdf.putAtt(ncid,NBBP700ADERRID,'resolution',single(0.1)); 
         netcdf.putAtt(ncid,NBBP700ADERRID,'_FillValue',single(fval));  
         
         NBETABACK700ID=netcdf.defVar(ncid,'BETA_BACKSCATTERING700','NC_FLOAT',[N_LEVELSID,N_PROFID]);
@@ -1431,8 +1418,6 @@ if dbdat.eco
 %         netcdf.putAtt(ncid,NBETABACK700ID,'standard_name','moles_of_oxygen_per_unit_mass_in_sea_water');
         netcdf.putAtt(ncid,NBETABACK700ID,'units','count');
         netcdf.putAtt(ncid,NBETABACK700ID,'_FillValue',single(fval));
-        netcdf.putAtt(ncid,NBETABACK700ID,'valid_min',single(0.));
-%         netcdf.putAtt(ncid,NBETABACK700ID,'valid_max',single(99999.));
         netcdf.putAtt(ncid,NBETABACK700ID,'C_format','%9.3f');
         netcdf.putAtt(ncid,NBETABACK700ID,'FORTRAN_format','F9.3');
         netcdf.putAtt(ncid,NBETABACK700ID,'resolution',single(1.));         
@@ -1453,7 +1438,7 @@ if dbdat.eco
     %         netcdf.putAtt(ncid,NBBP532ID,'valid_max','');
     netcdf.putAtt(ncid,NBBP532ID,'C_format','%10.8f');
     netcdf.putAtt(ncid,NBBP532ID,'FORTRAN_format','F10.8');
-    netcdf.putAtt(ncid,NBBP532ID,'resolution',' ');
+    netcdf.putAtt(ncid,NBBP532ID,'resolution',single(0.00000001));
     
     NBBP532ADID=netcdf.defVar(ncid,'BBP532_ADJUSTED','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NBBP532ADID,'long_name','Particle backscattering at 532 nanometers');
@@ -1464,7 +1449,7 @@ if dbdat.eco
     %         netcdf.putAtt(ncid,NBBP532ADID,'valid_max','');
     netcdf.putAtt(ncid,NBBP532ADID,'C_format','%10.8f');
     netcdf.putAtt(ncid,NBBP532ADID,'FORTRAN_format','F10.8');
-    netcdf.putAtt(ncid,NBBP532ADID,'resolution',' ');
+    netcdf.putAtt(ncid,NBBP532ADID,'resolution',single(0.00000001));
     
     NBBP532QCID=netcdf.defVar(ncid,'BBP532_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NBBP532QCID,'long_name','quality flag');
@@ -1481,7 +1466,7 @@ if dbdat.eco
     netcdf.putAtt(ncid,NBBP532ADERRID,'units','m-1');
     netcdf.putAtt(ncid,NBBP532ADERRID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NBBP532ADERRID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NBBP532ADERRID,'resolution',' ');
+    netcdf.putAtt(ncid,NBBP532ADERRID,'resolution',single(0.1));
     netcdf.putAtt(ncid,NBBP532ADERRID,'_FillValue',single(fval));
     
     NBETABACK532ID=netcdf.defVar(ncid,'BETA_BACKSCATTERING532','NC_FLOAT',[N_LEVELSID,N_PROFID]);
@@ -1489,8 +1474,6 @@ if dbdat.eco
     %         netcdf.putAtt(ncid,NBETABACK532ID,'standard_name','moles_of_oxygen_per_unit_mass_in_sea_water');
     netcdf.putAtt(ncid,NBETABACK532ID,'units','count');
     netcdf.putAtt(ncid,NBETABACK532ID,'_FillValue',single(fval));
-    netcdf.putAtt(ncid,NBETABACK532ID,'valid_min',single(0.));
-    %         netcdf.putAtt(ncid,NBETABACK532ID,'valid_max',single(99999.));
     netcdf.putAtt(ncid,NBETABACK532ID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NBETABACK532ID,'FORTRAN_format','F9.3');
     netcdf.putAtt(ncid,NBETABACK532ID,'resolution',single(1.));
@@ -1510,7 +1493,7 @@ if dbdat.eco
     %         netcdf.putAtt(ncid,NBBP470ID,'valid_max','');
     netcdf.putAtt(ncid,NBBP470ID,'C_format','%10.8f');
     netcdf.putAtt(ncid,NBBP470ID,'FORTRAN_format','F10.8');
-    netcdf.putAtt(ncid,NBBP470ID,'resolution',' ');
+    netcdf.putAtt(ncid,NBBP470ID,'resolution',single(0.00000001));
     
     NBBP470ADID=netcdf.defVar(ncid,'BBP470_ADJUSTED','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NBBP470ADID,'long_name','Particle backscattering at 470 nanometers');
@@ -1521,7 +1504,7 @@ if dbdat.eco
     %         netcdf.putAtt(ncid,NBBP470ADID,'valid_max','');
     netcdf.putAtt(ncid,NBBP470ADID,'C_format','%10.8f');
     netcdf.putAtt(ncid,NBBP470ADID,'FORTRAN_format','F10.8');
-    netcdf.putAtt(ncid,NBBP470ADID,'resolution',' ');
+    netcdf.putAtt(ncid,NBBP470ADID,'resolution',single(0.00000001));
     
     NBBP470QCID=netcdf.defVar(ncid,'BBP470_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NBBP470QCID,'long_name','quality flag');
@@ -1538,7 +1521,7 @@ if dbdat.eco
     netcdf.putAtt(ncid,NBBP470ADERRID,'units','m-1');
     netcdf.putAtt(ncid,NBBP470ADERRID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NBBP470ADERRID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NBBP470ADERRID,'resolution',' ');
+    netcdf.putAtt(ncid,NBBP470ADERRID,'resolution',single(0.1));
     netcdf.putAtt(ncid,NBBP470ADERRID,'_FillValue',single(fval));
     
     NBETABACK470ID=netcdf.defVar(ncid,'BETA_BACKSCATTERING470','NC_FLOAT',[N_LEVELSID,N_PROFID]);
@@ -1546,8 +1529,6 @@ if dbdat.eco
     %         netcdf.putAtt(ncid,NBETABACK470ID,'standard_name','moles_of_oxygen_per_unit_mass_in_sea_water');
     netcdf.putAtt(ncid,NBETABACK470ID,'units','count');
     netcdf.putAtt(ncid,NBETABACK470ID,'_FillValue',single(fval));
-    netcdf.putAtt(ncid,NBETABACK470ID,'valid_min',single(0.));
-    %         netcdf.putAtt(ncid,NBETABACK470ID,'valid_max',single(99999.));
     netcdf.putAtt(ncid,NBETABACK470ID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NBETABACK470ID,'FORTRAN_format','F9.3');
     netcdf.putAtt(ncid,NBETABACK470ID,'resolution',single(1.));
@@ -1570,7 +1551,7 @@ if dbdat.suna
     %         netcdf.putAtt(ncid,NNITRATEID,'valid_max','');
     netcdf.putAtt(ncid,NNITRATEID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NNITRATEID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NNITRATEID,'resolution',' ');
+    netcdf.putAtt(ncid,NNITRATEID,'resolution',single(0.1));
     
     NNITRATEADID=netcdf.defVar(ncid,'NITRATE_ADJUSTED','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NNITRATEADID,'long_name','Nitrate');
@@ -1581,7 +1562,7 @@ if dbdat.suna
     %         netcdf.putAtt(ncid,NNITRATEADID,'valid_max','');
     netcdf.putAtt(ncid,NNITRATEADID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NNITRATEADID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NNITRATEADID,'resolution',' ');
+    netcdf.putAtt(ncid,NNITRATEADID,'resolution',single(0.1));
     
     NNITRATEQCID=netcdf.defVar(ncid,'NITRATE_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NNITRATEQCID,'long_name','quality flag');
@@ -1598,7 +1579,7 @@ if dbdat.suna
     netcdf.putAtt(ncid,NNITRATEADERRID,'units','micromole/kg');
     netcdf.putAtt(ncid,NNITRATEADERRID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NNITRATEADERRID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NNITRATEADERRID,'resolution',' ');
+    netcdf.putAtt(ncid,NNITRATEADERRID,'resolution',single(0.1));
     netcdf.putAtt(ncid,NNITRATEADERRID,'_FillValue',single(fval));
     
 end
@@ -1614,7 +1595,7 @@ if dbdat.irr & ~dbdat.irr2
     %         netcdf.putAtt(ncid,NDOWNIRRA412ID,'valid_max','');
     netcdf.putAtt(ncid,NDOWNIRRA412ID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NDOWNIRRA412ID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NDOWNIRRA412ID,'resolution',' ');
+    netcdf.putAtt(ncid,NDOWNIRRA412ID,'resolution',single(1.));
     
     NDOWNIRRA412ADID=netcdf.defVar(ncid,'DOWN_IRRADIANCE412_ADJUSTED','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NDOWNIRRA412ADID,'long_name','Downwelling irradiance at 412 nanometers');
@@ -1625,7 +1606,7 @@ if dbdat.irr & ~dbdat.irr2
     %         netcdf.putAtt(ncid,NDOWNIRRA412ADID,'valid_max','');
     netcdf.putAtt(ncid,NDOWNIRRA412ADID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NDOWNIRRA412ADID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NDOWNIRRA412ADID,'resolution',' ');
+    netcdf.putAtt(ncid,NDOWNIRRA412ADID,'resolution',single(1.));
     
     NDOWNIRRA412QCID=netcdf.defVar(ncid,'DOWN_IRRADIANCE412_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NDOWNIRRA412QCID,'long_name','quality flag');
@@ -1642,7 +1623,7 @@ if dbdat.irr & ~dbdat.irr2
     netcdf.putAtt(ncid,NDOWNIRRA412ADERRID,'units','W/m^2/nm');
     netcdf.putAtt(ncid,NDOWNIRRA412ADERRID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NDOWNIRRA412ADERRID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NDOWNIRRA412ADERRID,'resolution',' ');
+    netcdf.putAtt(ncid,NDOWNIRRA412ADERRID,'resolution',single(1.));
     netcdf.putAtt(ncid,NDOWNIRRA412ADERRID,'_FillValue',single(fval));
     
     NRAWDOWNIRRA412ID=netcdf.defVar(ncid,'RAW_DOWNWELLING_IRRADIANCE412','NC_FLOAT',[N_LEVELSID,N_PROFID]);
@@ -1654,7 +1635,7 @@ if dbdat.irr & ~dbdat.irr2
     %         netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'valid_max','');
     netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'C_format','%9.1f');
     netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'FORTRAN_format','F9.1');
-    netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'resolution',' ');
+    netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'resolution',single(1.));
     
     NRAWDOWNIRRA412QCID=netcdf.defVar(ncid,'RAW_DOWNWELLING_IRRADIANCE412_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NRAWDOWNIRRA412QCID,'long_name','quality flag');
@@ -1670,7 +1651,7 @@ if dbdat.irr & ~dbdat.irr2
     %         netcdf.putAtt(ncid,NDOWNIRRA443ID,'valid_max','');
     netcdf.putAtt(ncid,NDOWNIRRA443ID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NDOWNIRRA443ID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NDOWNIRRA443ID,'resolution',' ');
+    netcdf.putAtt(ncid,NDOWNIRRA443ID,'resolution',single(1.));
     
     NDOWNIRRA443ADID=netcdf.defVar(ncid,'DOWN_IRRADIANCE443_ADJUSTED','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NDOWNIRRA443ADID,'long_name','Downwelling irradiance at 443 nanometers');
@@ -1681,7 +1662,7 @@ if dbdat.irr & ~dbdat.irr2
     %         netcdf.putAtt(ncid,NDOWNIRRA443ADID,'valid_max','');
     netcdf.putAtt(ncid,NDOWNIRRA443ADID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NDOWNIRRA443ADID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NDOWNIRRA443ADID,'resolution',' ');
+    netcdf.putAtt(ncid,NDOWNIRRA443ADID,'resolution',single(1.));
     
     NDOWNIRRA443QCID=netcdf.defVar(ncid,'DOWN_IRRADIANCE443_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NDOWNIRRA443QCID,'long_name','quality flag');
@@ -1698,7 +1679,7 @@ if dbdat.irr & ~dbdat.irr2
     netcdf.putAtt(ncid,NDOWNIRRA443ADERRID,'units','W/m^2/nm');
     netcdf.putAtt(ncid,NDOWNIRRA443ADERRID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NDOWNIRRA443ADERRID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NDOWNIRRA443ADERRID,'resolution',' ');
+    netcdf.putAtt(ncid,NDOWNIRRA443ADERRID,'resolution',single(1.));
     netcdf.putAtt(ncid,NDOWNIRRA443ADERRID,'_FillValue',single(fval));
     
     NRAWDOWNIRRA443ID=netcdf.defVar(ncid,'RAW_DOWNWELLING_IRRADIANCE443','NC_FLOAT',[N_LEVELSID,N_PROFID]);
@@ -1710,7 +1691,7 @@ if dbdat.irr & ~dbdat.irr2
     %         netcdf.putAtt(ncid,NRAWDOWNIRRA443ID,'valid_max','');
     netcdf.putAtt(ncid,NRAWDOWNIRRA443ID,'C_format','%9.1f');
     netcdf.putAtt(ncid,NRAWDOWNIRRA443ID,'FORTRAN_format','F9.1');
-    netcdf.putAtt(ncid,NRAWDOWNIRRA443ID,'resolution',' ');
+    netcdf.putAtt(ncid,NRAWDOWNIRRA443ID,'resolution',single(1.));
     
     NRAWDOWNIRRA443QCID=netcdf.defVar(ncid,'RAW_DOWNWELLING_IRRADIANCE443_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NRAWDOWNIRRA443QCID,'long_name','quality flag');
@@ -1726,7 +1707,7 @@ if dbdat.irr & ~dbdat.irr2
     %         netcdf.putAtt(ncid,NDOWNIRRA490ID,'valid_max','');
     netcdf.putAtt(ncid,NDOWNIRRA490ID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NDOWNIRRA490ID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NDOWNIRRA490ID,'resolution',' ');
+    netcdf.putAtt(ncid,NDOWNIRRA490ID,'resolution',single(1.));
     
     NDOWNIRRA490ADID=netcdf.defVar(ncid,'DOWN_IRRADIANCE490_ADJUSTED','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NDOWNIRRA490ADID,'long_name','Downwelling irradiance at 490 nanometers');
@@ -1737,7 +1718,7 @@ if dbdat.irr & ~dbdat.irr2
     %         netcdf.putAtt(ncid,NDOWNIRRA490ADID,'valid_max','');
     netcdf.putAtt(ncid,NDOWNIRRA490ADID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NDOWNIRRA490ADID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NDOWNIRRA490ADID,'resolution',' ');
+    netcdf.putAtt(ncid,NDOWNIRRA490ADID,'resolution',single(1.));
     
     NDOWNIRRA490QCID=netcdf.defVar(ncid,'DOWN_IRRADIANCE490_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NDOWNIRRA490QCID,'long_name','quality flag');
@@ -1754,7 +1735,7 @@ if dbdat.irr & ~dbdat.irr2
     netcdf.putAtt(ncid,NDOWNIRRA490ADERRID,'units','W/m^2/nm');
     netcdf.putAtt(ncid,NDOWNIRRA490ADERRID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NDOWNIRRA490ADERRID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NDOWNIRRA490ADERRID,'resolution',' ');
+    netcdf.putAtt(ncid,NDOWNIRRA490ADERRID,'resolution',single(1.));
     netcdf.putAtt(ncid,NDOWNIRRA490ADERRID,'_FillValue',single(fval));
     
     NRAWDOWNIRRA490ID=netcdf.defVar(ncid,'RAW_DOWNWELLING_IRRADIANCE490','NC_FLOAT',[N_LEVELSID,N_PROFID]);
@@ -1766,7 +1747,7 @@ if dbdat.irr & ~dbdat.irr2
     %         netcdf.putAtt(ncid,NRAWDOWNIRRA490ID,'valid_max','');
     netcdf.putAtt(ncid,NRAWDOWNIRRA490ID,'C_format','%9.1f');
     netcdf.putAtt(ncid,NRAWDOWNIRRA490ID,'FORTRAN_format','F9.1');
-    netcdf.putAtt(ncid,NRAWDOWNIRRA490ID,'resolution',' ');
+    netcdf.putAtt(ncid,NRAWDOWNIRRA490ID,'resolution',single(1.));
     
     NRAWDOWNIRRA490QCID=netcdf.defVar(ncid,'RAW_DOWNWELLING_IRRADIANCE490_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NRAWDOWNIRRA490QCID,'long_name','quality flag');
@@ -1782,7 +1763,7 @@ if dbdat.irr & ~dbdat.irr2
     %         netcdf.putAtt(ncid,NDOWNIRRA555ID,'valid_max','');
     netcdf.putAtt(ncid,NDOWNIRRA555ID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NDOWNIRRA555ID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NDOWNIRRA555ID,'resolution',' ');
+    netcdf.putAtt(ncid,NDOWNIRRA555ID,'resolution',single(1.));
     
     NDOWNIRRA555ADID=netcdf.defVar(ncid,'DOWN_IRRADIANCE555_ADJUSTED','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NDOWNIRRA555ADID,'long_name','Downwelling irradiance at 555 nanometers');
@@ -1793,7 +1774,7 @@ if dbdat.irr & ~dbdat.irr2
     %         netcdf.putAtt(ncid,NDOWNIRRA555ADID,'valid_max','');
     netcdf.putAtt(ncid,NDOWNIRRA555ADID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NDOWNIRRA555ADID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NDOWNIRRA555ADID,'resolution',' ');
+    netcdf.putAtt(ncid,NDOWNIRRA555ADID,'resolution',single(1.));
     
     NDOWNIRRA555QCID=netcdf.defVar(ncid,'DOWN_IRRADIANCE555_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NDOWNIRRA555QCID,'long_name','quality flag');
@@ -1810,7 +1791,7 @@ if dbdat.irr & ~dbdat.irr2
     netcdf.putAtt(ncid,NDOWNIRRA555ADERRID,'units','W/m^2/nm');
     netcdf.putAtt(ncid,NDOWNIRRA555ADERRID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NDOWNIRRA555ADERRID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NDOWNIRRA555ADERRID,'resolution',' ');
+    netcdf.putAtt(ncid,NDOWNIRRA555ADERRID,'resolution',single(1.));
     netcdf.putAtt(ncid,NDOWNIRRA555ADERRID,'_FillValue',single(fval));
     
     NRAWDOWNIRRA555ID=netcdf.defVar(ncid,'RAW_DOWNWELLING_IRRADIANCE555','NC_FLOAT',[N_LEVELSID,N_PROFID]);
@@ -1822,7 +1803,7 @@ if dbdat.irr & ~dbdat.irr2
     %         netcdf.putAtt(ncid,NRAWDOWNIRRA555ID,'valid_max','');
     netcdf.putAtt(ncid,NRAWDOWNIRRA555ID,'C_format','%9.1f');
     netcdf.putAtt(ncid,NRAWDOWNIRRA555ID,'FORTRAN_format','F9.1');
-    netcdf.putAtt(ncid,NRAWDOWNIRRA555ID,'resolution',' ');
+    netcdf.putAtt(ncid,NRAWDOWNIRRA555ID,'resolution',single(1.));
     
     NRAWDOWNIRRA555QCID=netcdf.defVar(ncid,'RAW_DOWNWELLING_IRRADIANCE555_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NRAWDOWNIRRA555QCID,'long_name','quality flag');
@@ -1838,7 +1819,7 @@ if dbdat.irr & ~dbdat.irr2
     %         netcdf.putAtt(ncid,NUPRAD412ID,'valid_max','');
     netcdf.putAtt(ncid,NUPRAD412ID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NUPRAD412ID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NUPRAD412ID,'resolution',' ');
+    netcdf.putAtt(ncid,NUPRAD412ID,'resolution',single(1.));
     
     NUPRAD412ADID=netcdf.defVar(ncid,'UP_RADIANCE412_ADJUSTED','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NUPRAD412ADID,'long_name','Upwelling radiance at 412 nanometers');
@@ -1849,7 +1830,7 @@ if dbdat.irr & ~dbdat.irr2
     %         netcdf.putAtt(ncid,NUPRAD412ADID,'valid_max','');
     netcdf.putAtt(ncid,NUPRAD412ADID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NUPRAD412ADID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NUPRAD412ADID,'resolution',' ');
+    netcdf.putAtt(ncid,NUPRAD412ADID,'resolution',single(1.));
     
     NUPRAD412QCID=netcdf.defVar(ncid,'UP_RADIANCE412_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NUPRAD412QCID,'long_name','quality flag');
@@ -1866,7 +1847,7 @@ if dbdat.irr & ~dbdat.irr2
     netcdf.putAtt(ncid,NUPRAD412ADERRID,'units','W/m^2/nm/sr');
     netcdf.putAtt(ncid,NUPRAD412ADERRID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NUPRAD412ADERRID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NUPRAD412ADERRID,'resolution',' ');
+    netcdf.putAtt(ncid,NUPRAD412ADERRID,'resolution',single(1.));
     netcdf.putAtt(ncid,NUPRAD412ADERRID,'_FillValue',single(fval));
     
     NRAWUPRAD412ID=netcdf.defVar(ncid,'RAW_UPWELLING_RADIANCE412','NC_FLOAT',[N_LEVELSID,N_PROFID]);
@@ -1878,7 +1859,7 @@ if dbdat.irr & ~dbdat.irr2
     %         netcdf.putAtt(ncid,NRAWUPRAD412ID,'valid_max','');
     netcdf.putAtt(ncid,NRAWUPRAD412ID,'C_format','%9.1f');
     netcdf.putAtt(ncid,NRAWUPRAD412ID,'FORTRAN_format','F9.1');
-    netcdf.putAtt(ncid,NRAWUPRAD412ID,'resolution',' ');
+    netcdf.putAtt(ncid,NRAWUPRAD412ID,'resolution',single(1.));
     
     NRAWUPRAD412QCID=netcdf.defVar(ncid,'RAW_UPWELLING_RADIANCE412_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NRAWUPRAD412QCID,'long_name','quality flag');
@@ -1894,7 +1875,7 @@ if dbdat.irr & ~dbdat.irr2
     %         netcdf.putAtt(ncid,NUPRAD443ID,'valid_max','');
     netcdf.putAtt(ncid,NUPRAD443ID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NUPRAD443ID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NUPRAD443ID,'resolution',' ');
+    netcdf.putAtt(ncid,NUPRAD443ID,'resolution',single(1.));
     
     NUPRAD443ADID=netcdf.defVar(ncid,'UP_RADIANCE443_ADJUSTED','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NUPRAD443ADID,'long_name','Upwelling radiance at 443 nanometers');
@@ -1905,7 +1886,7 @@ if dbdat.irr & ~dbdat.irr2
     %         netcdf.putAtt(ncid,NUPRAD443ADID,'valid_max','');
     netcdf.putAtt(ncid,NUPRAD443ADID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NUPRAD443ADID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NUPRAD443ADID,'resolution',' ');
+    netcdf.putAtt(ncid,NUPRAD443ADID,'resolution',single(1.));
     
     NUPRAD443QCID=netcdf.defVar(ncid,'UP_RADIANCE443_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NUPRAD443QCID,'long_name','quality flag');
@@ -1922,7 +1903,7 @@ if dbdat.irr & ~dbdat.irr2
     netcdf.putAtt(ncid,NUPRAD443ADERRID,'units','W/m^2/nm/sr');
     netcdf.putAtt(ncid,NUPRAD443ADERRID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NUPRAD443ADERRID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NUPRAD443ADERRID,'resolution',' ');
+    netcdf.putAtt(ncid,NUPRAD443ADERRID,'resolution',single(1.));
     netcdf.putAtt(ncid,NUPRAD443ADERRID,'_FillValue',single(fval));
     
     NRAWUPRAD443ID=netcdf.defVar(ncid,'RAW_UPWELLING_RADIANCE443','NC_FLOAT',[N_LEVELSID,N_PROFID]);
@@ -1934,7 +1915,7 @@ if dbdat.irr & ~dbdat.irr2
     %         netcdf.putAtt(ncid,NRAWUPRAD443ID,'valid_max','');
     netcdf.putAtt(ncid,NRAWUPRAD443ID,'C_format','%9.1f');
     netcdf.putAtt(ncid,NRAWUPRAD443ID,'FORTRAN_format','F9.1');
-    netcdf.putAtt(ncid,NRAWUPRAD443ID,'resolution',' ');
+    netcdf.putAtt(ncid,NRAWUPRAD443ID,'resolution',single(1.));
     
     NRAWUPRAD443QCID=netcdf.defVar(ncid,'RAW_UPWELLING_RADIANCE443_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NRAWUPRAD443QCID,'long_name','quality flag');
@@ -1950,7 +1931,7 @@ if dbdat.irr & ~dbdat.irr2
     %         netcdf.putAtt(ncid,NUPRAD490ID,'valid_max','');
     netcdf.putAtt(ncid,NUPRAD490ID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NUPRAD490ID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NUPRAD490ID,'resolution',' ');
+    netcdf.putAtt(ncid,NUPRAD490ID,'resolution',single(1.));
     
     NUPRAD490ADID=netcdf.defVar(ncid,'UP_RADIANCE490_ADJUSTED','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NUPRAD490ADID,'long_name','Upwelling radiance at 490 nanometers');
@@ -1961,7 +1942,7 @@ if dbdat.irr & ~dbdat.irr2
     %         netcdf.putAtt(ncid,NUPRAD490ADID,'valid_max','');
     netcdf.putAtt(ncid,NUPRAD490ADID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NUPRAD490ADID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NUPRAD490ADID,'resolution',' ');
+    netcdf.putAtt(ncid,NUPRAD490ADID,'resolution',single(1.));
     
     NUPRAD490QCID=netcdf.defVar(ncid,'UP_RADIANCE490_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NUPRAD490QCID,'long_name','quality flag');
@@ -1978,7 +1959,7 @@ if dbdat.irr & ~dbdat.irr2
     netcdf.putAtt(ncid,NUPRAD490ADERRID,'units','W/m^2/nm/sr');
     netcdf.putAtt(ncid,NUPRAD490ADERRID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NUPRAD490ADERRID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NUPRAD490ADERRID,'resolution',' ');
+    netcdf.putAtt(ncid,NUPRAD490ADERRID,'resolution',single(1.));
     netcdf.putAtt(ncid,NUPRAD490ADERRID,'_FillValue',single(fval));
     
     NRAWUPRAD490ID=netcdf.defVar(ncid,'RAW_UPWELLING_RADIANCE490','NC_FLOAT',[N_LEVELSID,N_PROFID]);
@@ -1990,7 +1971,7 @@ if dbdat.irr & ~dbdat.irr2
     %         netcdf.putAtt(ncid,NRAWUPRAD490ID,'valid_max','');
     netcdf.putAtt(ncid,NRAWUPRAD490ID,'C_format','%9.1f');
     netcdf.putAtt(ncid,NRAWUPRAD490ID,'FORTRAN_format','F9.1');
-    netcdf.putAtt(ncid,NRAWUPRAD490ID,'resolution',' ');
+    netcdf.putAtt(ncid,NRAWUPRAD490ID,'resolution',single(1.));
     
     NRAWUPRAD490QCID=netcdf.defVar(ncid,'RAW_UPWELLING_RADIANCE490_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NRAWUPRAD490QCID,'long_name','quality flag');
@@ -2006,7 +1987,7 @@ if dbdat.irr & ~dbdat.irr2
     %         netcdf.putAtt(ncid,NUPRAD555ID,'valid_max','');
     netcdf.putAtt(ncid,NUPRAD555ID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NUPRAD555ID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NUPRAD555ID,'resolution',' ');
+    netcdf.putAtt(ncid,NUPRAD555ID,'resolution',single(1.));
     
     NUPRAD555ADID=netcdf.defVar(ncid,'UP_RADIANCE555_ADJUSTED','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NUPRAD555ADID,'long_name','Upwelling radiance at 555 nanometers');
@@ -2017,7 +1998,7 @@ if dbdat.irr & ~dbdat.irr2
     %         netcdf.putAtt(ncid,NUPRAD555ADID,'valid_max','');
     netcdf.putAtt(ncid,NUPRAD555ADID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NUPRAD555ADID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NUPRAD555ADID,'resolution',' ');
+    netcdf.putAtt(ncid,NUPRAD555ADID,'resolution',single(1.));
     
     NUPRAD555QCID=netcdf.defVar(ncid,'UP_RADIANCE555_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NUPRAD555QCID,'long_name','quality flag');
@@ -2034,7 +2015,7 @@ if dbdat.irr & ~dbdat.irr2
     netcdf.putAtt(ncid,NUPRAD555ADERRID,'units','W/m^2/nm/sr');
     netcdf.putAtt(ncid,NUPRAD555ADERRID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NUPRAD555ADERRID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NUPRAD555ADERRID,'resolution',' ');
+    netcdf.putAtt(ncid,NUPRAD555ADERRID,'resolution',single(1.));
     netcdf.putAtt(ncid,NUPRAD555ADERRID,'_FillValue',single(fval));
     
     NRAWUPRAD555ID=netcdf.defVar(ncid,'RAW_UPWELLING_RADIANCE555','NC_FLOAT',[N_LEVELSID,N_PROFID]);
@@ -2046,7 +2027,7 @@ if dbdat.irr & ~dbdat.irr2
     %         netcdf.putAtt(ncid,NRAWUPRAD555ID,'valid_max','');
     netcdf.putAtt(ncid,NRAWUPRAD555ID,'C_format','%9.1f');
     netcdf.putAtt(ncid,NRAWUPRAD555ID,'FORTRAN_format','F9.1');
-    netcdf.putAtt(ncid,NRAWUPRAD555ID,'resolution',' ');
+    netcdf.putAtt(ncid,NRAWUPRAD555ID,'resolution',single(1.));
     
     NRAWUPRAD555QCID=netcdf.defVar(ncid,'RAW_UPWELLING_RADIANCE555_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NRAWUPRAD555QCID,'long_name','quality flag');
@@ -2063,7 +2044,7 @@ if dbdat.irr2
     netcdf.putAtt(ncid,NDOWNIRRA380ID,'_FillValue',single(fval));
     netcdf.putAtt(ncid,NDOWNIRRA380ID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NDOWNIRRA380ID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NDOWNIRRA380ID,'resolution',' ');
+    netcdf.putAtt(ncid,NDOWNIRRA380ID,'resolution',single(1.));
     
     NDOWNIRRA380ADID=netcdf.defVar(ncid,'DOWN_IRRADIANCE380_ADJUSTED','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NDOWNIRRA380ADID,'long_name','Downwelling irradiance at 380 nanometers');
@@ -2071,7 +2052,7 @@ if dbdat.irr2
     netcdf.putAtt(ncid,NDOWNIRRA380ADID,'_FillValue',single(fval));
     netcdf.putAtt(ncid,NDOWNIRRA380ADID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NDOWNIRRA380ADID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NDOWNIRRA380ADID,'resolution',' ');
+    netcdf.putAtt(ncid,NDOWNIRRA380ADID,'resolution',single(1.));
     
     NDOWNIRRA380QCID=netcdf.defVar(ncid,'DOWN_IRRADIANCE380_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NDOWNIRRA380QCID,'long_name','quality flag');
@@ -2088,7 +2069,7 @@ if dbdat.irr2
     netcdf.putAtt(ncid,NDOWNIRRA380ADERRID,'units','W/m^2/nm');
     netcdf.putAtt(ncid,NDOWNIRRA380ADERRID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NDOWNIRRA380ADERRID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NDOWNIRRA380ADERRID,'resolution',' ');
+    netcdf.putAtt(ncid,NDOWNIRRA380ADERRID,'resolution',single(1.));
     netcdf.putAtt(ncid,NDOWNIRRA380ADERRID,'_FillValue',single(fval));
     
     NRAWDOWNIRRA380ID=netcdf.defVar(ncid,'RAW_DOWNWELLING_IRRADIANCE380','NC_FLOAT',[N_LEVELSID,N_PROFID]);
@@ -2097,7 +2078,7 @@ if dbdat.irr2
     netcdf.putAtt(ncid,NRAWDOWNIRRA380ID,'_FillValue',single(fval));
     netcdf.putAtt(ncid,NRAWDOWNIRRA380ID,'C_format','%9.1f');
     netcdf.putAtt(ncid,NRAWDOWNIRRA380ID,'FORTRAN_format','F9.1');
-    netcdf.putAtt(ncid,NRAWDOWNIRRA380ID,'resolution',' ');
+    netcdf.putAtt(ncid,NRAWDOWNIRRA380ID,'resolution',single(1.));
     
     NRAWDOWNIRRA380QCID=netcdf.defVar(ncid,'RAW_DOWNWELLING_IRRADIANCE380_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NRAWDOWNIRRA380QCID,'long_name','quality flag');
@@ -2110,7 +2091,7 @@ if dbdat.irr2
     netcdf.putAtt(ncid,NDOWNIRRA412ID,'_FillValue',single(fval));
     netcdf.putAtt(ncid,NDOWNIRRA412ID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NDOWNIRRA412ID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NDOWNIRRA412ID,'resolution',' ');
+    netcdf.putAtt(ncid,NDOWNIRRA412ID,'resolution',single(1.));
     
     NDOWNIRRA412ADID=netcdf.defVar(ncid,'DOWN_IRRADIANCE412_ADJUSTED','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NDOWNIRRA412ADID,'long_name','Downwelling irradiance at 412 nanometers');
@@ -2118,7 +2099,7 @@ if dbdat.irr2
     netcdf.putAtt(ncid,NDOWNIRRA412ADID,'_FillValue',single(fval));
     netcdf.putAtt(ncid,NDOWNIRRA412ADID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NDOWNIRRA412ADID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NDOWNIRRA412ADID,'resolution',' ');
+    netcdf.putAtt(ncid,NDOWNIRRA412ADID,'resolution',single(1.));
     
     NDOWNIRRA412QCID=netcdf.defVar(ncid,'DOWN_IRRADIANCE412_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NDOWNIRRA412QCID,'long_name','quality flag');
@@ -2135,7 +2116,7 @@ if dbdat.irr2
     netcdf.putAtt(ncid,NDOWNIRRA412ADERRID,'units','W/m^2/nm');
     netcdf.putAtt(ncid,NDOWNIRRA412ADERRID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NDOWNIRRA412ADERRID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NDOWNIRRA412ADERRID,'resolution',' ');
+    netcdf.putAtt(ncid,NDOWNIRRA412ADERRID,'resolution',single(1.));
     netcdf.putAtt(ncid,NDOWNIRRA412ADERRID,'_FillValue',single(fval));
     
     NRAWDOWNIRRA412ID=netcdf.defVar(ncid,'RAW_DOWNWELLING_IRRADIANCE412','NC_FLOAT',[N_LEVELSID,N_PROFID]);
@@ -2144,7 +2125,7 @@ if dbdat.irr2
     netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'_FillValue',single(fval));
     netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'C_format','%9.1f');
     netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'FORTRAN_format','F9.1');
-    netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'resolution',' ');
+    netcdf.putAtt(ncid,NRAWDOWNIRRA412ID,'resolution',single(1.));
     
     NRAWDOWNIRRA412QCID=netcdf.defVar(ncid,'RAW_DOWNWELLING_IRRADIANCE412_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NRAWDOWNIRRA412QCID,'long_name','quality flag');
@@ -2157,7 +2138,7 @@ if dbdat.irr2
     netcdf.putAtt(ncid,NDOWNIRRA490ID,'_FillValue',single(fval));
     netcdf.putAtt(ncid,NDOWNIRRA490ID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NDOWNIRRA490ID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NDOWNIRRA490ID,'resolution',' ');
+    netcdf.putAtt(ncid,NDOWNIRRA490ID,'resolution',single(1.));
     
     NDOWNIRRA490ADID=netcdf.defVar(ncid,'DOWN_IRRADIANCE490_ADJUSTED','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NDOWNIRRA490ADID,'long_name','Downwelling irradiance at 490 nanometers');
@@ -2165,7 +2146,7 @@ if dbdat.irr2
     netcdf.putAtt(ncid,NDOWNIRRA490ADID,'_FillValue',single(fval));
     netcdf.putAtt(ncid,NDOWNIRRA490ADID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NDOWNIRRA490ADID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NDOWNIRRA490ADID,'resolution',' ');
+    netcdf.putAtt(ncid,NDOWNIRRA490ADID,'resolution',single(1.));
     
     NDOWNIRRA490QCID=netcdf.defVar(ncid,'DOWN_IRRADIANCE490_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NDOWNIRRA490QCID,'long_name','quality flag');
@@ -2182,7 +2163,7 @@ if dbdat.irr2
     netcdf.putAtt(ncid,NDOWNIRRA490ADERRID,'units','W/m^2/nm');
     netcdf.putAtt(ncid,NDOWNIRRA490ADERRID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NDOWNIRRA490ADERRID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NDOWNIRRA490ADERRID,'resolution',' ');
+    netcdf.putAtt(ncid,NDOWNIRRA490ADERRID,'resolution',single(1.));
     netcdf.putAtt(ncid,NDOWNIRRA490ADERRID,'_FillValue',single(fval));
     
     NRAWDOWNIRRA490ID=netcdf.defVar(ncid,'RAW_DOWNWELLING_IRRADIANCE490','NC_FLOAT',[N_LEVELSID,N_PROFID]);
@@ -2191,7 +2172,7 @@ if dbdat.irr2
     netcdf.putAtt(ncid,NRAWDOWNIRRA490ID,'_FillValue',single(fval));
     netcdf.putAtt(ncid,NRAWDOWNIRRA490ID,'C_format','%9.1f');
     netcdf.putAtt(ncid,NRAWDOWNIRRA490ID,'FORTRAN_format','F9.1');
-    netcdf.putAtt(ncid,NRAWDOWNIRRA490ID,'resolution',' ');
+    netcdf.putAtt(ncid,NRAWDOWNIRRA490ID,'resolution',single(1.));
     
     NRAWDOWNIRRA490QCID=netcdf.defVar(ncid,'RAW_DOWNWELLING_IRRADIANCE490_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NRAWDOWNIRRA490QCID,'long_name','quality flag');
@@ -2205,7 +2186,7 @@ if dbdat.irr2
     netcdf.putAtt(ncid,NDOWN_PARID,'_FillValue',single(fval));
     netcdf.putAtt(ncid,NDOWN_PARID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NDOWN_PARID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NDOWN_PARID,'resolution',' ');
+    netcdf.putAtt(ncid,NDOWN_PARID,'resolution',single(1.));
     
     NDOWNPARADID=netcdf.defVar(ncid,'DOWNWELLING_PAR_ADJUSTED','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NDOWNPARADID,'long_name','Downwelling photosynthetic available radiation');
@@ -2214,7 +2195,7 @@ if dbdat.irr2
     netcdf.putAtt(ncid,NDOWNPARADID,'_FillValue',single(fval));
     netcdf.putAtt(ncid,NDOWNPARADID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NDOWNPARADID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NDOWNPARADID,'resolution',' ');
+    netcdf.putAtt(ncid,NDOWNPARADID,'resolution',single(1.));
     
     NDOWNPARQCID=netcdf.defVar(ncid,'DOWNWELLING_PAR_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NDOWNPARQCID,'long_name','quality flag');
@@ -2231,7 +2212,7 @@ if dbdat.irr2
     netcdf.putAtt(ncid,NDOWNPARADERRID,'units','microMoleQuanta/m^2/sec');
     netcdf.putAtt(ncid,NDOWNPARADERRID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NDOWNPARADERRID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NDOWNPARADERRID,'resolution',' ');
+    netcdf.putAtt(ncid,NDOWNPARADERRID,'resolution',single(1.));
     netcdf.putAtt(ncid,NDOWNPARADERRID,'_FillValue',single(fval));
     
     NRAWDOWN_PARID=netcdf.defVar(ncid,'RAW_DOWNWELLING_PAR','NC_FLOAT',[N_LEVELSID,N_PROFID]);
@@ -2240,7 +2221,7 @@ if dbdat.irr2
     netcdf.putAtt(ncid,NRAWDOWN_PARID,'_FillValue',single(fval));
     netcdf.putAtt(ncid,NRAWDOWN_PARID,'C_format','%9.1f');
     netcdf.putAtt(ncid,NRAWDOWN_PARID,'FORTRAN_format','F9.1');
-    netcdf.putAtt(ncid,NRAWDOWN_PARID,'resolution',' ');
+    netcdf.putAtt(ncid,NRAWDOWN_PARID,'resolution',single(1.));
     
     NRAWDOWNPARQCID=netcdf.defVar(ncid,'RAW_DOWNWELLING_PAR_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NRAWDOWNPARQCID,'long_name','quality flag');
@@ -2259,7 +2240,7 @@ if dbdat.pH
     netcdf.putAtt(ncid,NPHINSITOLID,'_FillValue',single(fval));
     netcdf.putAtt(ncid,NPHINSITOLID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NPHINSITOLID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NPHINSITOLID,'resolution',' ');
+    netcdf.putAtt(ncid,NPHINSITOLID,'resolution',single(0.01));
     
     NPHINSITOLADID=netcdf.defVar(ncid,'PH_IN_SITU_TOTAL_ADJUSTED','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NPHINSITOLADID,'long_name','pH');
@@ -2268,7 +2249,7 @@ if dbdat.pH
     netcdf.putAtt(ncid,NPHINSITOLADID,'_FillValue',single(fval));
     netcdf.putAtt(ncid,NPHINSITOLADID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NPHINSITOLADID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NPHINSITOLADID,'resolution',' ');
+    netcdf.putAtt(ncid,NPHINSITOLADID,'resolution',single(0.01));
     
     NPHINSITOLQCID=netcdf.defVar(ncid,'PH_IN_SITU_TOTAL_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NPHINSITOLQCID,'long_name','quality flag');
@@ -2285,7 +2266,7 @@ if dbdat.pH
     netcdf.putAtt(ncid,NPHINSITOLADERRID,'units','dimensionless');
     netcdf.putAtt(ncid,NPHINSITOLADERRID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NPHINSITOLADERRID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NPHINSITOLADERRID,'resolution',' ');
+    netcdf.putAtt(ncid,NPHINSITOLADERRID,'resolution',single(0.01));
     netcdf.putAtt(ncid,NPHINSITOLADERRID,'_FillValue',single(fval));
     
     NVRSPHID=netcdf.defVar(ncid,'VRS_PH','NC_FLOAT',[N_LEVELSID,N_PROFID]);
@@ -2294,7 +2275,7 @@ if dbdat.pH
     netcdf.putAtt(ncid,NVRSPHID,'_FillValue',single(fval));
     netcdf.putAtt(ncid,NVRSPHID,'C_format','%9.7f');
     netcdf.putAtt(ncid,NVRSPHID,'FORTRAN_format','F9.7');%%%%%F9.1%%%%%%%%%%%%%%
-    netcdf.putAtt(ncid,NVRSPHID,'resolution',' ');
+    netcdf.putAtt(ncid,NVRSPHID,'resolution',single(0.0000001));
     
     NVRSPHQCID=netcdf.defVar(ncid,'VRS_PH_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NVRSPHQCID,'long_name','quality flag');
@@ -2307,7 +2288,7 @@ if dbdat.pH
     netcdf.putAtt(ncid,NTEMPPHID,'_FillValue',single(fval));
     netcdf.putAtt(ncid,NTEMPPHID,'C_format','%9.4f');
     netcdf.putAtt(ncid,NTEMPPHID,'FORTRAN_format','F9.4');%%%%%F9.1%%%%%%%%%%%%%%
-    netcdf.putAtt(ncid,NTEMPPHID,'resolution',' ');
+    netcdf.putAtt(ncid,NTEMPPHID,'resolution',single(0.001));
     netcdf.putAtt(ncid,NTEMPPHID,'valid_min',single(-2.));
     netcdf.putAtt(ncid,NTEMPPHID,'valid_max',single(40.));
 
@@ -2326,7 +2307,7 @@ if isfield(fp,'Tilt')
     netcdf.putAtt(ncid,NTILTID,'_FillValue',single(fval));
     netcdf.putAtt(ncid,NTILTID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NTILTID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NTILTID,'resolution',' ');
+    netcdf.putAtt(ncid,NTILTID,'resolution',single(0.1));
     
     NTILTADID=netcdf.defVar(ncid,'TILT_ADJUSTED','NC_FLOAT',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NTILTADID,'long_name','Inclination of the float axis in respect to the local vertical');
@@ -2334,7 +2315,7 @@ if isfield(fp,'Tilt')
     netcdf.putAtt(ncid,NTILTADID,'_FillValue',single(fval));
     netcdf.putAtt(ncid,NTILTADID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NTILTADID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NTILTADID,'resolution',' ');
+    netcdf.putAtt(ncid,NTILTADID,'resolution',single(0.1));
     
     NTILTQCID=netcdf.defVar(ncid,'TILT_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
     netcdf.putAtt(ncid,NTILTQCID,'long_name','quality flag');
@@ -2351,7 +2332,7 @@ if isfield(fp,'Tilt')
     netcdf.putAtt(ncid,NTILTADERRID,'units','degree');
     netcdf.putAtt(ncid,NTILTADERRID,'C_format','%9.3f');
     netcdf.putAtt(ncid,NTILTADERRID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NTILTADERRID,'resolution',' ');
+    netcdf.putAtt(ncid,NTILTADERRID,'resolution',single(0.1));
     netcdf.putAtt(ncid,NTILTADERRID,'_FillValue',single(fval));
     
     NTILTSTDID=netcdf.defVar(ncid,'TILT_STD','NC_FLOAT',[N_LEVELSID,N_PROFID]);
@@ -2360,7 +2341,7 @@ if isfield(fp,'Tilt')
     netcdf.putAtt(ncid,NTILTSTDID,'_FillValue',single(fval));
     netcdf.putAtt(ncid,NTILTSTDID,'C_format','%9.7f');
     netcdf.putAtt(ncid,NTILTSTDID,'FORTRAN_format','F9.3');
-    netcdf.putAtt(ncid,NTILTSTDID,'resolution',' ');
+    netcdf.putAtt(ncid,NTILTSTDID,'resolution',single(0.01));
     
 end
 
