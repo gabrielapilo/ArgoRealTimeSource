@@ -875,7 +875,6 @@ if dbdat.oxy %  & dbdat.subtype~=1006
 
         NFREQDOXYID=netcdf.defVar(ncid,'FREQUENCY_DOXY','NC_FLOAT',[N_LEVELSID,N_PROFID]);
         netcdf.putAtt(ncid,NFREQDOXYID,'long_name','Frequency reported by oxygen sensor');
-        netcdf.putAtt(ncid,NFREQDOXYID,'standard_name','-');
         netcdf.putAtt(ncid,NFREQDOXYID,'units','hertz');
         netcdf.putAtt(ncid,NFREQDOXYID,'_FillValue',single(fval));
         netcdf.putAtt(ncid,NFREQDOXYID,'valid_min',single(0.));
@@ -918,7 +917,6 @@ if dbdat.oxy %  & dbdat.subtype~=1006
        
         NTPHASEDOXYID=netcdf.defVar(ncid,'TPHASE_DOXY','NC_FLOAT',[N_LEVELSID,N_PROFID]);
         netcdf.putAtt(ncid,NTPHASEDOXYID,'long_name','Uncalibrated phase shift reported by oxygen sensor');
-        netcdf.putAtt(ncid,NTPHASEDOXYID,'standard_name','-');
         netcdf.putAtt(ncid,NTPHASEDOXYID,'units','degree');
         netcdf.putAtt(ncid,NTPHASEDOXYID,'_FillValue',single(fval));
         netcdf.putAtt(ncid,NTPHASEDOXYID,'valid_min',single(10.));
@@ -937,7 +935,6 @@ if dbdat.oxy %  & dbdat.subtype~=1006
 
             NRPHASEDOXYID=netcdf.defVar(ncid,'RPHASE_DOXY','NC_FLOAT',[N_LEVELSID,N_PROFID]);
             netcdf.putAtt(ncid,NRPHASEDOXYID,'long_name','Uncalibrated red phase shift reported by oxygen sensor');
-            netcdf.putAtt(ncid,NRPHASEDOXYID,'standard_name','-');
             netcdf.putAtt(ncid,NRPHASEDOXYID,'units','degree');
             netcdf.putAtt(ncid,NRPHASEDOXYID,'_FillValue',single(fval));
             netcdf.putAtt(ncid,NRPHASEDOXYID,'valid_min',single(10.));
