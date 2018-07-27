@@ -346,7 +346,7 @@ while ~isempty(rev)
         LMdel = LMTrel(gd) - (clkfit(2) + clkfit(1)*gd);
         [mxd,tmp] = max(abs(LMdel));
         
-        if mxd>(5*std(LMdel)) && mxd>0.1    % 2.4 hours
+        if mxd>(5*std(LMdel)) && mxd>0.1 && LMdel(tmp) > 0  % 2.4 hours and NOT Early
             % Primary test: 5 SD outliers
             rev = tmp;
             
