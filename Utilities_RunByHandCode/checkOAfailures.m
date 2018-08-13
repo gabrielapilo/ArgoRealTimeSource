@@ -1,7 +1,7 @@
 %edit here:
-[fpp,dbdat] = getargo(5903912);  %float
-j = 205; %profile number
-win = 30; %plot window of adjacent profiles
+[fpp,dbdat] = getargo(5904256);  %float
+j = 187; %profile number
+win = 10; %plot window of adjacent profiles
 %%
 
 figure(1);clf
@@ -24,35 +24,40 @@ for i=max(j-win,1):min(j+win,length(fpp))
     plot(fpp(i).s_raw,fpp(i).p_calibrate,'b')
     vo=qc_apply(fpp(i).s_calibrate,fpp(i).s_qc);
     vp=qc_apply(fpp(i).p_calibrate,fpp(i).p_qc);
-    plot(vo,vp,'r-')
+    hgoodall=plot(vo,vp,'r-')
     hold on
     axis ij
 end
 i=j
-plot(fpp(i).s_raw,fpp(i).p_calibrate,'k-','linewidth',2)
+h1=plot(fpp(i).s_raw,fpp(i).p_calibrate,'k-','linewidth',2)
 vo=qc_apply(fpp(i).s_calibrate,fpp(i).s_qc);
 vp=qc_apply(fpp(i).p_calibrate,fpp(i).p_qc);
-plot(vo,vp,'g','linewidth',2)
+hgood1=plot(vo,vp,'g','linewidth',2)
 grid on
 title('PSAL')
+hleglines= [hgoodall(1),h1(1),hgood1(1)];
+hleg = legend(hleglines,{'Good','This cycle', 'This cycle good'},'Location','southeast');
+
  
 
 % for j=1:3:length(fpp)
 figure(3);clf
-for i=max(j-10,1):min(j+10,length(fpp))
+for i=max(j-win,1):min(j+win,length(fpp))
     plot(fpp(i).s_raw,fpp(i).t_raw,'b')
     vo=qc_apply(fpp(i).s_calibrate,fpp(i).s_qc);
     vp=qc_apply(fpp(i).t_raw,fpp(i).t_qc);
-    plot(vo,vp,'r-')
+    hgoodall=plot(vo,vp,'r-')
     hold on
 end
 i=j
-plot(fpp(i).s_raw,fpp(i).t_raw,'k-','linewidth',2)
+h1=plot(fpp(i).s_raw,fpp(i).t_raw,'k-','linewidth',2)
 vo=qc_apply(fpp(i).s_calibrate,fpp(i).s_qc);
 vp=qc_apply(fpp(i).t_raw,fpp(i).t_qc);
-plot(vo,vp,'g','linewidth',2)
+hgood1=plot(vo,vp,'g','linewidth',2)
 grid on
 title('T/S')
+hleglines= [hgoodall(1),h1(1),hgood1(1)];
+hleg = legend(hleglines,{'Good','This cycle', 'This cycle good'},'Location','southeast');
 
 figure(2)
 %  end
