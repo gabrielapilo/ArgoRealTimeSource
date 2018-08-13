@@ -31,6 +31,11 @@ end
 typ = {'log','msg'};
 for ii = 1:length(typ)
     nfilen=[filen '.' typ{ii}];
+    if ii == 1
+    nfilen2=[filen '.' typ{2}];
+    else
+    nfilen2=[filen '.' typ{1}];
+    end        
     d = dirc([ARGO_SYS_PARAM.iridium_path nfilen]);
     if isempty(d)
         %file is missing
@@ -75,10 +80,22 @@ for ii = 1:length(typ)
                 system(['cp -f ' lookhere{imax} ' ' ARGO_SYS_PARAM.iridium_path '/' nfilen(end-11:end)]);
                 %If we updated any files, copy to BOM ftp
                 BOM_retrieve_Iridium([ARGO_SYS_PARAM.iridium_path nfilen(end-11:end)])
+                %and copy the matching msg/log file to make the pair
+                try
+                    BOM_retrieve_Iridium([ARGO_SYS_PARAM.iridium_path nfilen2(end-11:end)])
+                catch
+                    logerr(3,['Matching file not copied to BOM: ' nfilen2]);
+                end
             else
                 system(['cp -f ' lookhere{imax} ' ' ARGO_SYS_PARAM.iridium_path '/' nfilen]);
                 %If we updated any files, copy to BOM ftp
                 BOM_retrieve_Iridium([ARGO_SYS_PARAM.iridium_path nfilen])
+                %and copy the matching msg/log file to make the pair
+                try
+                    BOM_retrieve_Iridium([ARGO_SYS_PARAM.iridium_path nfilen2])
+                catch
+                    logerr(3,['Matching file not copied to BOM: ' nfilen2]);
+                end
             end
             found = 1;
         end
