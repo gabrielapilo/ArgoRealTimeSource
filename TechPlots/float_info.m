@@ -25,7 +25,7 @@ global ARGO_SYS_PARAM;
 %% Initialization
 % Initialization of each parameter:
 status = nan;
-typepres = nan;
+typrepres = nan;
 bgc = nan;
 typefloat = '';
 batterytype=nan;
