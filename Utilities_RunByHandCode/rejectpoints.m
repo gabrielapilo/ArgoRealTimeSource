@@ -57,7 +57,7 @@ for i=1:length(pl)
         kk = [];
     end
 if rr<0
-    qc(kk) = max(qc(kk),3);
+    qc(kk) = max(qc(kk),4);
 else
      qc(kk) = 1;
 end

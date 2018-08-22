@@ -10,7 +10,7 @@ for bb =1:length(fns)
     if strfind(fns(bb).name,'.')
         continue
     end
-    if isempty(strfind(fns(bb).name,'1901119'))
+    if isempty(strfind(fns(bb).name,'5905032'))
         continue
     end
     fln = fns(bb).name;
@@ -111,15 +111,18 @@ for bb =1:length(fns)
         %(code 703)
         ij = find(cyc_ind == a);
         ii = find(cyc == a & mc == 703);
-        flt = min(jd_adj(ii));
-        llt = max(jd_adj(ii));
-        if ~isnan(flt.*jfl(ij)) & ~isnan(llt.*jll(ij))
-            if flt ~= jfl(ij) | llt ~= jll(ij)
-                disp(['first/last mesage times dont match, Profile: ' num2str(a) ' mc = 703'])
+        flt = min(jd(ii));
+        llt = max(jd(ii));
+         if any(~isnan(flt) | ~isnan(jfl(ij)))
+            if flt ~= jfl(ij) 
+                disp(['first mesage times dont match JULD_First_loc, Profile: ' num2str(a) ' mc = 703'])
+            end
+         end
+        if any(~isnan(llt) | ~isnan(jll(ij)))
+            if llt ~= jll(ij)
+                disp(['last mesage times dont match JULD_last_loc, Profile: ' num2str(a) ' mc = 703'])
             end
         end
-        
-        
         for b = 1:length(mcN)
             ii = find(cyc == a & mc == mcN(b));
             

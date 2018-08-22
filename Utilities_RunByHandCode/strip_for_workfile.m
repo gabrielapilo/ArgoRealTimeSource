@@ -137,7 +137,7 @@ elseif(strncmp(nxtline(1:3),'PRV',3)) || (strncmp(nxtline(1:3),'prv',3))
    end
    day=str2double(ftp_fname(9:end))+9;
    if(day>365);day=day-365;year=year+1; end         % What about leap years!  JRD
-   dv=datevec(datenum(year,1,1,0,0,0) + day-1);
+   dv=datevec(datenum(year,1,1,23,59,59) + day-1);
    ftptime=julian(dv);
 else
    % Need to estimate this (from last fix date in file)
