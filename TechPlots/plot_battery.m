@@ -1,4 +1,4 @@
-function [ ] = plot_battery( float , H, H2,fnm)
+function [ ] = plot_battery( float, dbdat)
 % This function permits to plot every data around battery in order to get
 % easily an failure of it.
 %
@@ -11,26 +11,15 @@ function [ ] = plot_battery( float , H, H2,fnm)
 % SBE pump.
 % Air pump.
 % Buoyancy pump.
-lft = [0.05:1/5:0.95];
-bot = 0.8:-.1872:0.05 ;
-wid = 0.13;
-hgt = 0.12;
+
+%set up the figures
 
 lg = length(float);
 axisX = [1:lg];
 
 % The strucuture of the program is the same for each plot.
 % Extract the list of voltage and current from the matfile.
-volt1 = nan(1,lg);
-int1 = nan(1,lg);
-volt2 = nan(1,lg);
-int2 = nan(1,lg);
-volt3 = nan(1,lg);
-int3 = nan(1,lg);
-volt4 = nan(1,lg);
-int4 = nan(1,lg);
-volt5 = nan(1,lg);
-int5 = nan(1,lg);
+[volt1,int1,volt2,int2,volt3,int3,volt4,int4,volt5,int5] = deal(nan(1,lg));
 
 flds = {'voltage','batterycurrent';'parkbatteryvoltage','parkbatterycurrent';...
     'SBEpumpvoltage','SBEpumpcurrent';'airpumpvoltage','airpumpcurrent';...
@@ -52,149 +41,81 @@ end
 
 % Consider both voltage an battery current, because sometimes there is no
 % information about the current, two assets are required:
-if isfield(float,'voltage')
-    
-%     if isfield(float,'batterycurrent')
-        
-        % If the current information are relevant, consider the power of
-        % the float:
-%         if min(isnan(int1)) == 0
-%             puis1 = volt1 .* int1 ;
-%             figure(1);subplot(5,5,1);
-%             plot(axisX , puis1,'--^','MarkerEdgeColor',markcolor,'color',markcolor);
-%             ylabel('Power');
-%             figure(2);
-%             plot(axisX , puis1,'--^','MarkerEdgeColor',markcolor,'color',markcolor);
-%             ylabel('Power');
-%             
-%             % If the current information are altered, only consider the voltage
-%             % evolution through time:
-%         else
+%         If the current information are relevant, consider the power of
+%         the float:
+
+power = volt1 .* int1 ;
+            
 markcolor = flag_battery(volt1) ;
-figure(H);subplot('Position',[lft(1) bot(1) wid hgt]);
-plot(axisX , volt1,'-^','MarkerEdgeColor',markcolor,'color',markcolor);
-xlabel('Cycle');
-title('Main battery');
-ylabel('Voltage');
-figure(H2);
+%plot power first
+figure;
+plot(axisX , power,'-^','MarkerEdgeColor',markcolor,'color',markcolor,'markersize',12);
+xlabel('Cycle','Fontsize',18);
+title('Main battery','Fontsize',18);
+ylabel('Power','Fontsize',18);
+set(gca,'FontSize',16)
+my_save_fig([fnm '/main_battery_power'],'clobber')
+clf
+%now plot voltage
 plot(axisX , volt1,'-^','MarkerEdgeColor',markcolor,'color',markcolor,'markersize',12);
 xlabel('Cycle','Fontsize',18);
 title('Main battery','Fontsize',18);
 ylabel('Voltage','Fontsize',18);
 set(gca,'FontSize',16)
-my_save_fig([fnm '/main_battery'],'clobber')
+my_save_fig([fnm '/main_battery_voltage'],'clobber')
 clf
-%         end
-
-% If no information on the current, only consider the voltage:
-%     else
-%         
-%         % Extract the list of voltage from the matfile.
-%         volt1 = nan(1,lg);
-%         for ind = 1:lg
-%             volt1(ind) = mean(float(ind).voltage);
-%         end
-%         
-%         markcolor = flag_battery(volt1) ;
-%         subplot(5,5,1);
-%         plot(axisX , volt1,'--^','MarkerEdgeColor',markcolor,'color',markcolor);
-%         xlabel('Cycle');
-%         ylabel('Voltage');
-%         title('Main battery');
-%     end
-end
 
 
 %% Park battery
 
 % Consider both voltage an battery current, because sometimes there is no
 % information about the current, two assets are required:
-if isfield(float,'parkbatteryvoltage')
-    
-%     if isfield(float,'parkbatterycurrent')
-                
-        % If the current information are relevant, consider the power of
-        % the float:
-%         
-%         if min(isnan(int2)) == 0
-%             puis2 = volt2 .* int2 ;
-%             markcolor = flag_battery(volt2) ;
-%             subplot(5,5,2);
-%             plot(axisX , puis2,'--^','MarkerEdgeColor',markcolor,'color',markcolor);
-%             xlabel('Cycle');
-%             ylabel('Power');
-%             title('Park battery');
-%             
-%             % If the current information are altered, only consider the voltage
-%             % evolution through time:
-%         else
-            markcolor = flag_battery(volt2) ;
-            figure(H);subplot('Position',[lft(2) bot(1) wid hgt]);
-            plot(axisX,volt2,'-^','MarkerEdgeColor',markcolor,'color',markcolor);
-            xlabel('Cycle');
-            ylabel('Voltage');
-            title('Park battery');
-            figure(H2);
-            plot(axisX,volt2,'-^','MarkerEdgeColor',markcolor,'color',markcolor,'markersize',12);
-            xlabel('Cycle','fontsize',18);
-            ylabel('Voltage','fontsize',18);
-            title('Park battery','fontsize',18);
-            set(gca,'fontsize',16)
-my_save_fig([fnm '/park_battery'],'clobber')
+markcolor = flag_battery(volt2) ;
+power = volt2 .* int2 ;
+%plot power
+clf;
+plot(axisX,power,'-^','MarkerEdgeColor',markcolor,'color',markcolor,'markersize',12);
+xlabel('Cycle','fontsize',18);
+ylabel('Voltage','fontsize',18);
+title('Park battery Power','fontsize',18);
+set(gca,'fontsize',16)
+my_save_fig([fnm '/park_battery_power'],'clobber')
+%plot voltage
+clf;
+plot(axisX,volt2,'-^','MarkerEdgeColor',markcolor,'color',markcolor,'markersize',12);
+xlabel('Cycle','fontsize',18);
+ylabel('Voltage','fontsize',18);
+title('Park battery Voltage','fontsize',18);
+set(gca,'fontsize',16)
+my_save_fig([fnm '/park_battery_voltage'],'clobber')
 clf
-%         end
-%         
-%         % If no information on the current, only consider the voltage:
-%     else
-%         % Extract the list of voltage from the matfile.
-%         volt2 = nan(1,lg);
-%         for ind = 1:lg
-%             volt2(ind) = mean(float(ind).parkbatteryvoltage);
-%         end
-%         markcolor = flag_battery(volt2) ;
-%         subplot(5,5,2);
-%         plot(axisX,volt2,'--^','MarkerEdgeColor',markcolor,'color',markcolor);
-%         xlabel('Cycle');
-%         ylabel('Voltage');
-%         title('Park battery');
-%     end
-end
 
 %% Sea Bird pump
 
 % Consider both voltage an battery current, because sometimes there is no
 % information about the current, two assets are required:
-if isfield(float,'SBEpumpvoltage')
-    
-%     if isfield(float,'SBEpumpcurrent')
 
-        % If the current information are relevant, consider the power of
-        % the float:
-        
-%         if min(isnan(int5)) == 0
-%             puis5 = volt5 .* int5 ;
-%             markcolor = flag_battery(volt5) ;
-%             subplot(5,5,3);
-%             plot(axisX,puis5,'--^','MarkerEdgeColor',markcolor,'color',markcolor);
-%             xlabel('Cycle');
-%             ylabel('Power');
-%             title('SBE pump');
-%             
+%plot power
+power = volt5 .* int5 ;
+plot(axisX,power,'--^','MarkerEdgeColor',markcolor,'color',markcolor);
+xlabel('Cycle');
+ylabel('Power');
+title('SBE pump');
+
 %             % If the current information are altered, only consider the voltage
 %             % evolution through time:
-%         else
-            markcolor = flag_battery(volt3) ;
-            figure(H);subplot('Position',[lft(3) bot(1) wid hgt]);
-            plot(axisX,volt3,'-^','MarkerEdgeColor',markcolor,'color',markcolor);
-            xlabel('Cycle');
-            ylabel('Voltage');
-            title('SBE pump');
-            figure(H2)
-            plot(axisX,volt3,'-^','MarkerEdgeColor',markcolor,'color',markcolor,'markersize',12);
-            xlabel('Cycle','fontsize',18);
-            ylabel('Voltage','fontsize',18);
-            title('SBE pump','fontsize',18);
-            set(gca,'fontsize',16)
+markcolor = flag_battery(volt3) ;
+figure(H);subplot('Position',[lft(3) bot(1) wid hgt]);
+plot(axisX,volt3,'-^','MarkerEdgeColor',markcolor,'color',markcolor);
+xlabel('Cycle');
+ylabel('Voltage');
+title('SBE pump');
+figure(H2)
+plot(axisX,volt3,'-^','MarkerEdgeColor',markcolor,'color',markcolor,'markersize',12);
+xlabel('Cycle','fontsize',18);
+ylabel('Voltage','fontsize',18);
+title('SBE pump','fontsize',18);
+set(gca,'fontsize',16)
 my_save_fig([fnm '/SBEpump_battery'],'clobber')
 
 clf
