@@ -24,15 +24,15 @@ for i=max(j-win,1):min(j+win,length(fpp))
     plot(fpp(i).s_raw,fpp(i).p_calibrate,'b')
     vo=qc_apply(fpp(i).s_calibrate,fpp(i).s_qc);
     vp=qc_apply(fpp(i).p_calibrate,fpp(i).p_qc);
-    hgoodall=plot(vo,vp,'r-')
+    hgoodall=plot(vo,vp,'r-');
     hold on
     axis ij
 end
 i=j
-h1=plot(fpp(i).s_raw,fpp(i).p_calibrate,'k-','linewidth',2)
+h1=plot(fpp(i).s_raw,fpp(i).p_calibrate,'k-','linewidth',2);
 vo=qc_apply(fpp(i).s_calibrate,fpp(i).s_qc);
 vp=qc_apply(fpp(i).p_calibrate,fpp(i).p_qc);
-hgood1=plot(vo,vp,'g','linewidth',2)
+hgood1=plot(vo,vp,'g','linewidth',2);
 grid on
 title('PSAL')
 hleglines= [hgoodall(1),h1(1),hgood1(1)];
@@ -46,14 +46,14 @@ for i=max(j-win,1):min(j+win,length(fpp))
     plot(fpp(i).s_raw,fpp(i).t_raw,'b')
     vo=qc_apply(fpp(i).s_calibrate,fpp(i).s_qc);
     vp=qc_apply(fpp(i).t_raw,fpp(i).t_qc);
-    hgoodall=plot(vo,vp,'r-')
+    hgoodall=plot(vo,vp,'r-');
     hold on
 end
 i=j
-h1=plot(fpp(i).s_raw,fpp(i).t_raw,'k-','linewidth',2)
+h1=plot(fpp(i).s_raw,fpp(i).t_raw,'k-','linewidth',2);
 vo=qc_apply(fpp(i).s_calibrate,fpp(i).s_qc);
 vp=qc_apply(fpp(i).t_raw,fpp(i).t_qc);
-hgood1=plot(vo,vp,'g','linewidth',2)
+hgood1=plot(vo,vp,'g','linewidth',2);
 grid on
 title('T/S')
 hleglines= [hgoodall(1),h1(1),hgood1(1)];
