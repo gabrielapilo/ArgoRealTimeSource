@@ -357,7 +357,8 @@ for nn = gotcyc
             ncwrite(fname,'GROUNDED',fpp(nn).grounded,ii);
         end
         %get mission number:
-        ncwrite(fname,'CONFIG_MISSION_NUMBER',floatTech.Mission(nn).mission_number,ii);
+        [mn,~] = getmission_number(dbdat.wmo_id,fpp(nn).profile_number,1,dbdat);
+        ncwrite(fname,'CONFIG_MISSION_NUMBER',mn,ii);
         
         % REPRESENTATIVE_PARK_PRESSURE is only used where values are averaged to
         % provide one value for whole park period (corresponds to MC=301)
