@@ -22,6 +22,12 @@ function [outcome] = write_BUFR(dbdat,fp)
 global ARGO_SYS_PARAM
 outcome = 0;
 
+%lets be sophistocated here and check that the time is within GTS time
+today=julian(clock);
+if today-fp.jday(1)>40 %outside GTS delivery window
+    return
+end
+
 %position information
 %find the first occurrence of a good position
 order = [1,2,0,5,8,9];
