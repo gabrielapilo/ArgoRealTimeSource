@@ -32,9 +32,14 @@ end
 pno=sprintf('%3.3i',fp.profile_number);
 backupdir = [ARGO_SYS_PARAM.root_dir 'textfiles/'];
 [st2,fnm2] = system(['find ' backupdir '/' num2str(fp.wmo_id) ' -name ''*R' num2str(fp.wmo_id) '_' pno '.bin'' -print']);
-if st2 == 0 | ~isempty(fnm2)
+if st2 ~= 0
+    %no such file or directory
+    logerr(3,['Error in write_BUFR finding file: ' fnm2]);
+    return
+end
+if ~isempty(fnm2)
     %already sent it, don't go any further
-      logerr(5,['GTS message already sent: ' fnm2]);    
+    logerr(5,['GTS message already sent: ' fnm2]);
     return
 end
 
