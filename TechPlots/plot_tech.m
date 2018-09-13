@@ -18,7 +18,7 @@ fnm = strcat(ARGO_SYS_PARAM.web_dir, '/tech/img/',num2str(float(1).wmo_id));
 if ~isdir(fnm)
     mkdir(fnm)
 end
-
+%this is where we plot
 plot_battery(float , H, H2,fnm) ;
 ground = plot_bathymetry(float , H, H2,fnm);
 plot_weight(float , H, H2, ground,fnm ) ;
