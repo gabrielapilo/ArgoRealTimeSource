@@ -60,27 +60,15 @@ if isempty(THE_ARGO_FLOAT_SENSOR_DB)
     %  fnm = [ARGO_SYS_PARAM.root_dir 'spreadsheet/argomaster_sensorinfo.csv'];
     if ~exist(fnm,'file')
         error(['Cannot find database file ' fnm]);
-        return
     end
 
     fid = fopen(fnm,'r');
-    tmpdb = textscan(fid,'%s','delimiter',',');   %,'bufsize',10000);
+   %42 columns. Edit here if we need to add/remove columns
+    tmpdb = textscan(fid,repmat('%s',1,42),'delimiter',',','headerlines',2);
     fclose(fid);
-    tmpdb = tmpdb{1};
 
-    ientry = 0;
-    ifld = 1;
+    for ientry = 1:length(tmpdb{1})
 
-    while ifld<length(tmpdb)
-        ifld = ifld+1;
-        if ~isempty(tmpdb{ifld})
-            fld = lower(tmpdb{ifld});
-            fld2=tmpdb{ifld};
-
-            if ~isempty(strfind(fld,'column1'))
-                % This field is the start-of-row marker - ie start of new float
-                ncol = 0;        % reset the column count
-                ientry = ientry+1;
             T(ientry).Pressure.Name = 'Pressure';
             T(ientry).Temperature.Name = 'Temperature';
             T(ientry).Salinity.Name = 'Salinity';
@@ -96,15 +84,10 @@ if isempty(THE_ARGO_FLOAT_SENSOR_DB)
             T(ientry).Temperature.Units = 'degC';
             T(ientry).Salinity.Units = 'PSU';
 
-            end
-        else
-            fld2=' ';
-            fld=' ';
-        end
 
-        if ientry>0
-            % (if ientry==0 then we are still in the header rows)
-            ncol = ncol+1;
+       for ncol = 1:length(tmpdb)
+            fld = lower(tmpdb{ncol}{ientry});
+            fld2 = tmpdb{ncol}{ientry};
 
             switch ncol
                 case 1
@@ -194,17 +177,9 @@ if isempty(THE_ARGO_FLOAT_SENSOR_DB)
                 case 40
                     T(ientry).UplinkSystemID = fld;
                 case 41
-                    T(ientry).Battery_Configuration = tmpdb{ifld};  %fld;
+                    T(ientry).Battery_Configuration = fld2;
                 case 42
                     T(ientry).PTTFrequencyMHz = fld;
-%                 case 36
-%                     T(ientry).UplinkSystem = fld;
-%                 case 37
-%                     T(ientry).UplinkSystemID = fld ;
-%                 case 38
-%                     T(ientry).Battery_Configuration = tmpdb{ifld};  %fld;
-%                 case 39
-%                     T(ientry).PTTFrequencyMHz = fld;
             end
 
         end
@@ -217,7 +192,7 @@ if fnum>0
    ii = find(ARGO_ID_CROSSREF(:,1)==fnum);
    if isempty(ii)
       disp(['Error - cannot find float ' num2str(fnum) ' in the database']);
-      dbdat = [];
+      Sensor = [];
       return
    end
    Sensor = Sensor(ii);
