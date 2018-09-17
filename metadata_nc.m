@@ -760,6 +760,7 @@ if dbdat.wmo_id==53548
 end
 
 aa=s.Battery_Configuration;
+netcdf.putVar(ncid,BATPKSID,0,length(aa),aa);
 li=strfind(aa,'Li');
 alk=strfind(aa,'Alk');
 if ~isempty(li) & ~isempty(alk)
@@ -776,7 +777,6 @@ else
     netcdf.putVar(ncid,BATTYID,0,length(aa),aa);
 end
 
-netcdf.putVar(ncid,BATPKSID,0,length(aa),aa);
 
 if ~isempty(dbdat.boardtype)
     if dbdat.boardtype==8
