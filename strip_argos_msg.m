@@ -200,8 +200,15 @@ if isempty(strmatch(fnm,'iridium'))
    nxtline = fgetl(fid);
 
    % Extract UTC date of ftp download
-   if isempty(nxtline)
+   ct = 0;
+   while isempty(nxtline)
       nxtline = fgetl(fid);
+      %put in a catch to make sure we don't get stuck here forever
+      ct = ct +1;
+      if ct > 200000
+          disp('Stuck in reading argoslog file. Stopped')
+          return
+      end
    end
    if length(nxtline)>=20 && strncmp(nxtline(1:3),'UTC',3)
       tmp = sscanf(nxtline(1:20),'UTC %d-%d-%d %d:%d');
