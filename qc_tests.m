@@ -642,6 +642,14 @@ for ii = ipf(:)'
             fp.testsfailed(14) = 1;
         end
     end
+
+    % Ad-Hoc test to flag known range serial number, possibly drifting SBE sensors as 2 (probably bad)
+    %SN6000 to 7100
+    if dbdat.sbe_snum >= 6000 & dbdat.sbe_snum <= 7100
+        vv=1:length(fp.s_raw);
+        newv = repmat(2,1,length(vv));
+        fp.s_qc(vv) = max([fp.s_qc(vv),newv]);
+    end
     
     % Test15: Grey List Test
     %load up the grey list
