@@ -43,6 +43,10 @@ ms=[];
 pns=sprintf('%3.3i',pn+dbdat.np0);
 
 fnm=dirc([ARGO_SYS_PARAM.iridium_path 'f' num2str(aic(kk,2)) '.' pns '.*.system_log.txt']);
+%for floats with controller board string in name.
+if isempty(fnm)
+    fnm=dirc([ARGO_SYS_PARAM.iridium_path char(dbdat.argos_hex_id) '.' pns '.*.system_log.txt']);
+end
 
 
 if ~isempty(fnm)

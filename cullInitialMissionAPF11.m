@@ -23,6 +23,9 @@ fn= [ARGO_SYS_PARAM.root_dir 'matfiles/float' num2str(wmo_id) 'aux.mat'];
 % else
     fnm000=dirc([ARGO_SYS_PARAM.root_dir 'iridium_data/iridium_processed/000files/f' num2str(aic(kk,2)) '.000.*.system_log.txt']);
 % end
+if isempty(fnm000)
+    fnm000=dirc([ARGO_SYS_PARAM.root_dir 'iridium_data/iridium_processed/000files/' char(dbdat.argos_hex_id) '.000.*.system_log.txt']);
+end    
  
 fnm000=fnm000{end,1};
 

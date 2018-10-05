@@ -49,15 +49,18 @@ if m>0   % are there any apf 11data?
     
     if ~isempty(c)
         cc = char(c{:,1});
-        cc = cc(:,1:10);
+        cc = regexp(cc,'[\.-]','split');
+        cc = cc{1};
     end
     if ~isempty(b)
         bb = char(b{:,1});
-        bb = bb(:,1:10);
+        bb = regexp(bb,'[\.-]','split');
+        bb = bb{1};
     end
     if ~isempty(a)
         aa = char(a{:,1});
-        aa = aa(:,1:10);
+        aa = regexp(aa,'[\.-]','split');
+        aa = aa{1};
     end
     
     
@@ -107,7 +110,7 @@ if m>0   % are there any apf 11data?
                 ftptime = julian(datevec(a{i,4}));
                 currenttime=julian(clock);
                 hr=1/24;
-                argosid = str2num(a{i,1}(2:5));
+                argosid = str2num(aa);
                 if ~any(argosidlist==argosid)
                     % Not a float we know or want
                     logerr(0,'');

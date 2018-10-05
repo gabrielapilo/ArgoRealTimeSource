@@ -694,7 +694,7 @@ if dbdat.maker==1 | dbdat.maker==4  %Webb of Seabird - similar formats
         if dbdat.subtype==1019 | dbdat.subtype==1023 %Webb APF11 floats
             fp.jday_ascent_start =         [];
             %hack here to cope with new floats
-            if ~isempty(strfind(lower(dbdat.controlboardnumstring),'fm'))
+            if dbdat.subtype==1023
                 fp.jday_ascent_to_surface =   [];  %when the sample was
 %             STORED, not when it was COLLECTED!!
             end
@@ -707,7 +707,7 @@ if dbdat.maker==1 | dbdat.maker==4  %Webb of Seabird - similar formats
             fp.GPSfixtime =                [];
             fp.jday_location =             [];
             %hack here to cope with new floats
-            if ~isempty(strfind(lower(dbdat.controlboardnumstring),'fm'))
+            if dbdat.subtype==1023
                 fp.GPSsatellites =             [];
             end
 %             fp.buoyancypumpcurrent =       [];

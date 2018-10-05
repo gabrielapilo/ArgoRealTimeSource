@@ -613,7 +613,7 @@ end
         end
     end
     
-    fclose(fid)
+    fclose(fid);
                         
     float(np) = pro;
     prec.profile_number = float(np).profile_number;
