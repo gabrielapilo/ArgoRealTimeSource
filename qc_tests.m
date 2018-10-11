@@ -642,14 +642,6 @@ for ii = ipf(:)'
             fp.testsfailed(14) = 1;
         end
     end
-
-    % Ad-Hoc test to flag known range serial number, possibly drifting SBE sensors as 2 (probably bad)
-    %SN6000 to 7100
-    if dbdat.sbe_snum >= 6000 & dbdat.sbe_snum <= 7100
-        vv=1:length(fp.s_raw);
-        newv = repmat(2,1,length(vv));
-        fp.s_qc(vv) = max([fp.s_qc(vv),newv]);
-    end
     
     % Test15: Grey List Test
     %load up the grey list
@@ -664,7 +656,7 @@ for ii = ipf(:)'
             
             fp.testsfailed(15) = 1;
             vv=1:length(fp.p_raw);
-            newv = repmat(4,1,length(vv));
+            newv = repmat(glist.flag(ib),1,length(vv));
             im = find(cellfun(@isempty,strfind(glist.var(ib),'PSAL'))==0);
             ij = find(cellfun(@isempty,strfind(glist.var(ib),'TEMP'))==0);
             ik = find(cellfun(@isempty,strfind(glist.var(ib),'PRES'))==0);
