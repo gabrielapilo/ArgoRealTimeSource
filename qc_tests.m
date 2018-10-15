@@ -656,7 +656,6 @@ for ii = ipf(:)'
             
             fp.testsfailed(15) = 1;
             vv=1:length(fp.p_raw);
-            newv = repmat(glist.flag(ib),1,length(vv));
             im = find(cellfun(@isempty,strfind(glist.var(ib),'PSAL'))==0);
             ij = find(cellfun(@isempty,strfind(glist.var(ib),'TEMP'))==0);
             ik = find(cellfun(@isempty,strfind(glist.var(ib),'PRES'))==0);
@@ -666,10 +665,12 @@ for ii = ipf(:)'
                 fp.t_qc(vv) = 4;
             else
                 if ~isempty(im) %psal
+                    newv = repmat(glist.flag(ib(im)),1,length(vv));
                     fp.s_qc(vv) = max([fp.s_qc(vv); newv]);
                     vvs = qc_apply(fp.s_raw,fp.s_qc);
                 end
                 if ~isempty(ij) %temp
+                    newv = repmat(glist.flag(ib(ij)),1,length(vv));
                     fp.t_qc(vv) = max([fp.t_qc(vv); newv]);
                     vvt = qc_apply(fp.t_raw,fp.t_qc);
                     fp.s_qc(vv) = max([fp.s_qc(vv); newv]);
@@ -680,6 +681,7 @@ for ii = ipf(:)'
                     end
                 end
                 if ~isempty(ik) %pres
+                    newv = repmat(glist.flag(ib(ik)),1,length(vv));
                     fp.p_qc(vv) = max([fp.p_qc(vv); newv]);
                     pii = qc_apply(fp.p_calibrate,fp.p_qc);
                     fp.s_qc(vv) = max([fp.s_qc(vv); newv]);
