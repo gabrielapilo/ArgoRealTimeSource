@@ -30,7 +30,7 @@ end
 
 %now lets see if we have already sent a GTS message
 pno=sprintf('%3.3i',fp.profile_number);
-backupdir = [ARGO_SYS_PARAM.root_dir 'textfiles/'];
+backupdir = [ARGO_SYS_PARAM.root_dir 'textfiles'];
 [st2,fnm2] = system(['find ' backupdir '/' num2str(fp.wmo_id) ' -name ''*R' num2str(fp.wmo_id) '_' pno '.bin'' -print']);
 if st2 ~= 0
     %no such file or directory
