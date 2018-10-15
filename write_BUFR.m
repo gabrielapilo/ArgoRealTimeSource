@@ -28,13 +28,20 @@ if today-fp.jday(1)>20 %outside GTS delivery window
     return
 end
 
+% text file directory - create if it doesn't exist
+textfiledirnm = [ARGO_SYS_PARAM.root_dir 'textfiles/' int2str(dbdat.wmo_id) '/' ];
+
+% copy the files to the text file backup
+if exist(textfiledirnm,'dir') ~= 7
+    system(['mkdir ' textfiledirnm]);
+end
+
 %now lets see if we have already sent a GTS message
 pno=sprintf('%3.3i',fp.profile_number);
-backupdir = [ARGO_SYS_PARAM.root_dir 'textfiles'];
-[st2,fnm2] = system(['find ' backupdir '/' num2str(fp.wmo_id) ' -name ''*R' num2str(fp.wmo_id) '_' pno '.bin'' -print']);
+[st2,fnm2] = system(['find ' textfiledirnm ' -name ''*R' num2str(fp.wmo_id) '_' pno '.bin'' -print']);
 if st2 ~= 0
-    %no such file or directory
-    logerr(3,['Error in write_BUFR finding file: ' fnm2]);
+    %no such file or directory, continue creating file!
+    logerr(3,['Error in write_BUFR finding folder, this should not happen: ' fnm2]);
     return
 end
 if ~isempty(fnm2)
@@ -167,13 +174,6 @@ else
     outcome = 1;
 end
 
-% text file directory
-textfiledirnm = [ARGO_SYS_PARAM.root_dir 'textfiles/' int2str(dbdat.wmo_id) '/' ];
-
-% copy the files to the text file backup
-if ~exist(textfiledirnm)
-    system(['mkdir ' textfiledirnm]);
-end
 system(['cp ' outfile ' ' textfiledirnm]);
 
 % copy the files to the export_BUFR directory 
