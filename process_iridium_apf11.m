@@ -128,7 +128,7 @@ else
     ss=strfind(fn,'.');
 %     np=str2num(fn(ss(1)+1:ss(2)-1))-dbdat.np0;
     if(length(float)<np);
-        float(np)=new_profile_struct(dbdat);
+        float=replicate_profile_struct(float);
     end
     
     if(isempty(float(np).proc_stage))
