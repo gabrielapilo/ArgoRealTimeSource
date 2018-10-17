@@ -114,10 +114,10 @@ if(np==0);return;end
 
 p_raw=[];
 stage = 1;
-pro = new_profile_struct(dbdat);
 
 if ~exist([fnm '.mat'],'file')
     logerr(3,[fnm ' not found - opening new float file']);
+    pro = new_profile_struct(dbdat);
     float = pro;           %new_profile_struct(dbdat);
     %   pro = new_profile_struct(dbdat);
 else
@@ -126,10 +126,8 @@ else
     
     stage = unique([stage opts.redo]);
     ss=strfind(fn,'.');
-%     np=str2num(fn(ss(1)+1:ss(2)-1))-dbdat.np0;
-    if(length(float)<np);
-        float=replicate_profile_struct(float);
-    end
+    %     np=str2num(fn(ss(1)+1:ss(2)-1))-dbdat.np0;
+    [pro,float]=replicate_profile_struct(dbdat,float,np);
     
     if(isempty(float(np).proc_stage))
         float(np).proc_stage=1;
