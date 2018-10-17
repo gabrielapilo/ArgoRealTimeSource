@@ -13,12 +13,16 @@
 %                enddepth = last bad point or 999999 indicating the rest of
 %                   the profile.
 %                rr = reject(-1) or retrieve(1)? - optional
+%                flg = flag level - optional. Default is 4
 % Example:   rejectpoints(wmo,pn,{'s' 't'},0,2000)
 
-function rejectpoints(wmoid,pn2,pl,startdepth,enddepth,rr)
+function rejectpoints(wmoid,pn2,pl,startdepth,enddepth,rr,flg)
 
 global ARGO_SYS_PARAM
 
+if nargin < 7
+    flg = 4;
+end
 if nargin<6
     rr=-1;
 end
@@ -27,6 +31,8 @@ end
 if isempty(fpp(pn2).lat)
     return
 end
+
+pn = pn2;
 for j=1:length(fpp)
     if fpp(j).profile_number == pn2
         pn=j;
@@ -57,7 +63,7 @@ for i=1:length(pl)
         kk = [];
     end
 if rr<0
-    qc(kk) = max(qc(kk),4);
+    qc(kk) = max(qc(kk),flg);
 else
      qc(kk) = 1;
 end
@@ -72,7 +78,7 @@ end
 
 
     save(fnm,'float','-v6');
-    
+    close all
     argoprofile_nc(dbdat,fpp(pn))
     web_profile_plot(fpp(pn),dbdat)
     tsplots(fpp)
