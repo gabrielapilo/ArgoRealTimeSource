@@ -299,7 +299,6 @@ if dbdat.pH
 end
  
 if isfield(fpp,'Tilt')
-    jj=jj+1;
     n_param=n_param+1;
 end
 
@@ -1122,17 +1121,6 @@ if dbdat.pH
     netcdf.putVar(ncid,SENSORSERNOID,[0,jj-1],[length(aa),1],aa);
 end
 
-if isfield(fpp,'Tilt')
-    jj=jj+1;
-    aa=s.Irr.mfg;
-    netcdf.putVar(ncid,SENSORMAKERID,[0,jj-1],[length(aa),1],aa);
-    aa='RADIOMETER_PAR';
-    netcdf.putVar(ncid,SENSORID,[0,jj-1],[length(aa),1],aa);
-    aa=s.Irr.ModelNo;
-    netcdf.putVar(ncid,SENSORMODELID,[0,jj-1],[length(aa),1],aa);
-    aa=s.Irr.SerialNo;
-    netcdf.putVar(ncid,SENSORSERNOID,[0,jj-1],[length(aa),1],aa);
-end
 
 netcdf.putVar(ncid,NPARAID,[0,0],[4,1],'TEMP');
 netcdf.putVar(ncid,NPARAID,[0,1],[4,1],'PSAL');
