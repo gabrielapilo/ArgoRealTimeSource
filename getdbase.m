@@ -148,14 +148,14 @@ if isempty(THE_ARGO_FLOAT_DB)
                        T(ientry).maker = 1;
                    elseif ~isempty(strfind(lower(fld),'provor'))
                        T(ientry).maker = 2;
-                   elseif ~isempty(strfind(lower(fld),'arvor'))
-                       T(ientry).maker = 2;
                    elseif ~isempty(strfind(fld,'seabird'))
                        T(ientry).maker = 4;
                    elseif ~isempty(strfind(fld,'soloii'))
                        T(ientry).maker = 5;
                    elseif ~isempty(strfind(fld,'solo'))
                        T(ientry).maker = 3;
+                   elseif ~isempty(strfind(fld,'nke'))
+                       T(ientry).maker = 6;
                    else
                        T(ientry).maker = 0;
                        if isempty(fld)

@@ -52,6 +52,9 @@ for jj = 1:length(THE_ARGO_FLOAT_DB)
    end
 
    DB = THE_ARGO_FLOAT_DB(jj);
+   if DB.maker == 6 %NKE Arvor floats - being processed elsewhere
+       continue
+   end
    if isempty(DB.wmo_id); DB.wmo_id=nan; end
    if isempty(DB.argos_id); DB.argos_id=nan; end
    if isempty(DB.status); DB.status=' - '; end
