@@ -1587,13 +1587,14 @@ if any(stage==1)
         
         % Range check (just to alert our personnel to investigate)
         check_profile(float(np));
-        rejtests = [1 2 3 4 13 15];
+        %don't send to GDAC for these tests:
+        rejtests = [1 2 3 4];
         
         if any(float(np).testsfailed(rejtests))
             % Will not transmit this profile because of failing critical tests
             logerr(3,'Failed critical QC, so no BUFR msg sent!');
             prec.gts_count = 99;
-        elseif opts.rtmode && ~strcmp('suspect',dbdat.status) & ~strcmp('evil',dbdat.status) & ...
+        elseif opts.rtmode && ~strcmp('evil',dbdat.status) & ...
                 ~strcmp('hold',dbdat.status)
             % If not reprocessing, and not a "suspect" float, create tesac file. Disabled, 2 July, 2018
 %             write_tesac(dbdat,float(np));

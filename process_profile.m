@@ -570,7 +570,7 @@ if any(stage>=1)
          end
      end
 	 % We only send a GTS message if none of the following tests were failed 
-	 rejtests = [2 3 4 13];    
+	 rejtests = [1 2 3 4];    
 	 if isempty(opts.redo)
 	    opts.redo=0;
 	 end
@@ -587,7 +587,7 @@ if any(stage>=1)
 	    logerr(3,'Failed critical QC, so no BUFR msg sent!'); 
         prec.gts_count = 99;
      elseif ~strcmp('hold',dbdat.status) & ~strcmp('evil',dbdat.status) & ...
-             opts.rtmode && ~strcmp('suspect',dbdat.status) && ~any(stage==2) && ~opts.redo
+             ~any(stage==2) && ~opts.redo
          % If not reprocessing, and not a "suspect" float, create tesac
          % file. Disabled, 2 July, 2018
          % 	    write_tesac(dbdat,float(np));

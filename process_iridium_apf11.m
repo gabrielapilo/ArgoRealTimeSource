@@ -667,13 +667,13 @@ end
         
         % Range check (just to alert our personnel to investigate)
         check_profile(float(np));
-        rejtests = [2 3 4 13];
+        rejtests = [1 2 3 4];
         
         if any(float(np).testsfailed(rejtests))
             % Will not transmit this profile because of failing critical tests
             logerr(3,'Failed critical QC, so no BUFR msg sent!');
             prec.gts_count = 99;
-        elseif opts.rtmode && ~strcmp('suspect',dbdat.status)
+        elseif opts.rtmode && ~strcmp('hold',dbdat.status)
             % If not reprocessing, and not a "suspect" float, create tesac file
 %             write_tesac(dbdat,float(np));
             
@@ -684,11 +684,11 @@ end
             else
                 prec.gts_count = 99;
             end                
-        elseif strcmp('dead',dbdat.status) | strcmp('exhausted',dbdat.status)
+        end
+        if strcmp('dead',dbdat.status) | strcmp('exhausted',dbdat.status)
             % dead float returned - send email to alert operator -
             mail_out_dead_float(dbdat.wmo_id);
         end
-        
         %         export_text_files
         prec.prof_nc_count = 0;
     end
