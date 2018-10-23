@@ -25,7 +25,10 @@ idatapath = [solo2_path];
 % list all .eml files
 a=dirc([idatapath '*_*.eml']);
 b=dirc([idatapath '*_*.sbd']);
-[m,n]=size(a)
+[m,n]=size(a);
+if m == 0
+    return
+end
 
 crash2=0;
 sbdm=[];
