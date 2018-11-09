@@ -47,16 +47,12 @@ aa = aa(:,1:end-3);
 
 if length(nn) ~= max([length(aa),length(bb)])
     [nfils,infl] = max([size(aa,1), size(bb,1)]);
-    if infl == 1
-        flns = aa;
-        ext = 'log';
-    else
-        flns = bb;
-        ext = 'msg';
-    end
     for ii = 1:nfils
-        if ~ismember(flns(ii,:),nn,'rows')
-            mail_out_iridium_log_error([flns(ii,:) ext],1);
+        if ~ismember(aa(ii,:),nn,'rows')
+            mail_out_iridium_log_error([aa(ii,:) 'log'],1);
+        end
+        if ~ismember(bb(ii,:),nn,'rows')
+            mail_out_iridium_log_error([bb(ii,:) 'msg'],1);
         end
     end
 end
