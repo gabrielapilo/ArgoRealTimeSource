@@ -45,7 +45,7 @@ aa = char(logfn{:,1});
 aa = aa(:,1:end-3);
 [nn,ia,ib] = intersect(aa,bb,'rows');
 
-if any(ia ~= ib)
+if length(nn) ~= max([length(aa),length(bb)])
     [nfils,infl] = max([size(aa,1), size(bb,1)]);
     if infl == 1
         flns = aa;
