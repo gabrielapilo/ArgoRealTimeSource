@@ -1641,13 +1641,16 @@ for h=1:jj
    
 end
 
+%TEMP
+a1='Temperature ITS-90 = 1/ { a0 + a1[lambda nu (n)] + a2 [lambda nu^2 (n)] + a3 [lambda nu^3 (n)]} - 273.15 (deg C) ';
+%COND
+a2=' f = inst freq * sqrt(1.0 + WBOTC * t) / 1000.0; t = temperature [deg C]; p = pressure [decibars]; delta = CTcor; epsilon = CPcor; Conductivity = (g + hf^2 + if^3 + jf^4)/(1+ delta t + epsilon p) Siemens/meter ';
+%PRES
 if dbdat.deploy_num<=8
-   a1='n = instrument output - (ptca1 * t + ptca2 * t^2);  pressure (psia) = pa0 + pa1 * n + pa2 * n^2 ';
+   a3='n = instrument output - (ptca1 * t + ptca2 * t^2);  pressure (psia) = pa0 + pa1 * n + pa2 * n^2 ';
 else
-   a1='y=thermistor output; t=PTHA0+PTHA1*y+PTHA2*y^2; x=pressure output-PTCA0+PTCA1*t+PTCA2*t^2; n=x*PTCB0/(PTCB0+PTCB1*t+PTCB2*t^2); pressure (psia)=PA0+PA1*n+PA2*n^2';
+   a3='y=thermistor output; t=PTHA0+PTHA1*y+PTHA2*y^2; x=pressure output-PTCA0+PTCA1*t+PTCA2*t^2; n=x*PTCB0/(PTCB0+PTCB1*t+PTCB2*t^2); pressure (psia)=PA0+PA1*n+PA2*n^2';
 end
-a2='Temperature ITS-90 = 1/ { a0 + a1[lambda nu (n)] + a2 [lambda nu^2 (n)] + a3 [lambda nu^3 (n)]} - 273.15 (deg C) ';
-a3=' f = inst freq * sqrt(1.0 + WBOTC * t) / 1000.0; t = temperature [deg C]; p = pressure [decibars]; delta = CTcor; epsilon = CPcor; Conductivity = (g + hf^2 + if^3 + jf^4)/(1+ delta t + epsilon p) Siemens/meter ';
 
 netcdf.putVar(ncid,PREDEPCALEQNID,[0,0],[length(a1),1],a1);
 netcdf.putVar(ncid,PREDEPCALEQNID,[0,1],[length(a2),1],a2);
@@ -1655,17 +1658,17 @@ netcdf.putVar(ncid,PREDEPCALEQNID,[0,2],[length(a3),1],a3);
 
 plist = {'PA0','PA1','PA2','PTCA0','PTCA1','PTCA2','PTCB0','PTCB1','PTCB2',...
 	 'PTHA0','PTHA1','PTHA2'};
-a1 = sprintf('ser# = %s pressure coeffs:',sbeSN);
+a3 = sprintf('ser# = %s pressure coeffs:',sbeSN);
 for ii = 1:length(plist)
    ss = eval(['caldb.' plist{ii}]);
    if ~isempty(ss)
-      a1 = [a1 ' ' plist{ii} ' = ' num2str(ss)];
+      a3 = [a3 ' ' plist{ii} ' = ' num2str(ss)];
    end
 end
-a2 = sprintf(['ser# = %s temperature coeffs: A0 = %8.4f A1 = %8.4f ' ...
+a1 = sprintf(['ser# = %s temperature coeffs: A0 = %8.4f A1 = %8.4f ' ...
 	      'A2 = %8.4f A3 = %8.4f '],...
 	     sbeSN, caldb.TA0, caldb.TA1, caldb.TA2, caldb.TA3);
-a3 = sprintf(['ser# = %s conductivity coeffs: G = %8.4f H = %8.4f I = %8.4f' ...
+a2 = sprintf(['ser# = %s conductivity coeffs: G = %8.4f H = %8.4f I = %8.4f' ...
 	      ' J = %8.4f CPCOR = %8.4f CTCOR = %8.4f WBOTC = %8.4f '],...
 	     sbeSN, caldb.G, caldb.H, caldb.I, ...
 	     caldb.J, caldb.CPCOR, caldb.CTCOR, caldb.WBOTC);
@@ -1710,6 +1713,7 @@ if dbdat.oxy
             netcdf.putVar(ncid,PREDEPCALEQNID,[0,jj-1],[length(a4),1],a4);
             
         end
+        jj = jj+1; %add another empty field for the frequency doxy parameter
     end
     if isfield(fpp,'Bphase_raw')  %    case {1002, 1012, 1006, 1020}  % convertBphase
            if isempty(cal.a7) | cal.a7==0
