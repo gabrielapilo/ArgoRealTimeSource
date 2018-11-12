@@ -45,7 +45,7 @@ aa = char(logfn{:,1});
 aa = aa(:,1:end-3);
 [nn,ia,ib] = intersect(aa,bb,'rows');
 
-if length(nn) ~= max([length(aa),length(bb)])
+if size(nn,1) ~= max([size(aa,1),size(bb,1)])
     [nfils,infl] = max([size(aa,1), size(bb,1)]);
     for ii = 1:nfils
         if ~ismember(aa(ii,:),nn,'rows')
