@@ -854,7 +854,7 @@ if dbdat.RBR
 else
     netcdf.putVar(ncid,SENSORMAKERID,[0,0],[3,1],'SBE');
     netcdf.putVar(ncid,SENSORMAKERID,[0,1],[3,1],'SBE');
-    netcdf.putVar(ncid,SENSORMAKERID,[0,2],[3,1],'SBE');
+    netcdf.putVar(ncid,SENSORMAKERID,[0,2],[length(dbdat.pressure_sensor),1],dbdat.pressure_sensor);
 end
 nn = length(s.CTDtype);
 netcdf.putVar(ncid,SENSORMODELID,[0,0],[nn,1],s.CTDtype);
