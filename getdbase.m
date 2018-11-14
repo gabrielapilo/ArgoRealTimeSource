@@ -119,7 +119,6 @@ if isempty(THE_ARGO_FLOAT_DB)
                            T(ientry).boardtype = [];
                        end
                    end
-                   T(ientry).iridium = ~isempty(strfind(lower(fld),'i'));
                case 20
                    T(ientry).oxysens_snum = str2num(fld);
                case 21
@@ -185,11 +184,7 @@ if isempty(THE_ARGO_FLOAT_DB)
                    fld = upper(fld);
                    T(ientry).pressure_sensor = fld;
                case 35
-                   fld = lower(fld);
-                   % Check the end-of-row marker (not really necessary, but safer)
-                   if isempty(strfind(fld,'endrow'))
-                       disp(['GETDBASE: No "endrow" at col 31, row ' num2str(ientry)]);
-                   end
+                   T(ientry).iridium = ~isempty(strfind(lower(fld),'iridium'));                   
                otherwise
                    % we don't need these other fields (for now)
                    
