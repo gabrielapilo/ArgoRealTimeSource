@@ -1017,7 +1017,7 @@ if dbdat.tmiss
     jj=jj+1;
     aa=s.Transmissometer.mfg;
     netcdf.putVar(ncid,SENSORMAKERID,[0,jj-1],[length(aa),1],aa);
-    aa='TRANSMISSOMETER_CP';
+    aa='TRANSMISSOMETER_CP660';
     netcdf.putVar(ncid,SENSORID,[0,jj-1],[length(aa),1],aa);
     aa=s.Transmissometer.ModelNo;
     netcdf.putVar(ncid,SENSORMODELID,[0,jj-1],[length(aa),1],aa);
@@ -1320,14 +1320,14 @@ if dbdat.tmiss
     jj=jj+1;
     aa='TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660';  %raw
     netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-    aa='TRANSMISSOMETER_CP';
+    aa='TRANSMISSOMETER_CP660';
     netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
     aa='count';
     netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
     jj=jj+1;
     aa='CP660'; %derived - orig:PARTICLE_BEAM_ATTENUATION
     netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-    aa='TRANSMISSOMETER_CP';
+    aa='TRANSMISSOMETER_CP660';
     netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
     aa='m-1';
     netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
