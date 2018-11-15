@@ -3100,7 +3100,9 @@ for ii = 1:nin
     
     s=getadditionalinfo(dbdat.wmo_id);
     aa=s.Firmware_Revision;
-    netcdf.putVar(ncid,NFIRVERID,[0,ii-1],[length(aa),1],aa);
+    if ~isempty(aa)
+        netcdf.putVar(ncid,NFIRVERID,[0,ii-1],[length(aa),1],aa);
+    end
     
     %position information
     %find the first occurrence of a good position

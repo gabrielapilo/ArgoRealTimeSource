@@ -51,7 +51,9 @@ for ii = ipf(:)'
             return
         end
     end
-    
+    if isempty(fp.pos_qc)
+        fp.pos_qc = zeros(1,length(fp.lat),'uint8');
+    end        
     if  ~isempty(fp.p_raw)
         fp.p_qc = ones(size(fp.p_raw),'uint16');
         jj = find(isnan(fp.p_raw));
@@ -446,7 +448,7 @@ for ii = ipf(:)'
         fp.testsfailed(9) = 1;
     end
     if dbdat.oxy
-        if length(fp.oxy_raw)~=length(fp.p_raw)
+        if length(fp.oxy_raw)~=length(fp.p_raw) | isempty(fp.oxy_raw)
             po=fp.p_oxygen;
         else
             po=fp.p_raw;
