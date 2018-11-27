@@ -684,44 +684,40 @@ end
 
 netcdf.putVar(ncid,PLATFAMID,0,5,'FLOAT');
 
-if dbdat.maker==1
-    netcdf.putVar(ncid,PLATMAKERID,0,3,'WRC');
-    if dbdat.subtype==0
-        netcdf.putVar(ncid,PLATTYPID,0,6,'PALACE');
-    else
-        netcdf.putVar(ncid,PLATTYPID,0,4,'APEX');
+    switch dbdat.wmo_inst_type
+        case '831'
+            aa = 'PALACE ';
+            mak = 'WRC';
+        case '846'
+            aa = 'APEX ';
+            mak = 'WRC/TWR';
+        case '841'
+            aa = 'PROVOR_MT';
+            mak = 'METOCEAN'
+        case '839'
+            aa = 'PROVOR_II';
+            mak = 'NKE';
+        case '844'
+            aa = 'ARVOR ';
+            mak = 'NKE';
+        case '851'
+            aa = 'SOLO_W ';
+            mak = 'WHOI';
+        case '863'
+            aa = 'NAVIS_A ';
+            mak = 'SBE';
+        case '869'
+            aa = ['NAVIS_EBR '];
+            mak = 'SBE';
+        case '854'
+            aa = ['S2A '];
+            mak = 'MRV';
     end
-   
-% ======== Modified by uday to accomodate PROVOR and ARVOR type floats =========
-elseif dbdat.maker==2
-   if dbdat.subtype==3 | dbdat.subtype==1
-       netcdf.putVar(ncid,PLATMAKERID,0,8,'METOCEAN');
-       netcdf.putVar(ncid,PLATTYPID,0,9,'PROVOR_MT');
-   else
-       if dbdat.subtype==4 | dbdat.subtype==5
-           netcdf.putVar(ncid,PLATMAKERID,0,3,'NKE');
-           if dbdat.wmo_inst_type=='844'
-               netcdf.putVar(ncid,PLATTYPID,0,9,'PROVOR_II');
-           else
-               netcdf.putVar(ncid,PLATTYPID,0,5,'ARVOR');
-           end
-       end
-   end
- % ======== end of uday modification ==============
- 
-elseif dbdat.maker==3
-    netcdf.putVar(ncid,PLATMAKERID,0,4,'WHOI');
-    netcdf.putVar(ncid,PLATTYPID,0,6,'SOLO_W');
+plattype = repmat(' ',1,32);
+plattype(1:length(aa)) = aa; 
 
-elseif dbdat.maker==4
-    netcdf.putVar(ncid,PLATMAKERID,0,3,'SBE');
-    netcdf.putVar(ncid,PLATTYPID,0,7,'NAVIS_A');
-
-elseif dbdat.maker==5
-    netcdf.putVar(ncid,PLATMAKERID,0,3,'MRV');
-    netcdf.putVar(ncid,PLATTYPID,0,3,'S2A');
-
-end
+netcdf.putVar(ncid,PLATTYPID,0,32,plattype);
+netcdf.putVar(ncid,PLATMAKERID,0,length(mak),mak);
 
 aa=mission.data{29};
 if isempty(aa)
