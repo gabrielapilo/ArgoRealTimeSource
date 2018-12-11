@@ -690,7 +690,7 @@ netcdf.putVar(ncid,PLATFAMID,0,5,'FLOAT');
             mak = 'WRC';
         case '846'
             aa = 'APEX ';
-            mak = 'WRC/TWR';
+            mak = 'TWR';
         case '841'
             aa = 'PROVOR_MT';
             mak = 'METOCEAN'
