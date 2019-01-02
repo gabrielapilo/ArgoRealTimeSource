@@ -7,6 +7,7 @@
 %  download to use and reprocesses all intervening profiles.
 %
 % if 'retrieve is set to 1, then profiles are restored to quality 1.
+% Set retrieve to -1 to greylist
 %
 % usage: rerun_grey_listed(dbdat,startprof,endprof,[retrieve],[flg])
 
@@ -18,7 +19,7 @@ end
 if nargin<=3
     retrieve=-1;
 end
-    
+
 [fpp,dbdat]=getargo(wmo_id);
 if endprof > length(fpp)
     endprof = length(fpp);

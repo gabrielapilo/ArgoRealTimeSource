@@ -6,12 +6,12 @@ global ARGO_SYS_PARAM
 if isempty(ARGO_SYS_PARAM)
    set_argo_sys_params;
 end
-kk = [5905397
-    5905396
+kk = [5904260
+    5903911
    ];
 
 getdbase(0);
-for ii = 1:length(kk)%1:length(THE_ARGO_FLOAT_DB)
+for ii = 1:length(kk)%length(THE_ARGO_FLOAT_DB)%%
     [fpp,dbdat] = getargo(kk(ii));
 %     [fpp,dbdat] = getargo(THE_ARGO_FLOAT_DB(ii).wmo_id);
     if ~isempty(fpp)
