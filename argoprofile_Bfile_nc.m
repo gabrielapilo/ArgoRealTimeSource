@@ -3100,7 +3100,9 @@ for ii = 1:nin
     
     s=getadditionalinfo(dbdat.wmo_id);
     aa=s.Firmware_Revision;
-    netcdf.putVar(ncid,NFIRVERID,[0,ii-1],[length(aa),1],aa);
+    if ~isempty(aa)
+        netcdf.putVar(ncid,NFIRVERID,[0,ii-1],[length(aa),1],aa);
+    end
     
     %position information
     %find the first occurrence of a good position
@@ -4203,6 +4205,19 @@ end
 netcdf.putVar(ncid,NPARADAMOID,[0,0],[n,m],pdm');
 
 netcdf.close(ncid)
+
+if exist('isingdac')==2
+    if isingdac(fname)~=2 & ~strcmp('evil',dbdat.status) & ~strcmp('hold',dbdat.status) %DON'T DELIVER these!!!!!
+        if ispc
+            [status,ww] = system(['copy /Y ' fname ' ' ARGO_SYS_PARAM.root_dir 'export']);
+        else
+            [status,ww] = system(['cp -f ' fname ' ' ARGO_SYS_PARAM.root_dir 'export']);
+        end
+        if status~=0
+            logerr(3,['Copy of ' fname ' to export/ failed:' ww]);
+        end
+    end
+end
 
 
 %----------------------------------------------------------------------------

@@ -70,7 +70,7 @@ for ii = 1:length(PROC_RECORDS)
                 %sent.
                 [st2,fnm2] = system(['find ' backupdir '/' num2str(pr.wmo_id) ' -name ''*R' num2str(pr.wmo_id) '_' pno '.bin'' -print']);
                 if st2 ~= 0 | isempty(fnm2)
-                    if today-fpp(pnum).jday(1)<=40 %only warn us if inside GTS delivery window
+                    if today-fpp(pnum).jday(1)<=20 %only warn us if inside GTS delivery window
                         logerr(5,['Cannot find BUFR file for ' num2str(pr.wmo_id)]);
                     else
                         %reset GTS counts
@@ -81,7 +81,7 @@ for ii = 1:length(PROC_RECORDS)
                     pr.gts_count = DoneFlag;
                 end
             else
-                if today-fpp(pnum).jday(1)>40 %outside GTS delivery window
+                if today-fpp(pnum).jday(1)>20 %outside GTS delivery window
                     %remove from the BUFR delivery directory
                     [~,ij] = regexp( fnm, '[^\w/.]', 'match' ); %how many files?
                     s = 1;

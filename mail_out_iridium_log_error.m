@@ -3,12 +3,20 @@ function mail_out_iridium_log_error(filename,type)
 
 global ARGO_SYS_PARAM ARGO_ID_CROSSREF
 
-if strmatch('f',filename)
-    fl=str2num(filename(2:5));
-else
-    fl=str2num(filename(1:4));
+try
+    if strfind('f',filename)
+        fl=str2num(filename(2:5));
+    else
+        fl=str2num(filename(1:4));
+    end
+catch
+    fl = str2num(filename);
 end
-kk=find(ARGO_ID_CROSSREF(:,2)==fl);
+if ~isempty(fl)
+    kk=find(ARGO_ID_CROSSREF(:,2)==fl);
+else
+    kk = [];
+end
 
 
 filebad='badfile.txt';

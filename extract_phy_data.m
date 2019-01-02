@@ -8,12 +8,14 @@ Too_Old_Days = 11;         % Realtime: no interested beyond 10 and a bit days.
 jnow = julian(clock);      % Local time - now
 
 eval(['cd ' ARGO_SYS_PARAM.iridium_path]);
-idatapath = ARGO_SYS_PARAM.iridium_path
+idatapath = ARGO_SYS_PARAM.iridium_path;
 
 % list all .phy (Polynya) files
 a=dirc([idatapath '*.phy']);
 [m,n]=size(a);
-
+if m == 0
+    return
+end
 % no error checking except for xero size files - we rely on the data transfer to be correct until
 % shown otherwise!
 

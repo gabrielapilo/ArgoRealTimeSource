@@ -299,7 +299,6 @@ if dbdat.pH
 end
  
 if isfield(fpp,'Tilt')
-    jj=jj+1;
     n_param=n_param+1;
 end
 
@@ -685,44 +684,40 @@ end
 
 netcdf.putVar(ncid,PLATFAMID,0,5,'FLOAT');
 
-if dbdat.maker==1
-    netcdf.putVar(ncid,PLATMAKERID,0,3,'WRC');
-    if dbdat.subtype==0
-        netcdf.putVar(ncid,PLATTYPID,0,6,'PALACE');
-    else
-        netcdf.putVar(ncid,PLATTYPID,0,4,'APEX');
+    switch dbdat.wmo_inst_type
+        case '831'
+            aa = 'PALACE ';
+            mak = 'WRC';
+        case '846'
+            aa = 'APEX ';
+            mak = 'TWR';
+        case '841'
+            aa = 'PROVOR_MT';
+            mak = 'METOCEAN'
+        case '839'
+            aa = 'PROVOR_II';
+            mak = 'NKE';
+        case '844'
+            aa = 'ARVOR ';
+            mak = 'NKE';
+        case '851'
+            aa = 'SOLO_W ';
+            mak = 'WHOI';
+        case '863'
+            aa = 'NAVIS_A ';
+            mak = 'SBE';
+        case '869'
+            aa = ['NAVIS_EBR '];
+            mak = 'SBE';
+        case '854'
+            aa = ['S2A '];
+            mak = 'MRV';
     end
-   
-% ======== Modified by uday to accomodate PROVOR and ARVOR type floats =========
-elseif dbdat.maker==2
-   if dbdat.subtype==3 | dbdat.subtype==1
-       netcdf.putVar(ncid,PLATMAKERID,0,8,'METOCEAN');
-       netcdf.putVar(ncid,PLATTYPID,0,9,'PROVOR_MT');
-   else
-       if dbdat.subtype==4 | dbdat.subtype==5
-           netcdf.putVar(ncid,PLATMAKERID,0,3,'NKE');
-           if dbdat.wmo_inst_type=='844'
-               netcdf.putVar(ncid,PLATTYPID,0,9,'PROVOR_II');
-           else
-               netcdf.putVar(ncid,PLATTYPID,0,5,'ARVOR');
-           end
-       end
-   end
- % ======== end of uday modification ==============
- 
-elseif dbdat.maker==3
-    netcdf.putVar(ncid,PLATMAKERID,0,4,'WHOI');
-    netcdf.putVar(ncid,PLATTYPID,0,6,'SOLO_W');
+plattype = repmat(' ',1,32);
+plattype(1:length(aa)) = aa; 
 
-elseif dbdat.maker==4
-    netcdf.putVar(ncid,PLATMAKERID,0,3,'SBE');
-    netcdf.putVar(ncid,PLATTYPID,0,7,'NAVIS_A');
-
-elseif dbdat.maker==5
-    netcdf.putVar(ncid,PLATMAKERID,0,3,'MRV');
-    netcdf.putVar(ncid,PLATTYPID,0,3,'S2A');
-
-end
+netcdf.putVar(ncid,PLATTYPID,0,32,plattype);
+netcdf.putVar(ncid,PLATMAKERID,0,length(mak),mak);
 
 aa=mission.data{29};
 if isempty(aa)
@@ -760,6 +755,7 @@ if dbdat.wmo_id==53548
 end
 
 aa=s.Battery_Configuration;
+netcdf.putVar(ncid,BATPKSID,0,length(aa),aa);
 li=strfind(aa,'Li');
 alk=strfind(aa,'Alk');
 if ~isempty(li) & ~isempty(alk)
@@ -776,7 +772,6 @@ else
     netcdf.putVar(ncid,BATTYID,0,length(aa),aa);
 end
 
-netcdf.putVar(ncid,BATPKSID,0,length(aa),aa);
 
 if ~isempty(dbdat.boardtype)
     if dbdat.boardtype==8
@@ -855,7 +850,7 @@ if dbdat.RBR
 else
     netcdf.putVar(ncid,SENSORMAKERID,[0,0],[3,1],'SBE');
     netcdf.putVar(ncid,SENSORMAKERID,[0,1],[3,1],'SBE');
-    netcdf.putVar(ncid,SENSORMAKERID,[0,2],[3,1],'SBE');
+    netcdf.putVar(ncid,SENSORMAKERID,[0,2],[length(dbdat.pressure_sensor),1],dbdat.pressure_sensor);
 end
 nn = length(s.CTDtype);
 netcdf.putVar(ncid,SENSORMODELID,[0,0],[nn,1],s.CTDtype);
@@ -1018,7 +1013,7 @@ if dbdat.tmiss
     jj=jj+1;
     aa=s.Transmissometer.mfg;
     netcdf.putVar(ncid,SENSORMAKERID,[0,jj-1],[length(aa),1],aa);
-    aa='TRANSMISSOMETER_CP';
+    aa='TRANSMISSOMETER_CP660';
     netcdf.putVar(ncid,SENSORID,[0,jj-1],[length(aa),1],aa);
     aa=s.Transmissometer.ModelNo;
     netcdf.putVar(ncid,SENSORMODELID,[0,jj-1],[length(aa),1],aa);
@@ -1122,17 +1117,6 @@ if dbdat.pH
     netcdf.putVar(ncid,SENSORSERNOID,[0,jj-1],[length(aa),1],aa);
 end
 
-if isfield(fpp,'Tilt')
-    jj=jj+1;
-    aa=s.Irr.mfg;
-    netcdf.putVar(ncid,SENSORMAKERID,[0,jj-1],[length(aa),1],aa);
-    aa='RADIOMETER_PAR';
-    netcdf.putVar(ncid,SENSORID,[0,jj-1],[length(aa),1],aa);
-    aa=s.Irr.ModelNo;
-    netcdf.putVar(ncid,SENSORMODELID,[0,jj-1],[length(aa),1],aa);
-    aa=s.Irr.SerialNo;
-    netcdf.putVar(ncid,SENSORSERNOID,[0,jj-1],[length(aa),1],aa);
-end
 
 netcdf.putVar(ncid,NPARAID,[0,0],[4,1],'TEMP');
 netcdf.putVar(ncid,NPARAID,[0,1],[4,1],'PSAL');
@@ -1332,14 +1316,14 @@ if dbdat.tmiss
     jj=jj+1;
     aa='TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660';  %raw
     netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-    aa='TRANSMISSOMETER_CP';
+    aa='TRANSMISSOMETER_CP660';
     netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
     aa='count';
     netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
     jj=jj+1;
     aa='CP660'; %derived - orig:PARTICLE_BEAM_ATTENUATION
     netcdf.putVar(ncid,NPARAID,[0,jj-1],[length(aa),1],aa);
-    aa='TRANSMISSOMETER_CP';
+    aa='TRANSMISSOMETER_CP660';
     netcdf.putVar(ncid,NPARSENSID,[0,jj-1],[length(aa),1],aa);
     aa='m-1';
     netcdf.putVar(ncid,NPARUNITID,[0,jj-1],[length(aa),1],aa);
@@ -1653,13 +1637,16 @@ for h=1:jj
    
 end
 
+%TEMP
+a1='Temperature ITS-90 = 1/ { a0 + a1[lambda nu (n)] + a2 [lambda nu^2 (n)] + a3 [lambda nu^3 (n)]} - 273.15 (deg C) ';
+%COND
+a2=' f = inst freq * sqrt(1.0 + WBOTC * t) / 1000.0; t = temperature [deg C]; p = pressure [decibars]; delta = CTcor; epsilon = CPcor; Conductivity = (g + hf^2 + if^3 + jf^4)/(1+ delta t + epsilon p) Siemens/meter ';
+%PRES
 if dbdat.deploy_num<=8
-   a1='n = instrument output - (ptca1 * t + ptca2 * t^2);  pressure (psia) = pa0 + pa1 * n + pa2 * n^2 ';
+   a3='n = instrument output - (ptca1 * t + ptca2 * t^2);  pressure (psia) = pa0 + pa1 * n + pa2 * n^2 ';
 else
-   a1='y=thermistor output; t=PTHA0+PTHA1*y+PTHA2*y^2; x=pressure output-PTCA0+PTCA1*t+PTCA2*t^2; n=x*PTCB0/(PTCB0+PTCB1*t+PTCB2*t^2); pressure (psia)=PA0+PA1*n+PA2*n^2';
+   a3='y=thermistor output; t=PTHA0+PTHA1*y+PTHA2*y^2; x=pressure output-PTCA0+PTCA1*t+PTCA2*t^2; n=x*PTCB0/(PTCB0+PTCB1*t+PTCB2*t^2); pressure (psia)=PA0+PA1*n+PA2*n^2';
 end
-a2='Temperature ITS-90 = 1/ { a0 + a1[lambda nu (n)] + a2 [lambda nu^2 (n)] + a3 [lambda nu^3 (n)]} - 273.15 (deg C) ';
-a3=' f = inst freq * sqrt(1.0 + WBOTC * t) / 1000.0; t = temperature [deg C]; p = pressure [decibars]; delta = CTcor; epsilon = CPcor; Conductivity = (g + hf^2 + if^3 + jf^4)/(1+ delta t + epsilon p) Siemens/meter ';
 
 netcdf.putVar(ncid,PREDEPCALEQNID,[0,0],[length(a1),1],a1);
 netcdf.putVar(ncid,PREDEPCALEQNID,[0,1],[length(a2),1],a2);
@@ -1667,17 +1654,17 @@ netcdf.putVar(ncid,PREDEPCALEQNID,[0,2],[length(a3),1],a3);
 
 plist = {'PA0','PA1','PA2','PTCA0','PTCA1','PTCA2','PTCB0','PTCB1','PTCB2',...
 	 'PTHA0','PTHA1','PTHA2'};
-a1 = sprintf('ser# = %s pressure coeffs:',sbeSN);
+a3 = sprintf('ser# = %s pressure coeffs:',sbeSN);
 for ii = 1:length(plist)
    ss = eval(['caldb.' plist{ii}]);
    if ~isempty(ss)
-      a1 = [a1 ' ' plist{ii} ' = ' num2str(ss)];
+      a3 = [a3 ' ' plist{ii} ' = ' num2str(ss)];
    end
 end
-a2 = sprintf(['ser# = %s temperature coeffs: A0 = %8.4f A1 = %8.4f ' ...
+a1 = sprintf(['ser# = %s temperature coeffs: A0 = %8.4f A1 = %8.4f ' ...
 	      'A2 = %8.4f A3 = %8.4f '],...
 	     sbeSN, caldb.TA0, caldb.TA1, caldb.TA2, caldb.TA3);
-a3 = sprintf(['ser# = %s conductivity coeffs: G = %8.4f H = %8.4f I = %8.4f' ...
+a2 = sprintf(['ser# = %s conductivity coeffs: G = %8.4f H = %8.4f I = %8.4f' ...
 	      ' J = %8.4f CPCOR = %8.4f CTCOR = %8.4f WBOTC = %8.4f '],...
 	     sbeSN, caldb.G, caldb.H, caldb.I, ...
 	     caldb.J, caldb.CPCOR, caldb.CTCOR, caldb.WBOTC);
@@ -1722,6 +1709,7 @@ if dbdat.oxy
             netcdf.putVar(ncid,PREDEPCALEQNID,[0,jj-1],[length(a4),1],a4);
             
         end
+        jj = jj+1; %add another empty field for the frequency doxy parameter
     end
     if isfield(fpp,'Bphase_raw')  %    case {1002, 1012, 1006, 1020}  % convertBphase
            if isempty(cal.a7) | cal.a7==0

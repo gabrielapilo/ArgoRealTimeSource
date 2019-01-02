@@ -259,8 +259,21 @@ def createemailscrape(verbose,path,email_uid,c,my_log):
 		addr = config.get('account','addr')
 		domain = config.get('account','domain')
 		user_savename = addr.rstrip(domain)
-                newfileName = user_savename+"-"+email_uid+".txt"
-     
+
+                #make the filename contain the IMEI number 
+                hdrfetchstatus, hdrdata = c.uid('FETCH', email_uid, '(RFC822)')
+	        if hdrfetchstatus == 'OK':
+                    hdrmail = email.message_from_string(hdrdata[0][1])
+                    #print hdrmail
+                    # get the subject right away; if no subject; a new module would be needed as this one filters on subject!
+                    decode = email.header.decode_header(hdrmail['Subject'])[0]
+                    if decode is not None or decode !='':
+			subject = unicode(decode[0])
+                        junk,imei = subject.split("Unit: ")
+                        newfileName = imei+"_"+email_uid+".txt"
+                    else:
+                        newfileNema = user_savename+"_"+email_uid+".txt"
+                    
 	        # only create if it does not exist
                 if bool(newfileName):
 			filePath = os.path.join(path, newfileName)

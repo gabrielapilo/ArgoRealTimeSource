@@ -108,6 +108,8 @@ end
 %put in the on_deployment structure too
 if pn == 1
     traj(1).on_deployment = [];
+    traj(1).traj_mc_order = [];
+    traj(1).traj_mc_index = [];
 end
 
 rtc_skew = 0;

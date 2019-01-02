@@ -760,6 +760,8 @@ for ii = 1:nin
             aa = ['SOLO_W '];
         case '863'
             aa = ['NAVIS_A '];
+        case '869'
+            aa = ['NAVIS_EBR '];
         case '854'
             aa = ['S2A '];
     end

@@ -45,19 +45,14 @@ aa = char(logfn{:,1});
 aa = aa(:,1:end-3);
 [nn,ia,ib] = intersect(aa,bb,'rows');
 
-if any(ia ~= ib)
-    [nfils,infl] = max([size(aa,1), size(bb,1)]);
-    if infl == 1
-        flns = aa;
-        ext = 'log';
-    else
-        flns = bb;
-        ext = 'msg';
+for ii = 1:size(aa,1)
+    if ~ismember(aa(ii,:),nn,'rows')
+        mail_out_iridium_log_error([aa(ii,:) 'log'],1);
     end
-    for ii = 1:nfils
-        if ~ismember(flns(ii,:),nn,'rows')
-            mail_out_iridium_log_error([flns(ii,:) ext],1);
-        end
+end
+for ii = 1:size(bb,1)
+    if ~ismember(bb(ii,:),nn,'rows')
+        mail_out_iridium_log_error([bb(ii,:) 'msg'],1);
     end
 end
 

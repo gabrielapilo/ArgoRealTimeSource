@@ -22,6 +22,34 @@ function [outcome] = write_BUFR(dbdat,fp)
 global ARGO_SYS_PARAM
 outcome = 0;
 
+%lets be sophistocated here and check that the time is within GTS time
+today=julian(clock);
+if today-fp.jday(1)>20 %outside GTS delivery window
+    return
+end
+
+% text file directory - create if it doesn't exist
+textfiledirnm = [ARGO_SYS_PARAM.root_dir 'textfiles/' int2str(dbdat.wmo_id) '/' ];
+
+% copy the files to the text file backup
+if exist(textfiledirnm,'dir') ~= 7
+    system(['mkdir ' textfiledirnm]);
+end
+
+%now lets see if we have already sent a GTS message
+pno=sprintf('%3.3i',fp.profile_number);
+[st2,fnm2] = system(['find ' textfiledirnm ' -name ''*R' num2str(fp.wmo_id) '_' pno '.bin'' -print']);
+if st2 ~= 0
+    %no such file or directory, continue creating file!
+    logerr(3,['Error in write_BUFR finding folder, this should not happen: ' fnm2]);
+    return
+end
+if ~isempty(fnm2)
+    %already sent it, don't go any further
+    logerr(5,['GTS message already sent: ' fnm2]);
+    return
+end
+
 %position information
 %find the first occurrence of a good position
 order = [1,2,0,5,8,9];
@@ -146,13 +174,6 @@ else
     outcome = 1;
 end
 
-% text file directory
-textfiledirnm = [ARGO_SYS_PARAM.root_dir 'textfiles/' int2str(dbdat.wmo_id) '/' ];
-
-% copy the files to the text file backup
-if ~exist(textfiledirnm)
-    system(['mkdir ' textfiledirnm]);
-end
 system(['cp ' outfile ' ' textfiledirnm]);
 
 % copy the files to the export_BUFR directory 

@@ -51,107 +51,109 @@ for ii = ipf(:)'
             return
         end
     end
-   
-   if  ~isempty(fp.p_raw)
-      fp.p_qc = ones(size(fp.p_raw),'uint16');
-      jj = find(isnan(fp.p_raw));
-      fp.p_qc(jj) = 9;
-   end
-   if  ~isempty(fp.t_raw)
-      fp.t_qc = ones(size(fp.t_raw),'uint16');
-      jj = find(isnan(fp.t_raw));
-      fp.t_qc(jj) = 9;
-   end
-   if  ~isempty(fp.s_raw)
-      fp.s_qc = ones(size(fp.s_raw),'uint16');
-      jj = find(isnan(fp.s_raw));
-      fp.s_qc(jj) = 9;
-   end
-   if isfield(fp,'cndc_raw')
-      if  ~isempty(fp.cndc_raw)
-	 fp.cndc_qc = ones(size(fp.cndc_raw),'uint16');
-	 jj = find(isnan(fp.cndc_raw));
-	 fp.cndc_qc(jj) = 9;
-      end
-   end
-   if isfield(fp,'oxy_raw')
-      if  ~isempty(fp.oxy_raw)
-	 fp.oxy_qc = ones(size(fp.oxy_raw),'uint16');
-	 jj = find(isnan(fp.oxy_raw));
-	 fp.oxy_qc(jj) = 9;
-      end
-   end
-   if isfield(fp,'oxyT_raw')
-      if  ~isempty(fp.oxyT_raw)
-	 fp.oxyT_qc = ones(size(fp.oxyT_raw),'uint16');
-	 jj = find(isnan(fp.oxyT_raw));
-	 fp.oxyT_qc(jj) = 9;
-      end
-   end
-   if isfield(fp,'tm_counts')
-      if ~isempty(fp.tm_counts)
-	 fp.tm_qc = zeros(size(fp.tm_counts),'uint16');
-	 jj = find(isnan(fp.tm_counts));
-	 fp.tm_qc(jj) = 9;
-      end
-   end
-   if isfield(fp,'CP_raw')
-      if ~isempty(fp.CP_raw)
-	 fp.CP_qc = zeros(size(fp.CP_raw),'uint16');
-	 jj = find(isnan(fp.CP_raw));
-	 fp.CP_qc(jj) = 9;
-      end
-   end
-   if isfield(fp,'CHLa_raw')
-      if ~isempty(fp.CHLa_raw)
-	 fp.CHLa_qc = zeros(size(fp.CHLa_raw),'uint16');
-	 jj = find(isnan(fp.CHLa_raw));
-	 fp.CHLa_qc(jj) = 9;
-      end
-   end
-   if isfield(fp,'BBP700_raw')
-      if ~isempty(fp.BBP700_raw)
-	 fp.BBP700_qc = zeros(size(fp.BBP700_raw),'uint16');
-	 jj = find(isnan(fp.BBP700_raw));
-	 fp.BBP700_qc(jj) = 9;
-      end
-   end
-   if isfield(fp,'CDOM_raw')
-      if ~isempty(fp.CDOM_raw)
-	 fp.CDOM_qc = zeros(size(fp.CDOM_raw),'uint16');
-	 jj = find(isnan(fp.CDOM_raw));
-	 fp.CDOM_qc(jj) = 9;
-      end
-   end
-   if isfield(fp,'FLBBoxy_raw')
-      if ~isempty(fp.FLBBoxy_raw)
-	 fp.FLBBoxy_qc = ones(size(fp.FLBBoxy_raw),'uint16');
-	 jj = find(isnan(fp.FLBBoxy_raw));
-	 fp.FLBBoxy_qc(jj) = 9;
-      end
-   end
-   if isfield(fp,'p_oxygen')
-       if  ~isempty(fp.p_oxygen)
-           fp.p_oxygen_qc = ones(size(fp.p_oxygen),'uint16');
-           jj = find(isnan(fp.p_oxygen));
-           fp.p_oxygen_qc(jj) = 9;
-       end
-   end
-   if isfield(fp,'t_oxygen')
-       if  ~isempty(fp.t_oxygen)
-           fp.t_oxygen_qc = ones(size(fp.t_oxygen),'uint16');
-           jj = find(isnan(fp.t_oxygen));
-           fp.t_oxygen_qc(jj) = 9;
-       end
-   end
-   if isfield(fp,'s_oxygen')
-       if  ~isempty(fp.s_oxygen)
-           fp.s_oxygen_qc = ones(size(fp.s_oxygen),'uint16');
-           jj = find(isnan(fp.s_oxygen));
-           fp.s_oxygen_qc(jj) = 9;
-       end
-   end
-   
+    if isempty(fp.pos_qc)
+        fp.pos_qc = zeros(1,length(fp.lat),'uint8');
+    end        
+    if  ~isempty(fp.p_raw)
+        fp.p_qc = ones(size(fp.p_raw),'uint16');
+        jj = find(isnan(fp.p_raw));
+        fp.p_qc(jj) = 9;
+    end
+    if  ~isempty(fp.t_raw)
+        fp.t_qc = ones(size(fp.t_raw),'uint16');
+        jj = find(isnan(fp.t_raw));
+        fp.t_qc(jj) = 9;
+    end
+    if  ~isempty(fp.s_raw)
+        fp.s_qc = ones(size(fp.s_raw),'uint16');
+        jj = find(isnan(fp.s_raw));
+        fp.s_qc(jj) = 9;
+    end
+    if isfield(fp,'cndc_raw')
+        if  ~isempty(fp.cndc_raw)
+            fp.cndc_qc = ones(size(fp.cndc_raw),'uint16');
+            jj = find(isnan(fp.cndc_raw));
+            fp.cndc_qc(jj) = 9;
+        end
+    end
+    if isfield(fp,'oxy_raw')
+        if  ~isempty(fp.oxy_raw)
+            fp.oxy_qc = ones(size(fp.oxy_raw),'uint16');
+            jj = find(isnan(fp.oxy_raw));
+            fp.oxy_qc(jj) = 9;
+        end
+    end
+    if isfield(fp,'oxyT_raw')
+        if  ~isempty(fp.oxyT_raw)
+            fp.oxyT_qc = ones(size(fp.oxyT_raw),'uint16');
+            jj = find(isnan(fp.oxyT_raw));
+            fp.oxyT_qc(jj) = 9;
+        end
+    end
+    if isfield(fp,'tm_counts')
+        if ~isempty(fp.tm_counts)
+            fp.tm_qc = zeros(size(fp.tm_counts),'uint16');
+            jj = find(isnan(fp.tm_counts));
+            fp.tm_qc(jj) = 9;
+        end
+    end
+    if isfield(fp,'CP_raw')
+        if ~isempty(fp.CP_raw)
+            fp.CP_qc = zeros(size(fp.CP_raw),'uint16');
+            jj = find(isnan(fp.CP_raw));
+            fp.CP_qc(jj) = 9;
+        end
+    end
+    if isfield(fp,'CHLa_raw')
+        if ~isempty(fp.CHLa_raw)
+            fp.CHLa_qc = zeros(size(fp.CHLa_raw),'uint16');
+            jj = find(isnan(fp.CHLa_raw));
+            fp.CHLa_qc(jj) = 9;
+        end
+    end
+    if isfield(fp,'BBP700_raw')
+        if ~isempty(fp.BBP700_raw)
+            fp.BBP700_qc = zeros(size(fp.BBP700_raw),'uint16');
+            jj = find(isnan(fp.BBP700_raw));
+            fp.BBP700_qc(jj) = 9;
+        end
+    end
+    if isfield(fp,'CDOM_raw')
+        if ~isempty(fp.CDOM_raw)
+            fp.CDOM_qc = zeros(size(fp.CDOM_raw),'uint16');
+            jj = find(isnan(fp.CDOM_raw));
+            fp.CDOM_qc(jj) = 9;
+        end
+    end
+    if isfield(fp,'FLBBoxy_raw')
+        if ~isempty(fp.FLBBoxy_raw)
+            fp.FLBBoxy_qc = ones(size(fp.FLBBoxy_raw),'uint16');
+            jj = find(isnan(fp.FLBBoxy_raw));
+            fp.FLBBoxy_qc(jj) = 9;
+        end
+    end
+    if isfield(fp,'p_oxygen')
+        if  ~isempty(fp.p_oxygen)
+            fp.p_oxygen_qc = ones(size(fp.p_oxygen),'uint16');
+            jj = find(isnan(fp.p_oxygen));
+            fp.p_oxygen_qc(jj) = 9;
+        end
+    end
+    if isfield(fp,'t_oxygen')
+        if  ~isempty(fp.t_oxygen)
+            fp.t_oxygen_qc = ones(size(fp.t_oxygen),'uint16');
+            jj = find(isnan(fp.t_oxygen));
+            fp.t_oxygen_qc(jj) = 9;
+        end
+    end
+    if isfield(fp,'s_oxygen')
+        if  ~isempty(fp.s_oxygen)
+            fp.s_oxygen_qc = ones(size(fp.s_oxygen),'uint16');
+            jj = find(isnan(fp.s_oxygen));
+            fp.s_oxygen_qc(jj) = 9;
+        end
+    end
+    
     %set all tests to zeros before starting
     fp.testsperformed = zeros(1,19);
     fp.testsfailed = zeros(1,19);
@@ -283,7 +285,7 @@ for ii = ipf(:)'
                     jd=[fpp(ii-1).jday_location(igood) fp.jday_location(ig)];
                 catch
                     jd=[fpp(ii-1).jday fp.jday_location(ig)];
-                end                    
+                end
                 timediff = abs(diff(jd))*86400;
                 speed = distance./timediff;
                 
@@ -359,7 +361,7 @@ for ii = ipf(:)'
     % Test7: Regional Parameter Test
     % we won't do this one?
     
-   
+    
     % Test8: Pressure Increasing Test
     fp.testsperformed(8) = 1;
     
@@ -446,7 +448,7 @@ for ii = ipf(:)'
         fp.testsfailed(9) = 1;
     end
     if dbdat.oxy
-        if length(fp.oxy_raw)~=length(fp.p_raw)
+        if length(fp.oxy_raw)~=length(fp.p_raw) | isempty(fp.oxy_raw)
             po=fp.p_oxygen;
         else
             po=fp.p_raw;
@@ -613,55 +615,36 @@ for ii = ipf(:)'
     end
     
     % Test14: Density Inversion Test
-% new test from ADMT12: density calculated relative to neighboring points,
-% not surface reference level...:    
-    fp.testsperformed(14) = 1;
-    difdd = 0;   
-    for iij=1:length(fp.p_calibrate)-1
-        difdd(iij)=0;
+    % new test from ADMT12: density calculated relative to neighboring points,
+    % not surface reference level...:
+    if ~isempty(fp.p_calibrate) & ~isnan(fp.p_calibrate)
+        fp.testsperformed(14) = 1;
         
-        density = sw_pden(fp.s_raw(iij:iij+1),fp.t_raw(iij:iij+1),fp.p_calibrate(iij:iij+1), ...
-            (fp.p_calibrate(iij)+fp.p_calibrate(iij+1))/2);
-        difdd(iij)=diff(density);
+        %new test here to compare
+        %array of mid-points for pressure surface
+        psurf = diff(fp.p_calibrate)/2+fp.p_calibrate(1:end-1);
+        %array1 of density on the psurf
+        den1 = sw_pden(fp.s_raw(2:end),fp.t_raw(2:end),fp.p_calibrate(2:end),psurf);
+        %array 2 of density on the psurf
+        den2 = sw_pden(fp.s_raw(1:end-1),fp.t_raw(1:end-1),fp.p_calibrate(1:end-1),psurf);
         
-    end
-    
-    jj = find(difdd>0.03);
-    jf=[];
-    for i=1:length(jj)
-        jk=[max(jj(i)-1,1);jj(i);min(length(difdd),jj(i)+1)];
-        jk=unique(jk);
-        jl=find(difdd(jk)==min(difdd(jk)));
-        jf=[jf jj(i) jk(jl)];
-    end
-    
-    for iij=length(fp.p_calibrate):-1:2
-        difdd(iij)=0;
+        %difference between the two density arrays
+        %bottom up and top down
+        difd1 = den1 - den2;
+        difd2 = den2 - den1;
         
-        density = sw_pden(fp.s_raw(iij:-1:iij-1),fp.t_raw(iij:-1:iij-1),fp.p_calibrate(iij:-1:iij-1), ...
-            (fp.p_calibrate(iij)+fp.p_calibrate(iij-1))/2);
-        difdd(iij)=diff(density);
+        %find errors outside +/-0.03
+        err = find(difd1 > 0.03 | difd2 < -0.03);
         
+        if (~isempty(err))
+            % Have to reject values
+            newv = repmat(4,1,length(err));
+            fp.t_qc(err) = max([fp.t_qc(err); newv]);
+            fp.s_qc(err) = max([fp.s_qc(err); newv]);
+            fp.testsfailed(14) = 1;
+        end
     end
     
-    jj = find(difdd<-0.03);
-    
-    for i=1:length(jj)
-        jk=[max(jj(i)-1,1);jj(i);min(length(difdd),jj(i)+1)];
-        jk=unique(jk);
-        jl=find(difdd(jk)==min(difdd(jk)));
-        jf=[jf jj(i) jk(jl)];
-    end
-    
-    
-    if (~isempty(jf))
-        % Have to reject value at both levels involved
-        newv = repmat(3,1,length(jf));
-        fp.t_qc(jf) = max([fp.t_qc(jf); newv]);
-        fp.s_qc(jf) = max([fp.s_qc(jf); newv]);
-        fp.testsfailed(14) = 1;
-    end
-
     % Test15: Grey List Test
     %load up the grey list
     glist = load_greylist;
@@ -675,7 +658,6 @@ for ii = ipf(:)'
             
             fp.testsfailed(15) = 1;
             vv=1:length(fp.p_raw);
-            newv = repmat(4,1,length(vv));
             im = find(cellfun(@isempty,strfind(glist.var(ib),'PSAL'))==0);
             ij = find(cellfun(@isempty,strfind(glist.var(ib),'TEMP'))==0);
             ik = find(cellfun(@isempty,strfind(glist.var(ib),'PRES'))==0);
@@ -685,10 +667,12 @@ for ii = ipf(:)'
                 fp.t_qc(vv) = 4;
             else
                 if ~isempty(im) %psal
+                    newv = repmat(glist.flag(ib(im)),1,length(vv));
                     fp.s_qc(vv) = max([fp.s_qc(vv); newv]);
                     vvs = qc_apply(fp.s_raw,fp.s_qc);
                 end
                 if ~isempty(ij) %temp
+                    newv = repmat(glist.flag(ib(ij)),1,length(vv));
                     fp.t_qc(vv) = max([fp.t_qc(vv); newv]);
                     vvt = qc_apply(fp.t_raw,fp.t_qc);
                     fp.s_qc(vv) = max([fp.s_qc(vv); newv]);
@@ -699,6 +683,7 @@ for ii = ipf(:)'
                     end
                 end
                 if ~isempty(ik) %pres
+                    newv = repmat(glist.flag(ib(ik)),1,length(vv));
                     fp.p_qc(vv) = max([fp.p_qc(vv); newv]);
                     pii = qc_apply(fp.p_calibrate,fp.p_qc);
                     fp.s_qc(vv) = max([fp.s_qc(vv); newv]);
@@ -868,7 +853,7 @@ for ii = ipf(:)'
         fp.oxyT_qc=QC.t;
         %        fp.s_oxygen_qc=QC.s;
     end
-
+    
     
     %copy the profile back to the main structure
     fpp(ii) = fp;

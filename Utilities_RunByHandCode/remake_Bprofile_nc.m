@@ -12,28 +12,10 @@ end
 getdbase(-1)
 getBiocaldbase
 
-kk = [1901329
-    1901338
-    1901339
-    5903629
-    5903630
-    5903649
-    5903660
-    5903678
-    5903679
-    5903955
-    5904218
-    5904882
-    1901347
-    1901348
-    5904923
-    5904924
-    5905022
-    5905023
-    5905165
-    5905167];
+kk = [5905197
+    ];
 
-for ii = 19:length(kk)
+for ii = 1:length(kk)
     disp(ii)
     [float,dbdat]=getargo(kk(ii));
     bc=find(ARGO_BIO_CAL_WMO==dbdat.wmo_id);
@@ -120,21 +102,19 @@ for ii = 19:length(kk)
         pns = num2str(p);
         pn(end-length(pns)+1:end) = pns;
         float(p) = pro;
-        fnm = [ddir num2str(dbdat.wmo_id) '/DFILES/BD'  num2str(dbdat.wmo_id) '_' pn '.nc'];
+%         fnm = [ddir num2str(dbdat.wmo_id) '/DFILES/BD'  num2str(dbdat.wmo_id) '_' pn '.nc'];
         rfnm = [rdir num2str(dbdat.wmo_id) '/BR'  num2str(dbdat.wmo_id) '_' pn '.nc'];
-        %now just copy over the fields to the D mode file:
-        flds = {'BBP700','BETA_BACKSCATTERING700','BBP532','BETA_BACKSCATTERING532',...
-            'BBP700_2','BETA_BACKSCATTERING700_2','BBP470','BETA_BACKSCATTERING470'};
-        for jj = 1:length(flds)
-            try
-                dat = ncread(rfnm,flds{jj});
-                ncwrite(fnm,flds{jj},dat);
-            catch
-                disp(['No field ' flds{jj} ' for float ' num2str(dbdat.wmo_id)])
-            end
-        end
-        %copy for export.
-        system(['cp ' fnm ' /home/argo/ArgoRT/export/'])
+%         %now just copy over the fields to the D mode file:
+%         flds = {'BBP700','BETA_BACKSCATTERING700','BBP532','BETA_BACKSCATTERING532',...
+%             'BBP700_2','BETA_BACKSCATTERING700_2','BBP470','BETA_BACKSCATTERING470'};
+%         for jj = 1:length(flds)
+%             try
+%                 dat = ncread(rfnm,flds{jj});
+%                 ncwrite(fnm,flds{jj},dat);
+%             catch
+%                 disp(['No field ' flds{jj} ' for float ' num2str(dbdat.wmo_id)])
+%             end
+%         end
     end
     %now save the updated mat file
     save(['/home/argo/ArgoRT/matfiles/float' num2str(kk(ii)) '.mat'],'float','-v6');
@@ -159,13 +139,12 @@ else
 %         5903678 %selected profiles - see rejections
 % 1901348 %all        5905165 %All
 
-kk = [  5904924 %from p=27:183 Just copy over
-        5905022 %all BD files 1:243  Just copy over    
-        5903955]; %selected profiles - see rejections Just copy over
+kk = [  5904218
+    5903629]; %selected profiles - see rejections Just copy over
     ddir = '/home/argo/data/dmode/newSoftwareTest/';
     rdir = '/home/argo/ArgoRT/netcdf/';
     
-    for ii = 3%:length(kk)
+    for ii = 1:length(kk)
         [float,dbdat]=getargo(kk(ii));
         
         for p = 1:length(float)
@@ -173,13 +152,21 @@ kk = [  5904924 %from p=27:183 Just copy over
             pns = num2str(p);
             pn(end-length(pns)+1:end) = pns;
             fnm = [ddir num2str(kk(ii)) '/DFILES/BD'  num2str(kk(ii)) '_' pn '.nc'];
-            rfnedm = [rdir num2str(dbdat.wmo_id) '/BR'  num2str(dbdat.wmo_id) '_' pn '.nc'];
+            rfnm = [rdir num2str(dbdat.wmo_id) '/BR'  num2str(kk(ii)) '_' pn '.nc'];
             pro = float(p);
-            argoprofile_Bfile_nc(dbdat,pro);
+%             argoprofile_Bfile_nc(dbdat,pro);
             if exist(fnm,'file') == 2
-                dat = ncread(fnm,'BBP700');
-                datq = ncread(fnm,'BBP700_QC');
-                ij = ~isnan(dat);
+                %remove the standard name attribute from BPHASE_DOXY
+                try
+                    ncid = netcdf.open(fnm,'NC_WRITE');
+                    netcdf.reDef(ncid);
+                    netcdf.delAtt(ncid,47,'standard_name')
+                    netcdf.close(ncid);
+                catch
+                end
+%                 dat = ncread(fnm,'BBP700');
+%                 datq = ncread(fnm,'BBP700_QC');
+%                 ij = ~isnan(dat);
                 
 %                 if isempty(str2num(datq(ij))) && sum(sum(ij)) > 0
                     %now just copy over the fields to the D mode file:
@@ -197,12 +184,12 @@ kk = [  5904924 %from p=27:183 Just copy over
                         end
                      end
                     %copy for export.
-                    system(['cp ' fnm ' /home/argo/ArgoRT/exporttest/'])
+                    system(['cp ' fnm ' /home/argo/ArgoRT/export/'])
                     
 %                 end
             else
-                    %copy for export.
-                    system(['cp ' rfnm ' /home/argo/ArgoRT/exporttest/'])
+%                     %copy for export.
+%                     system(['cp ' rfnm ' /home/argo/ArgoRT/exporttest/'])
             end
         end
     end

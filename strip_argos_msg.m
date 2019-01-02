@@ -200,8 +200,15 @@ if isempty(strmatch(fnm,'iridium'))
    nxtline = fgetl(fid);
 
    % Extract UTC date of ftp download
-   if isempty(nxtline)
+   ct = 0;
+   while isempty(nxtline)
       nxtline = fgetl(fid);
+      %put in a catch to make sure we don't get stuck here forever
+      ct = ct +1;
+      if ct > 200000
+          disp('Stuck in reading argoslog file. Stopped')
+          return
+      end
    end
    if length(nxtline)>=20 && strncmp(nxtline(1:3),'UTC',3)
       tmp = sscanf(nxtline(1:20),'UTC %d-%d-%d %d:%d');
@@ -603,26 +610,11 @@ end
 
 %diagnostic line:
 disp('Processing Iridium Files ...')
-
-%need to transfer to ftp (only works if CSIRO is processor). Do it once for
-%all iridium files.
-% Does nothing if the ARGO_SYS_PARAM.processor is not set or does not have
-% 'CSIRO' or 'BOM' in the field.
-try
-     BOM_retrieve_Iridium
-catch Me
-    logerr(5,'error in iridium ftp transfer')
-    logerr(5,['Message: ' Me.message ])
-    for jk = 1:length(Me.stack)
-        logerr(5,Me.stack(jk).file)
-        logerr(5,['Line: ' num2str(Me.stack(jk).line)])
-    end
-end
-
+dbdat.wmo_id = 0;
 try
     extract_Iridium_data
 catch Me
-    logerr(5,['error in processing Iridium float - ' num2str(dbdat.wmo_id)])
+    logerr(5,['error in extract_iridium_code - ' num2str(dbdat.wmo_id)])
     logerr(5,['Message: ' Me.message ])
     for jk = 1:length(Me.stack)
         logerr(5,Me.stack(jk).file)
@@ -632,10 +624,12 @@ end
 
 
 %APF 11 floats
+disp('Processing APF 11 Iridium Files ...')
+dbdat.wmo_id = 0;
 try
     extract_apf11data
 catch Me
-    logerr(5,['error in processing APF11 float - ' num2str(dbdat.wmo_id)])
+    logerr(5,['error in APF11 processing code - ' num2str(dbdat.wmo_id)])
     logerr(5,['Message: ' Me.message ])
     for jk = 1:length(Me.stack)
         logerr(5,Me.stack(jk).file)
