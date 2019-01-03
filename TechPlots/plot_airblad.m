@@ -1,9 +1,7 @@
-function [ ] = plot_airblad( float ,H,H2,fnm)
+function [ ] = plot_airblad( float ,fnm)
 % This function permits to characterize a problem of air bladder.
-lft = [0.05:1/5:0.95];
-bot = 0.8:-.1872:0.05 ;
-wid = 0.13;
-hgt = 0.12;
+fig1 = figure(1);clf;hold on
+fig1.OuterPosition=[230 250 700 500];
 
 % Initialization
 lg = length(float);
@@ -19,20 +17,12 @@ if isfield(float,'airbladderpres')
     
     % Plot the previous information:
     markcolor = usual_test(airbl(3:end)) ;
-    figure(H)
-    subplot('Position',[lft(4) bot(4) wid hgt]);
-    plot(airbl,'--^','MarkerEdgeColor',markcolor,'color',markcolor);
-    title('Air bladder');
-    xlabel('Cycle');
-    ylabel('Air bladder pressure');
-    figure(H2)
-    plot(airbl,'--^','MarkerEdgeColor',markcolor,'color',markcolor,'markersize',12);
-    title('Air bladder','fontsize',18);
-    xlabel('Cycle','fontsize',18);
-    ylabel('Air bladder pressure','fontsize',18);
-    set(gca,'fontsize',16)
+    plot(airbl,'--^','MarkerEdgeColor',markcolor,'color',markcolor,'markersize',8);
+    set(gca,'fontsize',12)
+    title('Air bladder','fontsize',14);
+    xlabel('Cycle','fontsize',14);
+    ylabel('Air bladder pressure','fontsize',14);
     my_save_fig([fnm '/airbladder'],'clobber')
-    clf
 end
 
 end
