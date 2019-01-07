@@ -83,7 +83,7 @@ fprintf(fid,'<th>C<sub>ratio</sub>Calc</th></tr>\n\n');
 
 %find the first occurrence of a good position
 order = [1,2,0,5,8,9,7]; %what is 7 for?
-[~,ia,~] = intersect(fp.pos_qc,order);
+[~,ia,~] = intersect(fp.pos_qc,order,'stable');
 
 str{1} = sprintf('%d',length(fp.jday));
 str{2} = sprintf('%d',length(~isnan(fp.lat)));

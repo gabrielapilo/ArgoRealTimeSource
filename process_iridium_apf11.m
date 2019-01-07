@@ -257,7 +257,7 @@ if any(stage==1)
                 end
                 if pro.lon(gps)<0; pro.lon(gps)=360+pro.lon(gps); end
                 pro.datetime_vec(gps,:)=gregorian(pro.jday_location(gps));
-                if numlines<10
+                if pro.GPSfixtime(gps) - float(np-1).GPSfixtime(end) < 1
                     previouslocation=[previouslocation gps];
                 else
                     thislocation=[thislocation gps];
@@ -467,7 +467,7 @@ if any(stage==1)
             pro.pos_qc = zeros(1,length(pro.lat),'uint8');
             
             %also need to check location information:
-            if ~isempty(pro.lat) && ~isnan(pro.lat)
+            if ~isempty(pro.lat) && any(~isnan(pro.lat))
                 if any(~isnan(pro.lat))
                     [maxdeps,mindeps] = get_ocean_depth(pro.lat,pro.lon,0.03);
                     deps = nanmin(mindeps);
