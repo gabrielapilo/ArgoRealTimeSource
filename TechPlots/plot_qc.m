@@ -1,13 +1,10 @@
-function [ ] = plot_qc( float ,H,H2,fnm)
+function [ ] = plot_qc( float ,fnm)
 % This function permits to characterize a problem of air bladder.
-lft = [0.05:1/5:0.95];
-bot = 0.8:-.1872:0.05 ;
-wid = 0.13;
-hgt = 0.12;
-
 %% Initialization
 
 lg = length(float);
+fig1 = figure(1);clf;hold on
+fig1.OuterPosition=[230 250 700 500];
 
 %% Salinity part
 
@@ -21,14 +18,8 @@ if isfield(float,'s_qc')
     end
     
     % Plot the previous information:
-    figure(H)
-    subplot('Position',[lft(2) bot(5) wid hgt]);
-    plot(salinity_test,'-^','DisplayName','Salinity');
-    hold on
-    figure(H2)
-    plot(salinity_test,'--^','DisplayName','Salinity','markersize',12);
-    set(gca,'fontsize',16)
-    hold on
+    plot(salinity_test,'--^','DisplayName','Salinity','markersize',8);
+    set(gca,'fontsize',12)
 end
 
 
@@ -44,11 +35,7 @@ if isfield(float,'t_qc')
     end
     
     % Plot the previous information:
-    figure(H)
-    subplot('Position',[lft(2) bot(5) wid hgt]);
-    h = plot(temperature_test,'--^','DisplayName','Temperature');
-    figure(H2)
-    h = plot(temperature_test,'-^','DisplayName','Temperature','markersize',12);
+    h = plot(temperature_test,'-^','DisplayName','Temperature','markersize',8);
 end
 
 %% Pressure part
@@ -63,11 +50,7 @@ if isfield(float,'p_qc')
     end
     
     % Plot the previous information:
-    figure(H)
-    subplot('Position',[lft(2) bot(5) wid hgt]);
-    plot(pressure_test,'--^','DisplayName','Pressure');
-    figure(H2)
-    plot(pressure_test,'-^','DisplayName','Pressure','markersize',12);
+    plot(pressure_test,'-^','DisplayName','Pressure','markersize',8);
 end
 
 
@@ -83,11 +66,7 @@ if isfield(float,'cndc_qc')
     end
     
     % Plot the previous information:
-    figure(H)
-    subplot('Position',[lft(2) bot(5) wid hgt]);
-    plot(conductivity_test,'--^','DisplayName','Conductivity');
-    figure(H2)
-    plot(conductivity_test,'--^','DisplayName','Conductivity','markersize',12);
+    plot(conductivity_test,'--^','DisplayName','Conductivity','markersize',8);
 end
 
 
@@ -105,11 +84,7 @@ if isfield(float,'oxy_qc')
     end
     
     % Plot the previous information:
-    figure(H)
-    subplot('Position',[lft(2) bot(5) wid hgt]);
-    h = plot(oxygen_test,'--^','DisplayName','Oxygen');
-    figure(H2)
-    h = plot(oxygen_test,'--^','DisplayName','Oxygen');
+    h = plot(oxygen_test,'--^','DisplayName','Oxygen','markersize',8);
 end
 
 
@@ -125,27 +100,11 @@ if isfield(float,'pos_qc')
     end
     
     % Plot the previous information:
-    figure(H)
-    subplot('Position',[lft(2) bot(5) wid hgt]);
-    h = plot(position_test,'--^','DisplayName','Position');
-    figure(H2)
-    h = plot(position_test,'--^','DisplayName','Position','markersize',12);
+    h = plot(position_test,'--^','DisplayName','Position','markersize',8);
     
 end
 
 %% General aspect
-    figure(H)
-    subplot('Position',[lft(2) bot(5) wid hgt]);
-
-title('Quality control test');
-xlabel('Cycle');
-ylabel('Quality');
-ylim([0.5 6.5]);
-if exist('h','var')
-    set(get(h,'Parent'),'YTickLabel',{'A' 'B' 'C' 'D' 'E','F'});
-end
-    figure(H2)
-
 title('Quality control test','fontsize',18);
 xlabel('Cycle','fontsize',18);
 ylabel('Quality','fontsize',18);
@@ -155,5 +114,4 @@ if exist('h','var')
 end
 set(gca,'fontsize',16)
 my_save_fig([fnm '/quality_control'],'clobber')
-clf    
 end

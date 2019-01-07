@@ -1,4 +1,4 @@
-function [ ] = plot_leak( float , H, H2, fnm)
+function [ ] = plot_leak( float , fnm)
 % This function permits to plot several information on the piston
 % positionning system:
 %
@@ -8,16 +8,13 @@ function [ ] = plot_leak( float , H, H2, fnm)
 % Plot 4: evolution of surface piston position with an estimation of the
 % change of volume to reach the surface from the float compressibility.
 
-lft = [0.05:1/5:0.95];
-bot = 0.8:-.1872:0.05 ;
-wid = 0.13;
-hgt = 0.12;
-
 %% Plot 1: evolution of internal pressure with time.
 
 % Initialization:
 lg = length(float);
 axisX = [1:lg];
+fig1 = figure(1);clf;hold on
+fig1.OuterPosition=[230 250 700 500];
 
 if isfield(float,'p_internal')
     
@@ -29,19 +26,12 @@ if isfield(float,'p_internal')
 
     % Plot of the result.
     markcolor = usual_test(internal_pressure);
-    figure(H);subplot('Position',[lft(2) bot(3) wid hgt]);
-    plot(axisX , internal_pressure,'--^','MarkerEdgeColor',markcolor,'color',markcolor);
-    title('Internal pressure evolution');
-    xlabel('Cycle');
-    ylabel('Internal pressure');
-    figure(H2)
-    plot(axisX , internal_pressure,'--^','MarkerEdgeColor',markcolor,'color',markcolor,'markersize',12);
-    title('Internal pressure evolution','fontsize',18);
-    xlabel('Cycle','fontsize',18);
-    ylabel('Internal pressure','fontsize',18);
-    set(gca,'fontsize',16)
-my_save_fig([fnm '/pressure'],'clobber')
-clf
+    plot(axisX , internal_pressure,'--^','MarkerEdgeColor',markcolor,'color',markcolor,'markersize',8);
+    set(gca,'FontSize',12)
+    title('Internal pressure evolution','fontsize',14);
+    xlabel('Cycle','fontsize',14);
+    ylabel('Internal pressure','fontsize',14);
+    my_save_fig([fnm '/pressure'],'clobber')
 end
 
 
@@ -49,44 +39,34 @@ end
 
 % Extraction of the density and the evolution of volume from another
 % program.
+fig1 = figure(1);clf;hold on
+fig1.OuterPosition=[230 250 700 500];
 
 [volume] = get_volume_float(float);
 markcolor = usual_test(volume) ;
-figure(H);subplot('Position',[lft(3) bot(3) wid hgt]);
-plot(volume,'--^' , 'color' , markcolor , 'MarkerEdgeColor' , markcolor);
-title('Inside volume evolution');
-xlabel('Cycle');
-ylabel('Inside volume');
-figure(H2)
-plot(volume,'--^' , 'color' , markcolor , 'MarkerEdgeColor' , markcolor,'markersize',12);
-title('Inside volume evolution','fontsize',18);
-xlabel('Cycle','fontsize',18);
-ylabel('Inside volume','fontsize',18);
-set(gca,'fontsize',12)
+plot(volume,'--^' , 'color' , markcolor , 'MarkerEdgeColor' , markcolor,'markersize',8);
+    set(gca,'FontSize',12)
+title('Inside volume evolution','fontsize',14);
+xlabel('Cycle','fontsize',14);
+ylabel('Inside volume','fontsize',14);
 
 my_save_fig([fnm '/insidevolume'],'clobber')
-clf
 
 %% Plot 3: evolution of internal pressure with time.
 
 % Extraction of the density and the parking piston position
 % from another program.
+fig1 = figure(1);clf;hold on
+fig1.OuterPosition=[230 250 700 500];
 
 [density , parkpis , markcolor] = pistonpos_density (float);
 if length(density) == length(parkpis)
-figure(H);subplot('Position',[lft(4) bot(3) wid hgt]);
-    plot(density,parkpis,'--^' , 'color' , markcolor , 'MarkerEdgeColor' , markcolor);
-    title('Parking piston position evolution') ;
-    xlabel('External density');
-    ylabel('Parking piston position');
-    figure(H2)
-    plot(density,parkpis,'--^' , 'color' , markcolor , 'MarkerEdgeColor' , markcolor,'markersize',12);
-    title('Parking piston position evolution','fontsize',18) ;
-    xlabel('External density','fontsize',18);
-    ylabel('Parking piston position','fontsize',18);
-    set(gca,'fontsize',16)
+    plot(density,parkpis,'--^' , 'color' , markcolor , 'MarkerEdgeColor' , markcolor,'markersize',8);
+    set(gca,'FontSize',12)
+    title('Parking piston position evolution','fontsize',14) ;
+    xlabel('External density','fontsize',14);
+    ylabel('Parking piston position','fontsize',14);
 my_save_fig([fnm '/parkpis_compres'],'clobber')
-clf
 end
 
 
@@ -94,22 +74,17 @@ end
 
 % Extraction of the deltaV and the surface piston position
 % from another program.
+fig1 = figure(1);clf;hold on
+fig1.OuterPosition=[230 250 700 500];
 
 [deltaV , pispos , markcolor] = pistonpos_compressibility (float);
 if length(deltaV) == length(pispos)
-figure(H);subplot('Position',[lft(5) bot(3) wid hgt]);
-    plot(deltaV,pispos,'--^' , 'color' , markcolor , 'MarkerEdgeColor' , markcolor);
-    title('Piston position evolution') ;
-    xlabel('DeltaV for ascent');
-    ylabel('Piston differentiate');
-    figure(H2)
-    plot(deltaV,pispos,'--^' , 'color' , markcolor , 'MarkerEdgeColor' , markcolor,'markersize',12);
-    title('Piston position evolution','fontsize',18) ;
-    xlabel('DeltaV for ascent','fontsize',18);
-    ylabel('Piston differentiate','fontsize',18);
-    set(gca,'fontsize',12)
-my_save_fig([fnm '/pis_deltaV'],'clobber')
-clf
+    plot(deltaV,pispos,'--^' , 'color' , markcolor , 'MarkerEdgeColor' , markcolor,'markersize',8);
+    set(gca,'FontSize',12)
+    title('Piston position evolution','fontsize',14) ;
+    xlabel('DeltaV for ascent','fontsize',14);
+    ylabel('Piston differentiate','fontsize',14);
+    my_save_fig([fnm '/pis_deltaV'],'clobber')
 end
 
 

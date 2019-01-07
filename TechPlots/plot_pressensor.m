@@ -1,13 +1,11 @@
-function [ ] = plot_pressensor( float ,H,H2,fnm)
+function [ ] = plot_pressensor( float ,fnm)
 % This function permits to characterize a problem of pressure sensor.
-lft = [0.05:1/5:0.95];
-bot = 0.8:-.1872:0.05 ;
-wid = 0.13;
-hgt = 0.12;
 
 % Initialization:
 lg = length(float);
 surfpres = nan(1,lg);
+fig1 = figure(1);clf;hold on
+fig1.OuterPosition=[230 250 700 500];
 
 if isfield(float,'surfpres_used')
     
@@ -26,20 +24,12 @@ if isfield(float,'surfpres_used')
     end
     
     % Plot the previous information.
-    figure(H)
-    subplot('Position',[lft(3) bot(4) wid hgt]);
-    plot(surfpres,'--^','MarkerEdgeColor',markcolorpres,'color',markcolorpres);
-    title('Surface pressure sensor');
-    xlabel('Cycle');
-    ylabel('Surface pressure');
-    figure(H2)
-    plot(surfpres,'--^','MarkerEdgeColor',markcolorpres,'color',markcolorpres,'markersize',12);
-    title('Surface pressure sensor','fontsize',18);
-    xlabel('Cycle','fontsize',18);
-    ylabel('Surface pressure','fontsize',18);
-    set(gca,'fontsize',16)
+    set(gca,'fontsize',12)
+    plot(surfpres,'--^','MarkerEdgeColor',markcolorpres,'color',markcolorpres,'markersize',8);
+    title('Surface pressure sensor','fontsize',14);
+    xlabel('Cycle','fontsize',14);
+    ylabel('Surface pressure','fontsize',14);
     my_save_fig([fnm '/pres_sensor'],'clobber')
-    clf
 
 end
 
