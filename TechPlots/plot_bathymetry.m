@@ -43,12 +43,12 @@ for index=1:lg
     axisX(index) = float(index).profile_number;
     %find the first occurrence of a good position
     order = [1,2,0,5,8,9,7]; %what is 7 for?
-    [~,ia,~] = intersect(float(index).pos_qc,order);
+    [~,ia,~] = intersect(float(index).pos_qc,order,'stable');
     if isempty(ia)
         continue
     end
-    latitude(index) = float(index).lat(ia);
-    longitude(index) = float(index).lon(ia);
+    latitude(index) = float(index).lat(ia(1));
+    longitude(index) = float(index).lon(ia(1));
     if isfield(float,'grounded')
         if float(index).grounded == 'Y'
             ground(index) = 1;
