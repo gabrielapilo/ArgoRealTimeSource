@@ -46,7 +46,7 @@ for kk=1:nprof
     end
     %find the first occurrence of a good position
     order = [1,2,0,5,8,9,7]; %what is 7 for?
-    [~,ia,~] = intersect(fpp(kk).pos_qc,order);
+    [~,ia,~] = intersect(fpp(kk).pos_qc,order,'stable');
     
     figure(9),hold on
     if(~isempty(fpp(kk).lon) && ~isnan(fpp(kk).lon(ia(1))) && ~isempty(fpp(kk).profile_number))

@@ -166,7 +166,7 @@ if(~isempty(float))
         if ~isempty(float(kk).lat) & ~isempty(float(kk).datetime_vec)
             %find the first occurrence of a good position
             order = [1,2,0,5,8,9,7]; %what is 7 for?
-            [~,ia,~] = intersect(float(kk).pos_qc,order);
+            [~,ia,~] = intersect(float(kk).pos_qc,order,'stable');
             %      str{1} = sprintf('%6.3f',-float(kk).lat(1));
             str{1} = sprintf('%6.3f',float(kk).lat(ia(1)));
             str{2} = sprintf('%6.3f',float(kk).lon(ia(1)));
