@@ -40,15 +40,23 @@ lat = ncread(ARGO_SYS_PARAM.ocean_depth , 'lat') ;
 
 % Extraction of important parameters:
 for index=1:lg
-    axisX(index) = float(index).profile_number;
-    %find the first occurrence of a good position
-    order = [1,2,0,5,8,9,7]; %what is 7 for?
-    [~,ia,~] = intersect(float(index).pos_qc,order,'stable');
-    if isempty(ia)
-        continue
+    if ~isempty(float(index).profile_number)
+        axisX(index) = float(index).profile_number;
     end
-    latitude(index) = float(index).lat(ia(1));
-    longitude(index) = float(index).lon(ia(1));
+    if isfield(float,'pos_qc')
+        %find the first occurrence of a good position
+        order = [1,2,0,5,8,9,7]; %what is 7 for?
+        [~,ia,~] = intersect(float(index).pos_qc,order,'stable');
+        if isempty(ia)
+            continue
+        end
+    else
+        ia = 1;
+    end
+    if ~isempty(float(index).lat)
+        latitude(index) = float(index).lat(ia(1));
+        longitude(index) = float(index).lon(ia(1));
+    end
     if isfield(float,'grounded')
         if float(index).grounded == 'Y'
             ground(index) = 1;
@@ -59,7 +67,9 @@ for index=1:lg
     if length(max(float(index).p_raw)) > 0
         % Get the maximum pressure reached by the float.
         pressure(index) = max(float(index).p_raw);
-        parkp(index) = mean(float(index).park_p);
+        if isfield(float,'park_p')
+            parkp(index) = mean(float(index).park_p);
+        end
     end
     
     % Transforming the longitude and the latitude into index in order

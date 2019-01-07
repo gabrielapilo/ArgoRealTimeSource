@@ -53,7 +53,9 @@ if isfield(float,'pistonpos')
             parkpos(ind) = mean(float(ind).parkpistonpos);
         end
         position(ind) = mean(float(ind).pistonpos);
-        prof(ind) = float(ind).profile_number;
+        if ~isempty(float(ind).profile_number)
+            prof(ind) = float(ind).profile_number;
+        end
     end
     ice = logical(ice);
     

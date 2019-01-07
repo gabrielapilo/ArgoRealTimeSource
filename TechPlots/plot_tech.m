@@ -57,7 +57,17 @@ text([.01,.5],[st,st],{'WMO, Hull, Trans ID: ', [num2str(eng.wmo_id) ', ' num2st
 text([.01,.5],[st,st],{'Maker: ', [mak ' ' aa ]},'fontsize',12);st = st-dd;
 text([.01,.5],[st,st],{'Status: ', dbdat.status},'fontsize',12);st = st-dd;
 text([.01,.5],[st,st],{'No Profiles: ', num2str(float(end).profile_number)},'fontsize',12);st = st-dd;
-text([.01,.5],[st,st],{'Last reported: ', [datestr(gregorian(float(end).jday)) ' UTC']},'fontsize',12);st = st-dd;
+jj=length(float);
+if isempty(float(end).jday)
+    %find last not empty one
+    for jj = length(float):-1:1
+        if ~isempty(float(jj).jday)
+            break
+        end
+    end
+end
+   
+text([.01,.5],[st,st],{'Last date: ', [datestr(gregorian(float(jj).jday(1)),'dd/mm/yyyy') ' UTC, profile ' num2str(float(jj).profile_number)]},'fontsize',12);st = st-dd;
 text([.01,.5],[st,st],{'Satellite type: ', eng.UplinkSystem },'fontsize',12);st = st-dd;
 text([.01,.5],[st,st],{'Pressure sensor: ', [dbdat.pressure_sensor ', ' eng.Pressure.SerialNo]},'fontsize',12);st = st-dd;
 text([.01,.5],[st,st],{'Battery : ', eng.Battery_Configuration},'fontsize',12);
@@ -69,16 +79,7 @@ ground = plot_bathymetry(float ,fnm);
 plot_weight(float, ground,fnm ) ;
 plot_leak(float ,fnm) ;
 plot_others(float,fnm);
-
-
-% plot_pumpmotor(float ,fnm );
-% plot_pressensor(float , fnm );
-% plot_airblad(float ,fnm );
-% plot_parkpressure( float , H, H2,fnm)
-plot_qc(float , H, H2,fnm) ;
-
-
-my_save_fig([fnm '/overall'],'clobber')
+plot_qc(float ,fnm) ;
 
 
 

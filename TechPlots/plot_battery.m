@@ -26,7 +26,9 @@ flds = {'voltage','batterycurrent';'parkbatteryvoltage','parkbatterycurrent';...
     'buoyancypumpvoltage','buoyancypumpcurrent'};
 
 for ind = 1:lg
-    axisX(ind) = float(ind).profile_number;
+    if ~isempty(float(ind).profile_number)
+        axisX(ind) = float(ind).profile_number;
+    end
     for b = 1:size(flds,1)
         if isfield(float,flds{b,1})
             eval(['volt' num2str(b) '(ind) = nanmean(float(ind).(flds{b,1}));'])
