@@ -618,30 +618,32 @@ for ii = ipf(:)'
     % new test from ADMT12: density calculated relative to neighboring points,
     % not surface reference level...:
     if ~isempty(fp.p_calibrate) & ~isnan(fp.p_calibrate)
-        fp.testsperformed(14) = 1;
-        
-        %new test here to compare
-        %array of mid-points for pressure surface
-        psurf = diff(fp.p_calibrate)/2+fp.p_calibrate(1:end-1);
-        %array1 of density on the psurf
-        den1 = sw_pden(fp.s_raw(2:end),fp.t_raw(2:end),fp.p_calibrate(2:end),psurf);
-        %array 2 of density on the psurf
-        den2 = sw_pden(fp.s_raw(1:end-1),fp.t_raw(1:end-1),fp.p_calibrate(1:end-1),psurf);
-        
-        %difference between the two density arrays
-        %bottom up and top down
-        difd1 = den1 - den2;
-        difd2 = den2 - den1;
-        
-        %find errors outside +/-0.03
-        err = find(difd1 > 0.03 | difd2 < -0.03);
-        
-        if (~isempty(err))
-            % Have to reject values
-            newv = repmat(4,1,length(err));
-            fp.t_qc(err) = max([fp.t_qc(err); newv]);
-            fp.s_qc(err) = max([fp.s_qc(err); newv]);
-            fp.testsfailed(14) = 1;
+        if length(fp.p_calibrate) > 1
+            fp.testsperformed(14) = 1;
+            
+            %new test here to compare
+            %array of mid-points for pressure surface
+            psurf = diff(fp.p_calibrate)/2+fp.p_calibrate(1:end-1);
+            %array1 of density on the psurf
+            den1 = sw_pden(fp.s_raw(2:end),fp.t_raw(2:end),fp.p_calibrate(2:end),psurf);
+            %array 2 of density on the psurf
+            den2 = sw_pden(fp.s_raw(1:end-1),fp.t_raw(1:end-1),fp.p_calibrate(1:end-1),psurf);
+            
+            %difference between the two density arrays
+            %bottom up and top down
+            difd1 = den1 - den2;
+            difd2 = den2 - den1;
+            
+            %find errors outside +/-0.03
+            err = find(difd1 > 0.03 | difd2 < -0.03);
+            
+            if (~isempty(err))
+                % Have to reject values
+                newv = repmat(4,1,length(err));
+                fp.t_qc(err) = max([fp.t_qc(err); newv]);
+                fp.s_qc(err) = max([fp.s_qc(err); newv]);
+                fp.testsfailed(14) = 1;
+            end
         end
     end
     
