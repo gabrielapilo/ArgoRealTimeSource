@@ -1693,8 +1693,10 @@ else
     float(np).stg1_desc = ['reprocess V' ARGO_SYS_PARAM.version];
 end
 prec.jday_ascent_end = float(np).jday_ascent_end;
-if ~isempty(float(np).jday) && abs(float(np).jday_ascent_end-float(np).jday(1))>=.9
-    float(np).jday_ascent_end=float(np).jday(1);
+if ~isempty(float(np).jday) 
+    if abs(float(np).jday_ascent_end-float(np).jday(1))>=.9
+        float(np).jday_ascent_end=float(np).jday(1);
+    end
 end
 
 % ---- Web page update and Save data (both stage 1 & 2)
