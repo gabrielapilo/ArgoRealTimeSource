@@ -291,7 +291,7 @@ fclose(fid2);
 st = system(['chmod -f ugo+r ' file2]);
 st = system(['mv -f ' file2 ' ' file1]);
 
-now regenerate tech web pages:
+% now regenerate tech web pages:
 if ~isempty(strmatch('CSIRO',ARGO_SYS_PARAM.processor))
     if(~isempty(float)); plot_tech(float,dbdat);end
 end
