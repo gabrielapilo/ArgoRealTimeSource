@@ -18,10 +18,10 @@ if isfield(float,'park_s') & isfield(float,'park_t') & ...
     
     % Create the list of each important parameters.
     for k=1:lg
-        salinity(k) = mean(float(k).park_s) ;
-        temperature(k) = mean(float(k).park_t) ;
-        pressure(k) = mean(float(k).park_p) ;
-        parkpis(k) = mean(float(k).parkpistonpos) ;
+        salinity(k) = nanmean(float(k).park_s) ;
+        temperature(k) = nanmean(float(k).park_t) ;
+        pressure(k) = nanmean(float(k).park_p) ;
+        parkpis(k) = nanmean(float(k).parkpistonpos) ;
     end
     
     % Determine the density of the water through the CTD profile.

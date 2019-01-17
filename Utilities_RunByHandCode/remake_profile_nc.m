@@ -12,10 +12,22 @@ end
 getdbase(-1)
 % PREC_FNM = [ARGO_SYS_PARAM.root_dir 'Argo_proc_records'];
 
-kk = [5905389
+kk = [    5904922
+    5904925
+    5905389
+    5905390
+    5905393
+    5905394
+    5905410
+    5905411
+    5905412
+    5905413
+    5905419
+    5905420
+    5905421
     ];
 ipath = ARGO_SYS_PARAM.iridium_path;
-for ii = 1:length(kk)
+for ii = 7:length(kk)
     disp(ii)
     [fpp,dbdat]=getargo(kk(ii));
 
@@ -25,7 +37,9 @@ for ii = 1:length(kk)
         ARGO_SYS_PARAM.iridium_path = [ipath 'iridium_processed/' ...
             num2str(dbdat.wmo_id) '/'];
 %     if dbdat.oxy
-        for j=9%1:length(fpp)
+        for j=1:length(fpp)+dbdat.np0%71:78%1:
+            clear pmeta
+            close all
 %             [ii j]
 %             if ~isempty(fpp(j).lat)
 %                 try
@@ -37,11 +51,22 @@ for ii = 1:length(kk)
 %                     fn = dirc([ARGO_SYS_PARAM.iridium_path pmeta.ftp_fname]);
                     fn = dirc([ARGO_SYS_PARAM.iridium_path 'f*.' pn '.*science_log.csv']);
                     if isempty(fn)
-                        disp('file not found')
+                     fn = dirc([ARGO_SYS_PARAM.iridium_path 'f*.' pn '.*system_log.txt']);
+                    end
+                    if isempty(fn)
+                     fn = dirc([ARGO_SYS_PARAM.iridium_path '*.' pn '.*science_log.csv']);
+                    end
+                    if isempty(fn)
+                     fn = dirc([ARGO_SYS_PARAM.iridium_path '*.' pn '.*system_log.txt']);
+                    end
+                    if isempty(fn)
+                       disp('file not found')
                         continue
                     end
-                    pmeta.ftp_fname = fn{end,1};
-                    pmeta.ftptime = julian(datevec(fn{end,4}));
+                    for bb = 1:size(fn,1)
+                        pmeta.ftp_fname{bb} = fn{bb,1};
+                        pmeta.ftptime(bb) = julian(datevec(fn{bb,4}));
+                    end
                     opts.rtmode = 0; %don't send BUFR files etc
                     opts.redo = 1;
 %                     try
@@ -50,7 +75,7 @@ for ii = 1:length(kk)
 %                     catch
 %                         continue
 %                     end
-                     argoprofile_nc(dbdat,fpp(j))
+%                      argoprofile_nc(dbdat,fpp(j))
 %                     argoprofile_Bfile_nc(dbdat,fpp(j))
                     %copy to export
 % system(['cp ' ARGO_SYS_PARAM.root_dir '/netcdf/' num2str(dbdat.wmo_id) '/BR' num2str(dbdat.wmo_id) '_' pn '.nc /home/argo/ArgoRT/export'])

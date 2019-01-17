@@ -361,7 +361,7 @@ for i=1:m
                
     elseif strmatch('IsusInit',names{i})
     else
-        errornow=['new name! ' names{i}]
+        disp(['Dont panic. Found a new mission config parameter: ' names{i}])
         %             return
     end
 end

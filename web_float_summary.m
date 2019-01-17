@@ -168,13 +168,15 @@ if(~isempty(float))
             order = [1,2,0,5,8,9,7]; %what is 7 for?
             [~,ia,~] = intersect(float(kk).pos_qc,order,'stable');
             %      str{1} = sprintf('%6.3f',-float(kk).lat(1));
-            str{1} = sprintf('%6.3f',float(kk).lat(ia(1)));
-            str{2} = sprintf('%6.3f',float(kk).lon(ia(1)));
-            str{3} = sprintf('%d',float(kk).datetime_vec(ia(1),3));
-            str{4} = sprintf('%d',float(kk).datetime_vec(ia(1),2));
-            str{5} = sprintf('%d',float(kk).datetime_vec(ia(1),1));
-            str{6} = sprintf('%5.2f',float(kk).datetime_vec(ia(1),4) + ...
-                float(kk).datetime_vec(ia(1),5)/60.0);
+            if ~isempty(ia)
+                str{1} = sprintf('%6.3f',float(kk).lat(ia(1)));
+                str{2} = sprintf('%6.3f',float(kk).lon(ia(1)));
+                str{3} = sprintf('%d',float(kk).datetime_vec(ia(1),3));
+                str{4} = sprintf('%d',float(kk).datetime_vec(ia(1),2));
+                str{5} = sprintf('%d',float(kk).datetime_vec(ia(1),1));
+                str{6} = sprintf('%5.2f',float(kk).datetime_vec(ia(1),4) + ...
+                    float(kk).datetime_vec(ia(1),5)/60.0);
+            end
         else
             for ii = 1:6
                 str{ii} = '- -';
@@ -185,7 +187,7 @@ if(~isempty(float))
             str{7} = sprintf('%6.1f',max(float(kk).p_calibrate));
             str{8} = sprintf('%6.1f',min(float(kk).p_calibrate));
             str{9} = sprintf('%d',length(float(kk).p_raw));
-            str{10} = sprintf('%4.1f',float(kk).voltage);
+            str{10} = sprintf('%4.1f',mean(float(kk).voltage));
             str{11} = sprintf('%8.4f',float(kk).c_ratio);
             str{12} = sprintf('%8.4f',float(kk).c_ratio_calc);
         else
@@ -289,7 +291,7 @@ fclose(fid2);
 st = system(['chmod -f ugo+r ' file2]);
 st = system(['mv -f ' file2 ' ' file1]);
 
-% now regenerate tech web pages:
+now regenerate tech web pages:
 if ~isempty(strmatch('CSIRO',ARGO_SYS_PARAM.processor))
     if(~isempty(float)); plot_tech(float,dbdat);end
 end

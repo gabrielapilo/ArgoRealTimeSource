@@ -16,10 +16,10 @@ if isfield(float,'park_s') & isfield(float,'park_t') & isfield(float,'park_p') &
     
     % Extraction of relevant parameters
     for k=1:lg
-        salinity(k) = mean(float(k).park_s) ;
-        temperature(k) = mean(float(k).park_t) ;
-        pressure(k) = mean(float(k).park_p) ;
-        parkpis(k) = mean(float(k).parkpistonpos) ;
+        salinity(k) = nanmean(float(k).park_s) ;
+        temperature(k) = nanmean(float(k).park_t) ;
+        pressure(k) = nanmean(float(k).park_p) ;
+        parkpis(k) = nanmean(float(k).parkpistonpos) ;
     end
         
     % Extraction of the external density

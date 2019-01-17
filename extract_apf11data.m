@@ -68,7 +68,9 @@ for i=1:length(ufloats)
         
         %first check whether this float is in the spreadsheet:
         disp(ufloatsf{i})
-        ftptime = julian(datevec(a.datenum));
+        for bb = 1:size(a,1)
+            ftptime(bb) = julian(datevec(a(bb).datenum));
+        end
         currenttime=julian(clock);
         hr=1/24;
         argosid = str2num(ufloats{i});
@@ -83,12 +85,14 @@ for i=1:length(ufloats)
                 logerr(3,['? New float, Argos ID=' num2str(argosid)]);
             end
             isfloat = 0;
-        elseif currenttime-ftptime>=hr     % check whether this is more than 1 hour old - if so, then safe to process:
+        elseif currenttime-ftptime(1)>=hr     % check whether this is more than 1 hour old - if so, then safe to process:
             
             % Set details for the next profile
             pmeta.wmo_id = idcrossref(argosid,2,1);
-            pmeta.ftptime = ftptime;
-            pmeta.ftp_fname = a.name;
+            for bb = 1:size(a,1)
+                pmeta.ftptime(bb) = ftptime(bb);
+                pmeta.ftp_fname{bb} = a(bb).name;
+            end
             if length(pmeta.wmo_id)>1
                 pmeta.wmo_id=pmeta.wmo_id(2);  % assume you want the live version and punt if this isn't true
             end

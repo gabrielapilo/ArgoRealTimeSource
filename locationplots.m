@@ -49,10 +49,12 @@ for kk=1:nprof
     [~,ia,~] = intersect(fpp(kk).pos_qc,order,'stable');
     
     figure(9),hold on
+    if ~isempty(ia)
     if(~isempty(fpp(kk).lon) && ~isnan(fpp(kk).lon(ia(1))) && ~isempty(fpp(kk).profile_number))
         c(kk)=plot(fpp(kk).lon(ia(1)),fpp(kk).lat(ia(1)),'o','markersize',4,'color',cc(k,:));
         set(c(kk),'Color',cc(k,:))
         lab(kk,:) =sprintf('%7i',fpp(kk).profile_number);
+    end
     end
 end
 

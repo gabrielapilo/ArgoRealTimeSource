@@ -404,7 +404,7 @@ for ii = ipf(:)'
     
     bb=[];
     kk=find(diff(fp.p_calibrate)>0);
-    
+        
     if length(kk)>0
         for jj=1:length(kk)
             for l=kk(jj):kk(jj)+1    %max(2,kk(jj)):min(length(fp.p_calibrate)-2,kk(jj)+1)

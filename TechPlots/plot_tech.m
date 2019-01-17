@@ -50,9 +50,42 @@ eng = getadditionalinfo(dbdat.wmo_id);
             mak = 'MRV';
     end
 fig1 = figure(1);clf;hold on;axis off
-fig1.OuterPosition=[230 250 600 300];
-dd = 1/8;
+fig1.OuterPosition=[230 250 600 400];
+dd = 1/9;
 st = 0.95;
+str = [];
+if dbdat.subtype == 1019 | dbdat.subtype == 1023
+    str = [str,'APF11 '];
+end
+if dbdat.ice
+    str = [str,'Ice '];
+end
+if dbdat.oxy
+    str = [str,'Oxy '];
+end
+if dbdat.tmiss
+    str = [str,'Transmiss '];
+end
+if dbdat.flbb
+    str = [str,'FLBB '];
+end
+if dbdat.em
+    str = [str,'EM '];
+end
+if dbdat.suna
+    str = [str,'SUNA '];
+end
+if dbdat.eco
+    str = [str,'ECO '];
+end
+if dbdat.irr | dbdat.irr2
+    str = [str,'IRR '];
+end
+if dbdat.pH
+    str = [str,'pH'];
+end
+    
+text([.01,.5],[st,st],{'Controller,sensors: ', str},'fontsize',12);st = st-dd;
 text([.01,.5],[st,st],{'WMO, Hull, Trans ID: ', [num2str(eng.wmo_id) ', ' num2str(eng.mfg_id) ', ' eng.UplinkSystemID]},'fontsize',12);st = st-dd;
 text([.01,.5],[st,st],{'Maker: ', [mak ' ' aa ]},'fontsize',12);st = st-dd;
 text([.01,.5],[st,st],{'Status: ', dbdat.status},'fontsize',12);st = st-dd;

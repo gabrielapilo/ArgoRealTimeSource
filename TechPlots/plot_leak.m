@@ -87,5 +87,51 @@ if length(deltaV) == length(pispos)
     my_save_fig([fnm '/pis_deltaV'],'clobber')
 end
 
+%% APF11 leak voltage and humidity information
 
+if isfield(float,'leak_voltage')
+    fig1 = figure(1);clf;hold on
+    fig1.OuterPosition=[230 250 700 500];
+    for ind = 1:lg
+        leak_v(ind) = mean(float(ind).leak_voltage);
+    end
+    
+    plot(axisX,leak_v,'--^' , 'color' , markcolor , 'MarkerEdgeColor' , markcolor,'markersize',8);
+    set(gca,'FontSize',12)
+    title('Leak Detect voltage','fontsize',14) ;
+    xlabel('Cycle number','fontsize',14);
+    ylabel('Voltage','fontsize',14);
+    my_save_fig([fnm '/AIRpump_voltage'],'clobber')
+    
+end
+if isfield(float,'humidity')
+    fig1 = figure(1);clf;hold on
+    fig1.OuterPosition=[230 250 700 500];
+    for ind = 1:lg
+        hum(ind) = mean(float(ind).humidity);
+    end
+    
+    plot(axisX,hum,'--^' , 'color' , markcolor , 'MarkerEdgeColor' , markcolor,'markersize',8);
+    set(gca,'FontSize',12)
+    title('Humidity','fontsize',14) ;
+    xlabel('Cycle number','fontsize',14);
+    ylabel('Humidity, percent relative','fontsize',14);
+    my_save_fig([fnm '/AIRpump_power'],'clobber')
+    
+end
+if isfield(float,'coulomb_counter')
+    fig1 = figure(1);clf;hold on
+    fig1.OuterPosition=[230 250 700 500];
+    
+    for ind = 1:lg
+        cc(ind) = mean(float(ind).coulomb_counter);
+    end
+    
+    plot(axisX,cc,'--^' , 'color' , markcolor , 'MarkerEdgeColor' , markcolor,'markersize',8);
+    set(gca,'FontSize',12)
+    title('Coulomb Counter','fontsize',14) ;
+    xlabel('Cycle number','fontsize',14);
+    ylabel('Coulombs, milliamp hours','fontsize',14);
+    my_save_fig([fnm '/pumpmotor'],'clobber')
+    
 end

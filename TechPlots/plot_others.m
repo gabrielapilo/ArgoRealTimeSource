@@ -1,4 +1,4 @@
-function [ ] = plot_pumpmotor( float ,fnm)
+function [ ] = plot_others( float ,fnm)
 % This function permits to characterize a problem of pump motor.
 % Initialization:
 lg = length(float);
@@ -33,15 +33,17 @@ end
 
 
 % Plot this information
-markcolor = usual_test(pumptime(3:end)) ;
-fig1 = figure(1);clf;hold on
-fig1.OuterPosition=[230 250 700 500];
-plot(pumptime,'--^','MarkerEdgeColor',markcolor,'color',markcolor,'markersize',8);
-set(gca,'fontsize',12)
-title('Pump motor evolution','fontsize',14);
-xlabel('Cycle','fontsize',14);
-ylabel('Pump motor time','fontsize',14);
-my_save_fig([fnm '/pumpmotor'],'clobber')
+if float(end).subtype~=1019 & float(end).subtype~=1023
+    markcolor = usual_test(pumptime(3:end)) ;
+    fig1 = figure(1);clf;hold on
+    fig1.OuterPosition=[230 250 700 500];
+    plot(pumptime,'--^','MarkerEdgeColor',markcolor,'color',markcolor,'markersize',8);
+    set(gca,'fontsize',12)
+    title('Pump motor evolution','fontsize',14);
+    xlabel('Cycle','fontsize',14);
+    ylabel('Pump motor time','fontsize',14);
+    my_save_fig([fnm '/pumpmotor'],'clobber')
+end
 
 fig1 = figure(1);clf;hold on
 fig1.OuterPosition=[230 250 700 500];
