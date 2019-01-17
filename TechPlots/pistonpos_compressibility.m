@@ -23,16 +23,16 @@ if isfield(float,'park_s') & isfield(float,'park_t') & isfield(float,'park_p') &
         % Consider the difference of piston position!
         pispos(k) = nanmean(float(k).pistonpos) - mean(float(k).parkpistonpos) ;
     end
-    ig = ~isnan(pressure.*temperature.*salinity);
+    ig = ~isnan(pressure.*temperature.*salinity.*pispos);
     pressure = pressure(ig);
     temperature = temperature(ig);
     salinity = salinity(ig);
+    pispos = pispos(ig);
   
     % Determine the values of delta V
     [deltaV , V0 ] = float_compress(salinity,temperature,pressure,weight,ga,al);
     
     % Get rid off irrelevant values
-    pispos = pispos(~isnan(pispos));    
     markcolor = [0 0.498 0];
     
 else

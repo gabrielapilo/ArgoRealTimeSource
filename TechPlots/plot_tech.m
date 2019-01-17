@@ -86,7 +86,7 @@ if dbdat.pH
 end
     
 text([.01,.5],[st,st],{'Controller,sensors: ', str},'fontsize',12);st = st-dd;
-text([.01,.5],[st,st],{'WMO, Hull, Trans ID: ', [num2str(eng.wmo_id) ', ' num2str(eng.mfg_id) ', ' eng.UplinkSystemID]},'fontsize',12);st = st-dd;
+text([.01,.5],[st,st],{'WMO, Hull, Trans ID: ', [num2str(eng.wmo_id) ', ' num2str(eng.mfg_id) ', ' dbdat.argos_hex_id]},'fontsize',12);st = st-dd;
 text([.01,.5],[st,st],{'Maker: ', [mak ' ' aa ]},'fontsize',12);st = st-dd;
 text([.01,.5],[st,st],{'Status: ', dbdat.status},'fontsize',12);st = st-dd;
 text([.01,.5],[st,st],{'No Profiles: ', num2str(float(end).profile_number)},'fontsize',12);st = st-dd;
