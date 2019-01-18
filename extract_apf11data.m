@@ -86,7 +86,7 @@ for i=1:length(ufloats)
             end
             isfloat = 0;
         elseif currenttime-ftptime(1)>=hr     % check whether this is more than 1 hour old - if so, then safe to process:
-            
+            clear pmeta
             % Set details for the next profile
             pmeta.wmo_id = idcrossref(argosid,2,1);
             for bb = 1:size(a,1)
