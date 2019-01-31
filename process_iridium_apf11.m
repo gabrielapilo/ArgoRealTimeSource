@@ -432,17 +432,19 @@ if any(stage==1)
         %These won't get used in the surf pressure offset unless we
         %recalculate, I guess....
         if ~isempty(jday_pdm)
-            ii = find(jdall <= jday_pdm);
-            float(end-1).jday_surfpres = [float(end-1).jday_surfpres,jdall(ii)];
-            float(end-1).surfpres = [float(end-1).surfpres,pall(ii)];
-            if isfield(float,'surfT')
-                float(end-1).surfT = [float(end-1).surfT,tall(ii)];
-            end
-            if isfield(float,'surfS')
-                float(end-1).surfS = [float(end-1).surfS,sall(ii)];
-            end
-            if isfield(float,'surfC')
-                float(end-1).surfC = [float(end-1).surfC,call(ii)];
+            if np > 1
+                ii = find(jdall <= jday_pdm);
+                float(end-1).jday_surfpres = [float(end-1).jday_surfpres,jdall(ii)];
+                float(end-1).surfpres = [float(end-1).surfpres,pall(ii)];
+                if isfield(float,'surfT')
+                    float(end-1).surfT = [float(end-1).surfT,tall(ii)];
+                end
+                if isfield(float,'surfS')
+                    float(end-1).surfS = [float(end-1).surfS,sall(ii)];
+                end
+                if isfield(float,'surfC')
+                    float(end-1).surfC = [float(end-1).surfC,call(ii)];
+                end
             end
         end
         
