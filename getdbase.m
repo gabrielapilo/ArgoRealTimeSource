@@ -155,6 +155,8 @@ if isempty(THE_ARGO_FLOAT_DB)
                        T(ientry).maker = 3;
                    elseif ~isempty(strfind(fld,'nke'))
                        T(ientry).maker = 6;
+                   elseif ~isempty(strfind(fld,'mrv'))
+                       T(ientry).maker = 5;
                    else
                        T(ientry).maker = 0;
                        if isempty(fld)

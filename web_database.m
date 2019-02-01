@@ -17,7 +17,7 @@ function web_database
 global ARGO_SYS_PARAM
 global THE_ARGO_FLOAT_DB  ARGO_ID_CROSSREF
 
-makestr = {'Webb','Provor','SOLO','Seabird','MRV'};
+makestr = {'Webb','Provor','SOLO','Seabird','MRV','NKE'};
 
 if isempty(ARGO_SYS_PARAM)
    set_argo_sys_params;
