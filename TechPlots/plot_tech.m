@@ -13,6 +13,11 @@ if nargin == 0
 end
 
 close all
+fnm = strcat(ARGO_SYS_PARAM.web_dir, '/tech/',num2str(dbdat.wmo_id));
+if ~isdir(fnm)
+    make_tech_webpage(dbdat.wmo_id)
+    web_select_float_tech
+end
 fnm = strcat(ARGO_SYS_PARAM.web_dir, '/tech/img/',num2str(dbdat.wmo_id));
 
 if ~isdir(fnm)
