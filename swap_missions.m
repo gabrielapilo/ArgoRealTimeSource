@@ -37,6 +37,8 @@ if wmo_id==5905395 | wmo_id == 5905396 | wmo_id == 5905397
 %         
 %     end
     
+elseif wmo_id == 5905194
+    %don't swap for now (4 Feb 2019)
 else
     
     if mod(pn,6)==0  % profile divisible by 6 (every 3rd mission swap)
