@@ -95,7 +95,7 @@ save(fnm2,'-mat','holddepx','holddepy');
 %end
 
 title(['Float deployment planning to date ' date ' 2017-18 floats'])
-save_fig (['Float_deployment_planning_17-8_2.gif'])
+% save_fig (['Float_deployment_planning_17-8_2.gif'])
 
 
 

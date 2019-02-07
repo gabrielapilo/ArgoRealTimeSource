@@ -16,8 +16,12 @@
 % NOTE: use /home/argo/matlab/ballast/surface_dens_AT to update
 %     raw_sfc_obs.mat  NOTE: NOW IN ArgoRT/src!!!
 
+global ARGO_SYS_PARAM
 
-addpath /home/eez_data/software/matlab
+set_argo_sys_params
+addpath /home/eez_data/software/matlab/
+addpath /home/UOT/programs/Mquest/climatology
+addpath /home/UOT/programs/Mquest/Util
 
 % want print results into files?
 iprint = 1
@@ -73,15 +77,17 @@ for j2= 1:length(x_fl);
     special_text=[];
     % check for bottom depth!
     x2=rem(x_fl(j),10.);
-    bot_fl(j) = -1*topongdc(y_fl(j),x_fl(j));
+    %bot_fl(j) = -1*topongdc(y_fl(j),x_fl(j));
+    [maxdep,mindep] = get_ocean_depth(y_fl(j),x_fl(j));
+    bot_fl(j) = maxdep;
     if bot_fl(j2) > 2000,
         
         
         % get the historical climatological full depth cast:
         
         [aa,days,midd]=names_of_months;
-        tc = get_clim_casts('t',x_fl(j),y_fl(j),sdep,midd,'cars2009',1);
-        sc = get_clim_casts('s',x_fl(j),y_fl(j),sdep,midd,'cars2009',1);
+        tc = quest_get_clim_casts('t',x_fl(j),y_fl(j),sdep,midd,'cars2009',1);
+        sc = quest_get_clim_casts('s',x_fl(j),y_fl(j),sdep,midd,'cars2009',1);
         %tc = get_clim_casts('t',x_fl(j),y_fl(j),sdep,[],'filled');
         %sc = get_clim_casts('s',x_fl(j),y_fl(j),sdep,[],'filled');
         
@@ -89,7 +95,9 @@ for j2= 1:length(x_fl);
         % extract good sfc data within 3 degrees
         ig = find(abs(la-y_fl(j)) <= 3. & abs(lon-x_fl(j)) <= 3. & ~isnan(s(1,j)) & ~isnan(t(1,j)));
         % get bottom depth at nearby obs. and toss data on the shelf:
-        botdepth =  -1*topongdc(la(ig),lon(ig));
+        [maxdep,mindep] = get_ocean_depth(la(ig),lon(ig));
+        botdepth = maxdep;
+%         botdepth =  -1*topongdc(la(ig),lon(ig));
         ishallow = find(botdepth < 100);
         ig(ishallow) = [];
         % find nt least dens sfc values
@@ -121,8 +129,8 @@ for j2= 1:length(x_fl);
         for n=1:nt
             k =im(n);
             if(k==0)
-                tc = get_clim_casts('t',x_fl(j),y_fl(j),sdep,midd(n),'cars2009',1);
-                sc = get_clim_casts('s',x_fl(j),y_fl(j),sdep,midd(n),'cars2009',1);
+                tc = quest_get_clim_casts('t',x_fl(j),y_fl(j),sdep,midd(n),'cars2009',1);
+                sc = quest_get_clim_casts('s',x_fl(j),y_fl(j),sdep,midd(n),'cars2009',1);
             end
             clear ss tt pp
             ii = find(~isnan(sc));
