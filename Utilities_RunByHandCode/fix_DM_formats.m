@@ -7,17 +7,19 @@ set_argo_sys_params
 dirn = '/home/argo/data/dmode/newSoftwareTest/';
 
 getdbase(0);
-fln = [5904226
-    3901467
-    5904221
-    5904224
-    ];
+% fln = [5904226
+%     3901467
+%     5904221
+%     5904224
+%     ];
 %open a text file to record the files changed:
 % fid = fopen('/home/argo/ArgoRT/Irrformat_changes.txt','a');
 
 for a = 1:length(THE_ARGO_FLOAT_DB)
-    %     if THE_ARGO_FLOAT_DB(a).oxy
-    if ~isempty(find(THE_ARGO_FLOAT_DB(a).wmo_id==fln))
+    [fpp,dbdat]=getargo(THE_ARGO_FLOAT_DB(a).wmo_id);
+    disp(a)
+        if dbdat.maker == 4
+%     if ~isempty(find(THE_ARGO_FLOAT_DB(a).wmo_id==fln))
         flist = dir([dirn '/' num2str(THE_ARGO_FLOAT_DB(a).wmo_id) '/DFILES/D*.nc']);
 %         flds = {'RAW_DOWNWELLING_IRRADIANCE412','RAW_DOWNWELLING_IRRADIANCE490',...
 %             'RAW_DOWNWELLING_PAR','RAW_DOWNWELLING_IRRADIANCE380'};
@@ -26,8 +28,23 @@ for a = 1:length(THE_ARGO_FLOAT_DB)
             fn = [dirn '/' num2str(THE_ARGO_FLOAT_DB(a).wmo_id) ...
                 '/DFILES/' flist(b).name];
             %CHANGE the value
-            pn = 'S2A                             ';
-            ncwrite(fn,'PLATFORM_TYPE',pn');
+            pn = '                                ';
+            switch dbdat.wmo_inst_type
+                
+                case '863'
+                    aa = 'NAVIS_A ';
+                    mak = 'SBE';
+                case '869'
+                    aa = 'NAVIS_EBR ';
+                    mak = 'SBE';
+            end
+            oldpn = ncread(fn,'PLATFORM_TYPE');
+            newpn = [];
+            for c = 1:size(oldpn,2)
+                pn(1:length(aa)) = aa;
+                newpn = [newpn;pn];
+            end
+            ncwrite(fn,'PLATFORM_TYPE',newpn');
             
             
 %             fnnew = [dirn '/' num2str(THE_ARGO_FLOAT_DB(a).wmo_id) ...
@@ -56,12 +73,21 @@ for a = 1:length(THE_ARGO_FLOAT_DB)
     end
 end
 % fclose(fid);
-% %% submit to GDAC
+%% submit to GDAC
 % fid = fopen('/home/argo/ArgoRT/Irrformat_changes.txt','r');
 % fns = textscan(fid,'%s\n')
 % fclose(fid);
 % fns = fns{1};
-% 
+for a = 1:length(THE_ARGO_FLOAT_DB)
+    [fpp,dbdat]=getargo(THE_ARGO_FLOAT_DB(a).wmo_id);
+    disp(a)
+    if dbdat.maker == 4
+        flist = dir([dirn '/' num2str(THE_ARGO_FLOAT_DB(a).wmo_id) '/DFILES/BD*.nc']);
+        for b = 1:length(flist)
+            system(['cp ' dirn '/' num2str(THE_ARGO_FLOAT_DB(a).wmo_id) '/DFILES/' flist(b).name ' /home/argo/ArgoRT/export'])
+        end
+    end
+end
 % for a = 1:length(fns)
 %     if ~isempty(findstr('BD',fns{a}))
 %         system(['cp ' fns{a} ' /home/argo/ArgoRT/export'])

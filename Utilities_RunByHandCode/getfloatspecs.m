@@ -1,6 +1,6 @@
 %run with mypark_depths2
 clear
-fn = '/home/argo/ArgoRT/Deployment_Planning/deplocs2017_18ts.csv';
+fn = '/home/argo/ArgoRT/Deployment_Planning/purchaseplan2018_19_ts.csv';
 K = load(fn);
 
 %holddepy=-45.92;
