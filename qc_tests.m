@@ -54,6 +54,9 @@ for ii = ipf(:)'
     if isempty(fp.pos_qc)
         fp.pos_qc = zeros(1,length(fp.lat),'uint8');
     end        
+    if length(fp.pos_qc) < length(fp.lat)
+        fp.pos_qc = zeros(1,length(fp.lat),'uint8');
+    end        
     if  ~isempty(fp.p_raw)
         fp.p_qc = ones(size(fp.p_raw),'uint16');
         jj = find(isnan(fp.p_raw));
