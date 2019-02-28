@@ -99,13 +99,13 @@ dat = dat(:)';
 d0 = msglen(typ+1) - 2;
 p1 = prof(1,:);
 
-if(length(dat)==58 & dbdat.boardtype==9)  %this is probably a test message with bad crcs that passed tests
+if(length(dat)==58 & ~isempty(strmatch('APF9',dbdat.boardtype)))  %this is probably a test message with bad crcs that passed tests
                        % - only 2 blocks are not enough for a profile
                        % anyway so return...
    logerr(1,'Looks like test block - not enough data for profile');
    return
 end
-if(length(dat)<=87 & dbdat.boardtype==9 & dbdat.oxy)  %this is probably a test message with bad crcs that passed tests
+if(length(dat)<=87 & ~isempty(strmatch('APF9',dbdat.boardtype)) & dbdat.oxy)  %this is probably a test message with bad crcs that passed tests
                        % - only 2 blocks are not enough for a profile
                        % anyway so return...
    logerr(1,'Looks like test block - not enough data for profile');
