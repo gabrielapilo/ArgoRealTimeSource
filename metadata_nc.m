@@ -774,18 +774,11 @@ end
 
 
 if ~isempty(dbdat.boardtype)
-    if dbdat.boardtype==8
-        aa='APF8';
-    elseif dbdat.boardtype==9
-        aa='APF9';
-    elseif dbdat.boardtype==11
-        aa='APF11';
-    else
-        aa='n/a';
-    end
+    aa = dbdat.boardtype;
 else
-        aa='n/a';
+    aa='n/a';
 end
+
 netcdf.putVar(ncid,CONTBDID,0,length(aa),aa);
 
 aa=[];

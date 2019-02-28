@@ -63,7 +63,7 @@ if isempty(THE_ARGO_FLOAT_DB)
       
    fid = fopen(fnm,'r');
    %35 columns. Edit here if we need to add/remove columns
-   tmpdb = textscan(fid,repmat('%s',1,35),'delimiter',',','headerlines',2);  
+   tmpdb = textscan(fid,repmat('%s',1,36),'delimiter',',','headerlines',2);  
    fclose(fid);
 
    % stick with this setup, probably more efficient ways of doing it...
@@ -104,44 +104,39 @@ if isempty(THE_ARGO_FLOAT_DB)
                case 18
                    T(ientry).sbe_snum = str2num(fld);
                case 19
+                   if(isempty(fld))
+                       T(ientry).boardtype = [];
+                   else
+                       T(ientry).boardtype = fld;
+                   end
+               case 20
                    dt=strfind(fld,'-');
                    if isempty(dt);dt=0;end
                    T(ientry).controlboardnum = str2num(fld(dt+1:end));
                    T(ientry).controlboardnumstring = fld;
-                   if(isempty(fld))
-                       T(ientry).boardtype = [];
-                   elseif(dt==0)
-                       T(ientry).boardtype = 8;
-                   else
-                       try
-                           T(ientry).boardtype = str2num(fld(1:dt-2));
-                       catch
-                           T(ientry).boardtype = [];
-                       end
-                   end
-               case 20
-                   T(ientry).oxysens_snum = str2num(fld);
                case 21
-                   T(ientry).psens_snum = str2num(fld);
+                   T(ientry).oxysens_snum = str2num(fld);
                case 22
-                   T(ientry).reprate = str2num(fld);
+                   T(ientry).psens_snum = str2num(fld);
                case 23
-                   T(ientry).parktime = str2num(fld);
+                   T(ientry).reprate = str2num(fld);
                case 24
-                   T(ientry).asctime = str2num(fld);
+                   T(ientry).parktime = str2num(fld);
                case 25
-                   T(ientry).surftime = str2num(fld);
+                   T(ientry).asctime = str2num(fld);
                case 26
-                   T(ientry).parkpres = str2num(fld);
+                   T(ientry).surftime = str2num(fld);
                case 27
-                   T(ientry).uptime = str2num(fld);
+                   T(ientry).parkpres = str2num(fld);
                case 28
-                   T(ientry).profpres = str2num(fld);
+                   T(ientry).uptime = str2num(fld);
                case 29
-                   T(ientry).launch_platform = fld;
+                   T(ientry).profpres = str2num(fld);
                case 30
-                   T(ientry).np0 = str2num(fld);
+                   T(ientry).launch_platform = fld;
                case 31
+                   T(ientry).np0 = str2num(fld);
+               case 32
                    fld = lower(fld);
                    if ~isempty(strfind(fld,'webb'))
                        T(ientry).maker = 1;
@@ -167,9 +162,9 @@ if isempty(THE_ARGO_FLOAT_DB)
                                ', in row ' num2str(ientry)]);
                        end
                    end
-               case 32
-                   T(ientry).subtype = str2num(fld);
                case 33
+                   T(ientry).subtype = str2num(fld);
+               case 34
                    fld = lower(fld);
                    T(ientry).ice = ~isempty(strfind(fld,'i'));
                    T(ientry).oxy = ~isempty(strfind(fld,'o'));
@@ -182,10 +177,10 @@ if isempty(THE_ARGO_FLOAT_DB)
                    T(ientry).irr = ~isempty(strfind(fld,'r'));  %upward and downward irradiance sensors
                    T(ientry).irr2 = ~isempty(strfind(fld,'r2'));  %downward irradiance sensors with PAR
                    T(ientry).pH = ~isempty(strfind(fld,'p'));  %pH sensor
-               case 34
+               case 35
                    fld = upper(fld);
                    T(ientry).pressure_sensor = fld;
-               case 35
+               case 36
                    T(ientry).iridium = ~isempty(strfind(lower(fld),'iridium'));                   
                otherwise
                    % we don't need these other fields (for now)
