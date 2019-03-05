@@ -107,6 +107,7 @@ end
 
 fn=pmeta.ftp_fname{1};      % science log - can be over multiple files
 fnm = [ARGO_SYS_PARAM.root_dir 'matfiles/float' num2str(dbdat.wmo_id)];
+fnmaux = [ARGO_SYS_PARAM.root_dir 'matfiles/float' num2str(dbdat.wmo_id) 'aux.mat'];
 ss=strfind(fn,'.');
 np=str2num(fn(ss(1)+1:ss(2)-1));
 np=np-dbdat.np0;
@@ -459,14 +460,9 @@ if any(stage==1)
                 end
                 pro.GPSfixtime(gps)=pro.jday_location(gps);
                 if np > 1
-                    jd = [];
-                    if ~isempty(float(np-1).jday)
-                        jd = float(np-1).jday(end);
-                    elseif ~isempty(float(np-1).Tech_jday)
-                        jd = float(np-1).Tech_jday(end);
-                    else
-                        jd = float(np-2).jday(end);
-                    end
+                    load(fnmaux)
+                    cyctime = (floatTech.Mission(np).DownTime + floatTech.Mission(np).UpTime)/60/24;
+                    jd = jday_sm-cyctime;
                     if ~isempty(jd)
                         if pro.GPSfixtime(gps) - jd < 1
                             previouslocation=[previouslocation gps];
