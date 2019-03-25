@@ -115,7 +115,7 @@ end
 rtc_skew = 0;
 sat_count = 0;
 gps_count = 0;
-STlat = NaN; STlon = NaN;
+STlat = NaN; STlon = NaN; ST = NaN;
 
 % Floats which profile on ascent must provide
 %  DST, DET, PET, DDET, AST, AET and all surface times (Cookbook 3.2)
@@ -315,14 +315,15 @@ while row_idx <= length(tdata{1})
             %get the pressure too and record it here
             ij = strfind(tdata{1}{row_idx},'dbar');
             AST(2) = str2num(tdata{1}{row_idx}(ii+9:ij(1)-1));
+            AST(3:4) = NaN;
         end
     end
-    % If this line exists, overwrite the first AST Value, as this has the
+    % If this line exists, add to the AST Value, as this has the
     % temperature and salinity data too.
     if ~isnan(t_date) & strfind(tdata{1}{row_idx},'Sample 0')
         ii = regexp(tdata{1}{row_idx},'PTS');
         if ~isempty(ii)
-            AST = t_date;
+            AST(2,1) = t_date;
             exp = 'PTS.*(?=PSU)';
             splitS = regexp(tdata{1}{row_idx},exp,'match');
             %get the pressure, sal, temp info
@@ -335,10 +336,10 @@ while row_idx <= length(tdata{1})
             end    
             try
                 ij = strfind(str,'dbar');
-                AST(2) = str2num(str(isp(1):ij(1)-1));
+                AST(2,2) = str2num(str(isp(1):ij(1)-1));
                 ij = strfind(str,'C');
-                AST(3) = str2num(str(isp(2):ij-1));
-                AST(4) = str2num(str(isp(3):end));
+                AST(2,3) = str2num(str(isp(2):ij-1));
+                AST(2,4) = str2num(str(isp(3):end));
             catch
                 disp(['Not all AST data extracted ' num2str(dbdat.wmo_id)])
             end
@@ -416,7 +417,7 @@ end
 % are available. The time in the msg file is after the time recorded in the
 % log file.
 esttst2 = 0;
-if ~isempty(fpp(pn).jday) & isnan(TST2)
+if ~isempty(fpp(pn).jday) & isnan(TST2) & ~isnan(fpp(pn).jday)
     TST2 = datenum(gregorian(fpp(pn).jday(1))); %these are the GPS fixes from the msg file
     esttst2 = 1;
 end
@@ -433,7 +434,8 @@ if isnan(AST(1)) & ~isnan(DST)% & ~estdst
             dd = DST + floatTech.Mission(pn).DownTime/60/24;
             AST(1) = dd + floatTech.Mission(pn).TimeOfDay/60/24;
         end
-    elseif ~isempty(floatTech.Mission(pn).DownTime)
+    end
+    if isnan(AST(1)) & ~isempty(floatTech.Mission(pn).DownTime)
         AST(1) = DST + floatTech.Mission(pn).DownTime/60/24;
     end
     %If the time does not make sense relative to actual PET (eg, the float hits
@@ -468,24 +470,26 @@ end
 
 %if the GPS fixes are missing in log file, can be present in msg file
 %(previous one).
-if isnan(STlat) & ~isempty(msgdata_prev)
+if ~isempty(msgdata_prev)
     igps = find(cellfun(@isempty,strfind(msgdata_prev{1},'Fix:'))==0);
     if ~isempty(igps)
         for gps_count = 1:length(igps)
             fmt = 'mm/dd/yyyy HHMMSS';
             dt = regexp(msgdata_prev{1}{igps(gps_count)},'\d+/\d+/\d+ [0-9]*','match');
             if ~isempty(dt)
-                ST(gps_count) = datenum(dt,fmt);
+                ST = [ST, datenum(dt,fmt)];
                 %collect the position information too: ASSUME IT IS LON FOLLOWED BY
                 %LAT!!
                 ll = regexp(msgdata_prev{1}{igps(gps_count)},'[-0-9]+\.[0-9]+','match');
-                STlat(gps_count) = str2num(ll{2});
-                STlon(gps_count) = str2num(ll{1});
-            else
-                [ST(gps_count),STlat(gps_count), STlon(gps_count)] = deal(NaN);
+                STlat = [STlat, str2num(ll{2})];
+                STlon = [STlon, str2num(ll{1})];
             end
         end
     end
+    %remove duplicated positions:
+    [ST,ia,~] = unique(ST,'stable');
+    STlat = STlat(ia);
+    STlon = STlon(ia);
 end
 
 % % Can get approximate DSP values from the msg file (currently not decoded from
@@ -511,11 +515,20 @@ end
 %check for pressures within 3% of park depth:
 %use 'Eventual Drift Pressure', ie, not the programmed value
 % In the case of a float that overshoots on descent, DET is the time of the overshoot.
-[npark_samp,ndisc_samp] = deal([]);
+[npark_samp,ndisc_samp,pp,ps,pt,p503,t503,s503] = deal([]);
 if ~isempty(fpp(pn).park_p)
     idiscrete = find(strncmp('$ Discrete',msgdata{1},10));
-    iparks = length(find(cellfun(@isempty,strfind(msgdata{1},'(Park Sample)'))==0));
-    iparks2 = length(find(cellfun(@isempty,strfind(msgdata{1},'ParkPts'))==0));
+    nparks = find(cellfun(@isempty,strfind(msgdata{1},'(Park Sample)'))==0);
+    iparks = length(nparks);
+    if ~isempty(nparks)
+        pline = regexp(msgdata{1}(nparks),'[-0-9]+\.[0-9]+','match');
+        if ~isempty(pline{:})
+            pp = str2num(pline{:}{1});
+            ps = str2num(pline{:}{3});
+            pt = str2num(pline{:}{2});
+        end
+    end
+    iparks2 = length(find(cellfun(@isempty,strfind(msgdata{1},'ParkPt'))==0));
     if iparks2 == 0 %probably a bio float
         iparks2 = length(find(cellfun(@isempty,strfind(msgdata{1},'ParkObs:'))==0));
     end        
@@ -523,12 +536,18 @@ if ~isempty(fpp(pn).park_p)
         str = msgdata{1}{idiscrete};
         ij = findstr(':',str);
         ndisc_samp = str2num(str(ij+1:end));
+        if ndisc_samp > 1
+            pline = regexp(msgdata{1}(nparks+1),'[-0-9]+\.[0-9]+','match');
+            p503 = str2num(pline{:}{1});
+            s503 = str2num(pline{:}{3});
+            t503 = str2num(pline{:}{2});
+        end
         if ~isempty(iparks)
             npark_samp = iparks + iparks2;
         end
     end
     
-    pd = fpp(pn).park_p(1:npark_samp);
+    pd = [fpp(pn).park_p(1:iparks2),pp];
     pd = pd(~isnan(pd));
     pd = median(pd);
     if fpp(pn).park_p(1) > pd
@@ -553,99 +572,59 @@ if ~isempty(fpp(pn).park_p)
         end
     end
     %assign the PTM while we are here:
-    PTM = NaN*ones(size(fpp(pn).park_date,1)+length(npark_samp),4);
+    if iparks2 > 0
+        PTM = NaN*ones(iparks2,4);
     %note that the P/T/S park measurement does not have a date associated
     %with it in the fpp structure, however, in the log file, the time is
     %recorded with 'ParkTerminate', PET value. PTS from end of the park
-    %period is now to be associated with the PET value (MC 300).
+    %period is now to be associated with the MC 299.
     %also, there can be more than one measurement. In this case, the last
     %one is likely to be the AST value, the first one the PET value. The
     %log file will have both measurements labelled, so I'm inclined to get
     %them from the log file. The fpp data comes from the unlabelled msg
     %file. The data matches.
-    try
-        PTM(:,1) = [datenum(fpp(pn).park_date); NaN*npark_samp];
-        PTM(:,2) = reshape(fpp(pn).park_p(1:npark_samp),[],1);
-        PTM(:,3) = reshape(fpp(pn).park_t(1:npark_samp),[],1);
-        PTM(:,4) = reshape(fpp(pn).park_s(1:npark_samp),[],1);
-    catch
-        disp(['Problem with Park temp/pres/psal for float ' num2str(pmeta.wmo_id)])
-    end
-    %make sure DET comes after PST - eg in 5903625 pn 1, park_jday is
-    %incorrect, need to fix!
-    if PTM(1) < PST
-        PTM(1) = PST;
-%         fid = fopen('bad_fpp_park_date.txt','a');
-%         fprintf(fid,'%s\n',[fn ',' num2str(pn)]);
-%         fclose(fid);
-    end
-    
-    %look for dodgy values in msg file:
-    ii = find(PTM(:,2:4) > 10000);
-    if any(ii)
-        dat = PTM(:,2:4);
-        dat(ii) = NaN;
-        PTM(:,2:4) = dat;
-%         fid = fopen('bad_PTS.txt','a');
-%         fprintf(fid,'%s\n',[fn ',' num2str(pn)]);
-%         fclose(fid);
-    end        
-    
-    %at this stage, put in a fix for when the matrix size of the
-    %fpp(pn).park_s is wrong. Happened a couple of times:
-    if length(fpp(pn).park_s) ~= length(fpp(pn).park_p)
-        ps = NaN*fpp(pn).park_p;
-        ii = length(fpp(pn).park_s);
-        ps(end-ii+1:end) = fpp(pn).park_s;
-        fpp(pn).park_s = ps;
-%         fid = fopen('traj_files_need_fixing.txt','a');
-%         fprintf(fid,'%s\n',[fn ',' num2str(pn)]);
-%         fclose(fid);
-    end
-    
-    %only use the PET times that match the CTD measurements - use pressure
-    %only as salinity could be dodgy.
-    if ~estpet & length(PET) > 1
-        ii = find(abs(fpp(pn).park_p - PET(2)) < 5);
-    else
-        %have to use the park pressure from dbdat
-        ii = find(abs(fpp(pn).park_p - dbdat.parkpres) < 300);
-    end        
-    if ~isempty(ii) 
-        % use the last value minus the AST value (if there is one)
-        PET(2) = fpp(pn).park_p(ii(end));
-        PET(3) = fpp(pn).park_t(ii(end));
-        PET(4) = fpp(pn).park_s(ii(end));
-    end
-    % keep an eye on the +/-100m criteria:
-    if length(PET) > 1 & isempty(ii)
-        disp('No park data in msg file within +/- 5m of log file value or 300m of expected park pressure')
-%         keyboard
-    end
-    
-    % Get PTS for mc 503 - PTS of deepest bin in ascending profile float.
-    % is not being recorded as 503 at the moment, but as 500 PTS.
-    if length(AST)<2
-        if ~isempty(fpp(pn).p_calibrate)
-            AST(2) = fpp(pn).p_calibrate(1);
-        elseif ~isempty(fpp(pn).p_raw)
-            AST(2) = fpp(pn).p_raw(1);
+        PTM(:,1) = datenum(fpp(pn).park_date(1:iparks2,:));
+        PTM(:,2) = reshape(fpp(pn).park_p(1:iparks2),[],1);
+        PTM(:,3) = reshape(fpp(pn).park_t(1:iparks2),[],1);
+        try
+            PTM(:,4) = reshape(fpp(pn).park_s(1:iparks2),[],1);
+        catch
+            disp(['Problem with Park psal for float ' num2str(pmeta.wmo_id)])
         end
-    end
-    if length(AST)<3
+        %make sure DET comes after PST - eg in 5903625 pn 1, park_jday is
+        %incorrect, need to fix!
+        if PTM(1) < PST
+            PTM(1) = PST;
+            %         fid = fopen('bad_fpp_park_date.txt','a');
+            %         fprintf(fid,'%s\n',[fn ',' num2str(pn)]);
+            %         fclose(fid);
+        end
         
-        if ~isempty(fpp(pn).t_calibrate)
-            AST(3) = fpp(pn).t_calibrate(1);
-        elseif ~isempty(fpp(pn).t_raw)
-            AST(3) = fpp(pn).t_raw(1);
+        %look for dodgy values in msg file:
+        ii = find(PTM(:,2:4) > 10000);
+        if any(ii)
+            dat = PTM(:,2:4);
+            dat(ii) = NaN;
+            PTM(:,2:4) = dat;
+            %         fid = fopen('bad_PTS.txt','a');
+            %         fprintf(fid,'%s\n',[fn ',' num2str(pn)]);
+            %         fclose(fid);
         end
     end
-    if length(AST)<4
-        if ~isempty(fpp(pn).s_calibrate)
-            AST(4) = fpp(pn).s_calibrate(1);
-        elseif ~isempty(fpp(pn).s_raw)
-            AST(4) = fpp(pn).s_raw(1);
-        end
+        
+   %put in the park sample data if available
+    if ~isempty(pp) 
+        % use the Park Sample value if it is there.
+        PET(2) = pp;
+        PET(3) = pt;
+        PET(4) = ps;
+    end
+    
+    % Get PTS for mc 503 if we don't have it already from log file - PTS of deepest bin in ascending profile float.
+    if size(AST,1) < 1 && ~isempty(p503)
+        AST(2,2) = p503;
+        AST(2,3) = t503;
+        AST(2,4) = s503;
     end
 end
 %assign some more times and pressures and positions as required.
@@ -703,28 +682,37 @@ end
 %extras in the trajectory_iridium_nc code.
 mc_previous = [repmat(703,1,length(ST)), 700, 702, 704, 800];
 traj_float_order = [200, repmat(290,1,size(PTM,1))];
+if size(AST,1) > 1
+    ast_order = [500, 503];
+    ast_ind = [1,2];
+else
+    ast_order = 500;
+    ast_ind = 1;
+end
 surf_t = [600, 701];
 mc_current = [100, repmat(190,1,size(DSP,1)), 250, ...
-            traj_float_order(ij), 300, 301, 400, 500, surf_t(ik), 903];%, 501
+            traj_float_order(ij), 300, 301, 400, ast_order, surf_t(ik), 903];%, 501
 %mc order information. Keep any existing mc_order if this is a reprocess:
 if length(traj) < pn
     traj(pn).traj_mc_order = mc_current;
     %now the indices:
     traj(pn).traj_mc_index = [1, 1:size(DSP,1), 1, ...
-        tc_ind(ij), ones(1,7)];
+        tc_ind(ij), ones(1,3), ast_ind, ones(1,3)];
 else
     iend = find(traj(pn).traj_mc_order == 903);
     traj(pn).traj_mc_order = [mc_current traj(pn).traj_mc_order(iend+1:end)];
     traj(pn).traj_mc_index = [1, 1:size(DSP,1), 1, ...
-        tc_ind(ij), ones(1,7) traj(pn).traj_mc_index(iend+1:end)];    
+        tc_ind(ij), ones(1,3), ast_ind, ones(1,3), traj(pn).traj_mc_index(iend+1:end)];    
 end
 %put the satellite information on the previous profile:
 if pn > 1
     %if this is a re-process, remove the existing indices first
     if length(traj) ~= pn
         iclear = find(traj(pn-1).traj_mc_order == 703);
-        traj(pn-1).traj_mc_order(iclear:end) = [];
-        traj(pn-1).traj_mc_index(iclear:end) = [];
+        if ~isempty(iclear)
+            traj(pn-1).traj_mc_order(iclear:end) = [];
+            traj(pn-1).traj_mc_index(iclear:end) = [];
+        end
     end
     traj(pn-1).traj_mc_order = [traj(pn-1).traj_mc_order mc_previous(ii)];
     traj(pn-1).traj_mc_index = [traj(pn-1).traj_mc_index tp_ind(ii)];

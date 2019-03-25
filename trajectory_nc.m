@@ -1006,8 +1006,10 @@ vnms([100,150,200,250,300,400,450,500,550,600,700,702,704,800]) = ...
 numnn=0;
 % Loop on profiles to be written to this file
 for nn = gotcyc
+    disp(nn)
     numnn=numnn+1;
-    
+    %qc it first:
+    [traj(nn),fp] = qc_traj(traj(nn),fpp(nn));
     % Add variables which have been recently introduced but maybe not yet
     % loaded for all cycles.    JRD July 2014
     %if ~isfield(fpp(nn),'jday_qc')
@@ -1036,18 +1038,18 @@ for nn = gotcyc
                         else
                             jday = fv.juld-j1950;
                             status = fv.stat;
-                            qc = '0';
+                            if isfield(fv,'juld_qc')
+                                qc = num2str(fv.juld_qc);
+                            else
+                                qc = '1';
+                            end
                         end
                         adj = fv.adj;
                         madd = iNM+1;
                         if ~adj
                             netcdf.putVar(ncid,NJULDID,madd(1)-1,length(jday),jday);
                             netcdf.putVar(ncid,NJULDSTID,madd(1)-1,length(status),status);
-                            if isfield(fv,'qc') && ~isempty(fv.qc)
-                                netcdf.putVar(ncid,NJULDQCID,madd(1)-1,length(fv.qc),fv.qc);
-                            else
-                                netcdf.putVar(ncid,NJULDQCID,madd(1)-1,length(qc),qc);
-                            end
+                            netcdf.putVar(ncid,NJULDQCID,madd(1)-1,length(qc),qc);
                             if ~isempty(traj(nn).clockoffset)
                                 adj = 1;
                                 jday = jday - traj(nn).clockoffset;
@@ -1056,11 +1058,7 @@ for nn = gotcyc
                         if adj %an estimated value is being used, so only enter into adjusted fields
                             netcdf.putVar(ncid,NJULDADID,madd(1)-1,length(jday),jday);
                             netcdf.putVar(ncid,NJULDADSTID,madd(1)-1,length(status),status);
-                            if isfield(fv,'qc') && ~isempty(fv.qc)
-                                netcdf.putVar(ncid,NJULDADQCID,madd(1)-1,length(fv.qc),fv.qc);
-                            else
-                                netcdf.putVar(ncid,NJULDADQCID,madd(1)-1,length(qc),qc);
-                            end
+                            netcdf.putVar(ncid,NJULDADQCID,madd(1)-1,length(qc),qc);
                         end
                     end
                 end
@@ -1089,6 +1087,11 @@ for nn = gotcyc
                         %jday = fpp(nn).surf_jday(1);      % surf_jday ?? ******
                         jday = traj(nn).DST.juld;
                         stus = traj(nn).DST.stat;
+                        if isfield(traj(nn).DST,'juld_qc')
+                            jqc = num2str(traj(nn).DST.juld_qc);
+                        else
+                            jqc = repmat('1',1,length(jday));
+                        end
                     end
                 elseif mc==290
                     % Park
@@ -1100,6 +1103,11 @@ for nn = gotcyc
                     if ok && isfield(traj,'PET')
                         jday = traj(nn).PET.juld;
                         stus = traj(nn).PET.stat;
+                        if isfield(traj(nn).PET,'juld_qc')
+                            jqc = num2str(traj(nn).PET.juld_qc);
+                        else
+                            jqc = repmat('1',1,length(jday));
+                        end
                     else
                         ok = 0;
                     end
@@ -1115,6 +1123,11 @@ for nn = gotcyc
                     if ok && isfield(traj,'PET')
                         jday = traj(nn).PET.juld;
                         stus = traj(nn).PET.stat;
+                        if isfield(traj(nn).PET,'juld_qc')
+                            jqc = num2str(traj(nn).PET.juld_qc);
+                        else
+                            jqc = repmat('1',1,length(jday));
+                        end
                     else
                         ok = 0;
                     end
@@ -1133,28 +1146,33 @@ for nn = gotcyc
                     for ij = 1:nval
                         netcdf.putVar(ncid,NJULDID,iNM+ij-1,length(jday-j1950),jday-j1950);
                         netcdf.putVar(ncid,NJULDSTID,iNM+ij-1,length(stus),stus);
-                        netcdf.putVar(ncid,NJULDQCID,iNM+ij-1,length('1'),'1');
+                        netcdf.putVar(ncid,NJULDQCID,iNM+ij-1,length(jqc),jqc);
                     end
                     % Use clockoffset to decide whether to use JULD_ADJUSTED ??
                     
                     for ipar = params
                         if isfield(fpp(nn),tmpnm{ipar})
-                            tmp = fpp(nn).(tmpnm{ipar});
+                            tmp = fp.(tmpnm{ipar});
                             for ij = 1:min(nval,length(tmp))
                                 if ~isnan(tmp(ij))
                                     cmmd=['netcdf.putVar(ncid,N' pars{ipar} 'ID,iNM+ij-1,length(tmp(ij)),tmp(ij));'];
                                     eval(cmmd);
-                                    cmmd=['netcdf.putVar(ncid,N' pars{ipar} 'QCID,iNM+ij-1,1,''0'');'];
+                                    if isfield(fp,[tmpnm{ipar} 'q'])
+                                        qc = num2str(fp.([tmpnm{ipar} 'q'])(ij));
+                                    else
+                                        qc = '1';
+                                    end
+                                    cmmd=['netcdf.putVar(ncid,N' pars{ipar} 'QCID,iNM+ij-1,1,''' qc ''');'];
                                     eval(cmmd);
-                                    if ~isempty(fpp(nn).surfpres_used)
+                                    if ~isempty(fp.surfpres_used)
                                         % Don't know if this can/should apply for surface values
                                         if ipar==1
-                                            tmp(ij) = tmp(ij) - fpp(nn).surfpres_used;
+                                            tmp(ij) = tmp(ij) - fp.surfpres_used;
                                             netcdf.putVar(ncid,NDAMOID,numnn-1,length('A'),'A');
                                         end
                                         cmmd=['netcdf.putVar(ncid,N' pars{ipar} 'ADID,iNM+ij-1,length(tmp(ij)),tmp(ij));'];
                                         eval(cmmd);
-                                        cmmd=['netcdf.putVar(ncid,N' pars{ipar} 'ADQCID,iNM+ij-1,1,''0'');'];
+                                        cmmd=['netcdf.putVar(ncid,N' pars{ipar} 'ADQCID,iNM+ij-1,1,''' qc ''');'];
                                         eval(cmmd);
                                     elseif ipar==1
                                         netcdf.putVar(ncid,NDAMOID,numnn-1,length('R'),'R');
@@ -1201,9 +1219,9 @@ for nn = gotcyc
                     madd = iNM + (1:length(traj(nn).heads.juld));
                     netcdf.putVar(ncid,NJULDID,madd(1)-1,length(traj(nn).heads.juld-j1950),traj(nn).heads.juld-j1950);
                     if isfield(traj(nn).heads,'juld_qc') && ~isempty(traj(nn).heads.juld_qc)
-                        netcdf.putVar(ncid,NJULDQCID,madd(1)-1,length(char(traj(nn).heads.juld_qc(:))),char(traj(nn).heads.juld_qc(:)));
+                        netcdf.putVar(ncid,NJULDQCID,madd(1)-1,length(traj(nn).heads.juld_qc(:)),num2str(traj(nn).heads.juld_qc(:))');
                     else
-                        netcdf.putVar(ncid,NJULDQCID,madd(1)-1,length(madd),repmat('0',1,length(madd)));
+                        netcdf.putVar(ncid,NJULDQCID,madd(1)-1,length(madd),repmat('1',1,length(madd)));
                     end
                     netcdf.putVar(ncid,NJULDSTID,madd(1)-1,length(madd),repmat('4',1,length(madd)));
                     netcdf.putVar(ncid,NLATID,madd(1)-1,length(traj(nn).heads.lat),traj(nn).heads.lat);
@@ -1215,7 +1233,7 @@ for nn = gotcyc
                     end
                     netcdf.putVar(ncid,NLONGID,madd(1)-1,length(lon),lon);
                     if isfield(traj(nn).heads,'qcflags') && ~isempty(traj(nn).heads.qcflags)
-                        netcdf.putVar(ncid,NPOSQCID,madd(1)-1,length(num2str(traj(nn).heads.qcflags)),num2str(traj(nn).heads.qcflags));
+                        netcdf.putVar(ncid,NPOSQCID,madd(1)-1,length(traj(nn).heads.qcflags),num2str(traj(nn).heads.qcflags(:))');
                     else
                         netcdf.putVar(ncid,NPOSQCID,madd(1)-1,length('1'),'1');
                     end
@@ -1231,14 +1249,19 @@ for nn = gotcyc
             case 903
                 % Megan S agrees that this is the way to store SPO
                 if ~isempty(fpp(nn).surfpres_used) && ~isnan(fpp(nn).surfpres_used)
+                    if fp.surfpres_qc >= 0
+                        qc = '1';
+                    else
+                        qc = '4';
+                    end
                     madd = iNM+1;
                     netcdf.putVar(ncid,NPRESID,madd(1)-1,length(fpp(nn).surfpres_used),fpp(nn).surfpres_used);
-                    netcdf.putVar(ncid,NPRESQCID,madd(1)-1,length(fpp(nn).surfpres_used),'0');
+                    netcdf.putVar(ncid,NPRESQCID,madd(1)-1,length(fpp(nn).surfpres_used),qc);
                     if ~isempty(traj(nn).clockoffset) %only if it is in adjusted mode (a clock offset is applied)
                         %need to include in adjusted field as well to meet
                         %consistency checks for the file
                         netcdf.putVar(ncid,NPRESADID,madd(1)-1,length(fpp(nn).surfpres_used),fpp(nn).surfpres_used);
-                        netcdf.putVar(ncid,NPRESADQCID,madd(1)-1,length(fpp(nn).surfpres_used),'0');
+                        netcdf.putVar(ncid,NPRESADQCID,madd(1)-1,length(fpp(nn).surfpres_used),qc);
                     else
                         netcdf.putVar(ncid,NPRESADQCID,madd(1)-1,length(fpp(nn).surfpres_used),'9');
                     end

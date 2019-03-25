@@ -262,13 +262,14 @@ tvnm = {'DST','FST','DET','PST',...
     'PET','DDET','DPST','DAST',...
     'AST','AET','TST','FMT',...
     'FLT','LLT','LMT','TET'};
-rpp = NaN*ones(length(gotcyc),1);
+rpp = NaN*ones(length(gotcyc),1);rppq = rpp;
 ii = 0;
 load([ARGO_SYS_PARAM.root_dir 'matfiles/float' num2str(dbdat.wmo_id) 'aux.mat'])
 disp(['Writing N_CYCLE stuff ' num2str(dbdat.wmo_id)])
 
 for nn = gotcyc
 %     disp(num2str(nn))
+
     % We don't include missing cycles, so should end up with ii=length(gotcyc)
     ii = ii+1;
     
@@ -280,6 +281,7 @@ for nn = gotcyc
     %profile 0.
     %Clock offset is defined as float RTC-UTC.
     if nn == 0
+        
         ncwrite(fname,'CYCLE_NUMBER_INDEX',0,ii);
         pr0 = 1;
         if isempty(traj(1).clockoffset)
@@ -299,6 +301,8 @@ for nn = gotcyc
             ncwrite(fname,'DATA_MODE','A',ii);
         end
     else
+        %perform QC required at this point:
+        traj(nn) = qc_traj(traj(nn),fpp(nn));
         pr0 = 0;
         if ~isempty(fpp(nn).profile_number)
             ncwrite(fname,'CYCLE_NUMBER_INDEX',fpp(nn).profile_number,ii);
@@ -367,12 +371,14 @@ for nn = gotcyc
             %Need a weighted mean to use status flag of '1', however, will
             %use median for now until I figure out a better way.
             pp = fv.pressure;
-            pp = pp(~isnan(pp));
-            rpp(nn) = median(pp);
+            ip = ~isnan(pp) & fv.pressure_qc < 3;
+            rpp(nn) = median(pp(ip));
+            rppq(nn) = min(fv.pressure_qc(ip));
             ncwrite(fname,'REPRESENTATIVE_PARK_PRESSURE',rpp(nn),ii);
             ncwrite(fname,'REPRESENTATIVE_PARK_PRESSURE_STATUS','1',ii);
         else
-            rpp = [];
+            rpp(nn) = NaN;
+            rppq(nn) = NaN;
         end
     else %zero profile, assume it didn't ground!
         ncwrite(fname,'GROUNDED','N',ii);
@@ -403,9 +409,9 @@ end
 %codes that aren't specified in the cookbook. The mat files list these
 %codes.
 
-vnms([100,150,190,200,250,290,300,301,400,450,500,501,550,600,700,701,702,703,704,800,903]) = ...
+vnms([100,150,190,200,250,290,300,301,400,450,500,503,550,600,700,701,702,703,704,800,903]) = ...
     [{'DST'} {'FST'} {'DSP'} {'DET'} {'PST'} {'PTM'} {'PET'} ...
-    {''} {'DDET'} {'DPST'} {'AST'} {'DNT'} {'DAST'} ...
+    {''} {'DDET'} {'DPST'} {'AST'} {'AST'} {'DAST'} ...
     {'AET'} {'TST'} {'TST2'} {'FMT'} {'ST'} {'LMT'} {'TET'} {''}];
 
 jfillval_5 = 99999;
@@ -424,6 +430,9 @@ madd = iNM+1;
 
 for nn = gotcyc
 %     disp(num2str(nn))
+% if nn == 158
+%     keyboard
+% end
     %The traj_mc_order is not going to be true for every cycle because the
     %float may login multiple times, which means multiple values for ST
     %cannot appear all together, they must be distributed between the
@@ -458,7 +467,7 @@ for nn = gotcyc
     [pressureqc,temperatureqc,salinityqc,temperaturestat,pressurestat,salinitystat] ... 
         = deal(repmat(' ',1,length(traj_mc_order)));
     [juld_qc] = deal(repmat('0',1,length(traj_mc_order)));
-        [temperature_adj,salinity_adj,pressureadj] ...%adjusted flags
+        [temperature_adj,salinity_adj,pressure_adj] ...%adjusted flags
             = deal(NaN*zeros(1,length(traj_mc_order)));
     %put 7 in here to identify fill values so we can operate on them, then
     %replace them with ' ' later
@@ -477,8 +486,7 @@ for nn = gotcyc
     else
         fv = traj(nn);
     end
-    
-%-----------------------------------------------------------------------
+% -----------------------------------------------------------------------
     for a = 1:length(traj_mc_order)
         mc = traj_mc_order(a);
         mind = traj_mc_index(a);
@@ -498,17 +506,18 @@ for nn = gotcyc
                     juld_stat(a) = fvv.juld_stat(mind);
                     adj(a) = fvv.juld_adj(mind);
                 end
-                if isfield(fvv,'qc') && ~isempty(fvv.qc)
-                    juld_qc(a) = fvv.qc(mind);
+                if isfield(fvv,'juld_qc') && ~isempty(fvv.juld_qc)
+                    juld_qc(a) = num2str(fvv.juld_qc(mind));
                 end
                 %now parms:
                 for ipar = params;
                     if isfield(fvv,parmnm{ipar})
                         tmp = fvv.(parmnm{ipar})(mind);
-                        if ~isnan(tmp)
+                        tmpq = num2str(fvv.([parmnm{ipar} '_qc'])(mind));
+                        if ~isnan(tmp)    
                             eval([parmnm{ipar} '(a) = tmp;'])
-                            %put a zero flag in
-                            eval([parmnm{ipar} 'qc(a) = ''0'';']);
+                            %put our global range qc flag in:
+                            eval([parmnm{ipar} 'qc(a) = tmpq;']);
                             %keep track of status and adj values
                             eval([parmnm{ipar} '_adj(a) = fvv.' parmnm{ipar} '_adj(mind);']);
                             eval([parmnm{ipar} 'stat(a) = fvv.' parmnm{ipar} '_stat(mind);']);
@@ -528,7 +537,7 @@ for nn = gotcyc
                     %position quality information
                     if ~isnan(fvv.lon(mind)) & ~isnan(fvv.lat(mind))
                         if isfield(fvv,'qcflags') && ~isempty(fvv.qcflags)
-                            posqc(a) = num2str(fvv.qcflags);
+                            posqc(a) = num2str(fvv.qcflags(mind));
                         else
                             posqc(a) = '1'; %good
                         end
@@ -546,20 +555,20 @@ for nn = gotcyc
     
     %add in the 301 code:
     ival = find(traj_mc_order == 301);
-    if ~isempty(ival) & ~isempty(rpp)
+    if ~isempty(ival) & ~isnan(rpp(nn))
         pressure(ival) = rpp(nn);
         pressureadj(ival) = 0;
         pressurestat(ival) = '3';
-        pressureqc(ival) = '0';
+        pressureqc(ival) = num2str(rppq(nn));
     end
-    
+        
     %apply adjustments to pressure: 
     if nn > 0
-        ival = pressureadj == 0;
         if ~isempty(fpp(nn).surfpres_used)
             % Don't know if this can/should apply for surface values, but
             % included for all pressure values
             pressureadj = pressure;
+            ival = pressureadj ~= jfillval_5;
             pressureadj(ival) = pressure(ival) - fpp(nn).surfpres_used;
         end
     end
@@ -575,7 +584,11 @@ for nn = gotcyc
             pressure(ival) = fpp(nn).surfpres_used;
             pressurestat(ival) = '2';
             pressureadj(ival) = 0;
-            pressureqc(ival) = '0';
+            if fpp(nn).surfpres_qc >= 0 %this is good as calculated in calibrate_p.m
+                pressureqc(ival) = '1';
+            else
+                pressureqc(ival) = '4';
+            end                
         end
     end
     
@@ -589,6 +602,10 @@ for nn = gotcyc
     %data in 'adjusted' field, but found in DM user manual that the best
     %value should be included here, even if not adjusted.
     
+    %clean up an NaN in JULD:
+    ibad = isnan(juld);
+    juld(ibad) = jfillval_6;
+    juld_qc(ibad) = '9';
 
     %make adjusted array (note that times are already adjusted for drift)
     juld_adj_stat = juld_stat;
