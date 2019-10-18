@@ -1243,7 +1243,7 @@ if dbdat.flbb
         netcdf.putAtt(ncid,NFLUOCDOMID,'units','count');
         netcdf.putAtt(ncid,NFLUOCDOMID,'_FillValue',single(fval));
         netcdf.putAtt(ncid,NFLUOCDOMID,'C_format','%9.5f');
-        netcdf.putAtt(ncid,NFLUOCDOMID,'FORTRAN_format','F9.5'); %%%%%%%%%%%%%%%%%%²»Í¬%%%%%%%%%%%
+        netcdf.putAtt(ncid,NFLUOCDOMID,'FORTRAN_format','F9.5');         
         netcdf.putAtt(ncid,NFLUOCDOMID,'resolution',single(1.));
         NFLUOCDOMQCID=netcdf.defVar(ncid,'FLUORESCENCE_CDOM_QC','NC_CHAR',[N_LEVELSID,N_PROFID]);
         netcdf.putAtt(ncid,NFLUOCDOMQCID,'long_name','quality flag');

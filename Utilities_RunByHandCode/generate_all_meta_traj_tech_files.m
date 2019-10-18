@@ -12,13 +12,25 @@ getdbase(0);
 
 for ii = 1:length(THE_ARGO_FLOAT_DB)
 
-    [fpp,dbdat] = getargo(THE_ARGO_FLOAT_DB(ii).wmo_id);
-    if ~isempty(fpp)
-%         trajectory_nc(dbdat,fpp);
+    [float,dbdat] = getargo(THE_ARGO_FLOAT_DB(ii).wmo_id);
+    if ~dbdat.iridium %just do the iridium floats first
+        continue
+    end
+    if ~isempty(float)
+        float = qc_tests(dbdat,float,[],1); %redo the qc properly for position only
+        %and save it
+        save(['matfiles/float' num2str(dbdat.wmo_id) '.mat'],'float')
+%         if ~isempty(strmatch('APF11',dbdat.boardtype))
+        if dbdat.iridium
+            trajectory_iridium_nc(dbdat,float);
+        else
+            trajectory_nc(dbdat,float);
+        end
 %         techinfo_nc(dbdat,fpp);
-        metadata_nc(dbdat,fpp);
+%         metadata_nc(dbdat,fpp);
 %     plot_tech(fpp,dbdat)
 % make_tech_webpage(dbdat.wmo_id);
+%         end
     end
 end
 
@@ -32,11 +44,11 @@ kk = [ 5904923
     ];
 
 for ii = 1:length(kk)
-    [fpp,dbdat] = getargo(kk(ii));
-    if ~isempty(fpp)
+    [float,dbdat] = getargo(kk(ii));
+    if ~isempty(float)
 %         trajectory_nc(dbdat,fpp);
 %         techinfo_nc(dbdat,fpp);
-        metadata_nc(dbdat,fpp);
+        metadata_nc(dbdat,float);
 %     plot_tech(fpp,dbdat)
 % make_tech_webpage(dbdat.wmo_id);
     end

@@ -1,7 +1,8 @@
 %edit here:
-[fpp,dbdat] = getargo(5905185);  %float
-j = 79; %profile number
-win = 50; %plot window of adjacent profiles
+[fpp,dbdat] = getargo(5905190);  %float
+j = 102;
+; %profile number
+win = 20; %plot window of adjacent profiles
 %%
 
 figure(1);clf
