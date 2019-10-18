@@ -596,7 +596,7 @@ for ii = ipf(:)'
                 fp.testsperformed(12) = 1;
                 if ~isempty(jj)
                     %all other values in the profile to be set to flag 3
-                    fp.oxyT_qc = repmat(3,1,length(fp.oxyT));
+                    fp.oxyT_qc = repmat(3,1,length(fp.oxyT_raw));
                     %failed values set to flag 4
                     newv = repmat(4,1,length(jj));
                     fp.oxyT_qc(jj+1) = max([fp.oxyT_qc(jj+1); newv]);
