@@ -128,7 +128,7 @@ for i=1:length(ufloats)
                     process_iridium_apf11(pmeta,dbdat,opts)
                 end
             catch Me
-                logerr(5,['error in decoding float - ' num2str(dbdat.wmo_id) ' file ' pmeta.ftp_fname])
+                logerr(5,['error in decoding float - ' num2str(dbdat.wmo_id) ' file ' char(pmeta.ftp_fname)])
                 logerr(5,['Message: ' Me.message ])
                 for jk = 1:length(Me.stack)
                     logerr(5,Me.stack(jk).file)

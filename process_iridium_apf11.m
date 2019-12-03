@@ -337,7 +337,15 @@ if any(stage==1)
         if ~isempty(ii)
             jday_sm = pts(c{ii});
         else
-            jday_sm = [];
+            ii = find(cellfun(@isempty,strfind(c,'CP Stopped'))==0);
+            if isempty(ii)
+                %CP stopped isn't available for this float, let's break
+                %here and go to the next one. Will need to be debugged
+                %again.
+                return
+            else
+                jday_sm = pts(c{ii});
+            end
         end
         
         %put the descent to park info in
@@ -395,7 +403,7 @@ if any(stage==1)
         %now profiling spot samples (secondary profile possibly). Note also
         %includes the P-only measurements. Will need tidying up if putting
         %in a secondary profile in netcdf file.
-        if ~isempty(jday_prm)
+        if ~isempty(jday_prm) & ~isempty(jday_sm)
             ii = find(jdall > jday_prm & jdall < jday_sm);
             pro.jday_ascent_to_surface_spotsamp = jdall(ii);
             pro.P_ascent_to_surface_spotsamp = pall(ii);

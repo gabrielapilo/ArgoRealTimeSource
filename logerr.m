@@ -37,7 +37,7 @@ if isempty(ARGO_REPORT) | level==0
 end
 
 if isempty(newrpt)
-   % do nothing - sent an empty message
+%    do nothing - sent an empty message
 else
    % Add a report
    ARGO_REPORT.ecnt(level) =  ARGO_REPORT.ecnt(level)+1;
