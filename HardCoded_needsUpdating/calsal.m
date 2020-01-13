@@ -1,4 +1,4 @@
-% CALSAL_CLIM  Calibrate salinity in raw (near-realtime) Argo float, and load
+% CALSAL  Calibrate salinity in raw (near-realtime) Argo float, and load
 %         variables 's_calibrate', 'cndc_raw', 'cndc_qc', 'cndc_calibrate'
 %
 % INPUT
@@ -6,9 +6,14 @@
 %          profiles have already been QCed.
 %  ical  - index to those to be calibrated [if not supplied, will calibrate
 %          all profiles after the last with a non-empty 'c_ratio' field
+%  calibrate - 0 doesn't calibrate, but if calibration is needed and float
+%              is not in the grelist, sends an e-mail [default] ; 1 calibrates (option 
+%              available, but unused after ADMT19)
+%
 % OUTPUT
 %   nfloat - copy of 'float', but with 's_calibrate' and all conductivity
-%            profile variables loaded.
+%            profile variables loaded; these variables are set to 0 when
+%            calibrate is set to 0
 %   cal_report    6 diagnostic values for the last profile calibrated
 %         1 - "theta" (min theta of near-bottom values)
 %         2 - num profile potential T values in cal range
@@ -26,24 +31,33 @@
 %
 % AUTHOR: Jeff Dunn  CMAR Oct 2007
 %         Devolved from calsal.m  Aug 2006
+%         Updates by Rebecca Cowley and Gabi Pilo (06 Dec 2019)
 %
-% USAGE: [nfloat,cal_report] = calsal_clim(float,ical);
+% USAGE: [nfloat,cal_report] = calsal(float,ical,calibrate);
 
-function [nfloat,cal_report] = calsal_clim(float,ical,calibrate)
+function [nfloat,cal_report] = calsal(float,ical,calibrate)
 
 % The CTD reference set variables are loaded once and retained thereafter
-persistent CalFilNam CalX CalY CalY0 Calinc CalPotTLev CalPLmin  CalPLmax
+persistent CalFilNam CalX CalY CalY0 Calinc CalPotTLev CalPLmin  CalPLmax;
 
-global ARGO_SYS_PARAM
+global ARGO_SYS_PARAM ARGO_ID_CROSSREF;
 
 cal_report = zeros(1,6);
 dbdat=getdbase(float(end).wmo_id);
 
-if isempty(CalFilNam)
+if nargin<=2
+    calibrate = 0;
+end
+
+% makes sure I'll not update calibrated profile to structure later
+original_calibrate = calibrate;
+
+
+if isempty(CalFilNam);
     % First time here for this Matlab session, so load the CTD reference set.
     % This name could be in sys_params file, but for now hardcode it.
     
-    CalFilNam = ARGO_SYS_PARAM.CalFilNam
+    CalFilNam = ARGO_SYS_PARAM.CalFilNam;
     
     if ~exist([CalFilNam '.nc'],'file')
         logerr(2,['CALSAL_CLIM: cannot see T/S climatology file ' CalFilNam '.nc']);
@@ -172,7 +186,11 @@ for kk = ical(:)'
         end
     end
     
-    if calibrate
+    % used later, to make sure the output will be the uncalibrated
+    % profile if calibrate=0.
+    uncalib_fp = fp;
+    
+    if calibrate~=0
         % First interp theta levels
         icl = interp1(CalPotTLev,1:length(CalPotTLev),pot(icval));
         iclf = floor(icl);
@@ -235,7 +253,7 @@ for kk = ical(:)'
         calibrate = (cal_report(3)>0);
     end
     
-    if calibrate
+    if calibrate~=0
         jcal = find(~isnan(calS));
         calS = calS(jcal);
         im = icval(jcal);
@@ -326,10 +344,76 @@ for kk = ical(:)'
         fp.s_qc(gg)=4;
     end
     
+    %%%%%% Now either saves, or not, the calibrated profile %%%%%
+    %%%%%% (also sends e-mail) %%%%%
     
-    % Load this profile back into float array
-    float(kk) = fp;
+    if original_calibrate == 0; % Doesn't save calibrated profile to structure
+        uncalib_fp.c_ratio = 1.; % zeroes calibration
+        uncalib_fp.deltaS = []; % zeroes calibration
+       
+        float(kk) = uncalib_fp; % profile that is loaded back in the array is uncalibrated
+        cal_report = zeros(1,6);
+        float(kk).s_calibrate = float(kk).s_raw;
+        float(kk).cndc_calibrate = float(kk).cndc_raw;
+        
+        if fp.c_ratio ~= 1
+            
+            % saves a mat file with all c_ratios
+            fileout = [ARGO_SYS_PARAM.root_dir 'calsal_output/' num2str(float(kk).wmo_id) '.mat'];
+            if exist(fileout) == 0
+                c_ratio(kk,1) = fp.c_ratio;
+            else
+                load(fileout); % if file already exists, loads it and included new c_ratio
+                c_ratio(kk,1) = fp.c_ratio;
+            end
+            save(fileout,'c_ratio');
+            
+            % Checks if it was in the greylist already
+            glist = load_greylist;
+            ib = find(glist.wmo_id == dbdat.wmo_id);
+            st = glist.start; en = glist.end;
+            OUT = 0;
+            if isempty(ib) == 1;
+                ttx = ['Float is not in the greylist']
+                OUT = 1;
+            elseif isempty(ib) == 0 & en(ib) == datenum(date)+2;
+                ttx = ['Float in the greylist since ' datestr(st(ib))];
+            elseif isempty(ib) == 0 & en(ib) ~= datenum(date)+2;
+                ttx = ['Float in the greylist from ' datestr(st(ib)) ' to ' datestr(en(ib))];
+                OUT = 1;
+            end
+            
+            if OUT == 1;
+            % Sends out e-mail for further assessment
+            IN = find(ARGO_ID_CROSSREF(:,1)==float(kk).wmo_id);
+            
+            filecal = [ARGO_SYS_PARAM.root_dir 'calsal_output/calibrated.txt'];
+            
+            last = [];
+            for jj = kk-14:kk;
+                lt = float(jj).c_ratio;
+                last = [last, lt];
+            end
+            
+            fff = fopen(filecal,'w');
+            fprintf(fff,'%s: %s; %s; %s\n\n %s\n\n %s\n','Calibration suggested',...
+                num2str(ARGO_ID_CROSSREF(IN,1)),num2str(ARGO_ID_CROSSREF(IN,2)),...
+                num2str(ARGO_ID_CROSSREF(IN,5)),ttx, 'The last 15 suggested calibration ratios are (Profile, c_ratio):');
+            fprintf(fff,'%.0f %2.4f\r\n', [[kk-14:kk]; last]);
+            fclose(fff);
+            
+            system(['cat ' filecal ' | mail -s "[SEC=UNCLASSIFIED] Calibration suggested ' ...
+                num2str(float(kk).wmo_id) ...
+                ' "  '  ARGO_SYS_PARAM.calsal_addrs]);
+            end
+       
+        elseif original_calibrate == 1; % Saves in original structure - banned ADMT2019
+            % Load this profile back into float array
+            float(kk) = fp;
+        end
+    end
 end
+    
 
 nfloat = float;
 

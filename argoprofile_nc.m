@@ -23,6 +23,7 @@
 % NOTE:  calibraton of salinity turned off on 3/9/2007 - to turn back on,
 %        remove lines 42:43 below  :AT
 % NOTE:  turned back on 6/11/2007
+% NOTE: turned back off 09/12/2019 (GP)
 %
 % adding multiprofile features - June/July 2012 : AT
 % note - this CANNOT be used to create true multiprofile files for a single
@@ -63,7 +64,7 @@ elseif (~isfield(fp,'p_oxygen') && isempty(fp.p_raw))
 end
 
 % DATA_MODE could be set by testing for non-empty s_calibrate, but for now
-% fix to 'adjusted'.  Note - ifthe primary profile is empty, then this gets
+% fix to 'adjusted'.  Note - if the primary profile is empty, then this gets
 % messy. We adjust all profiles so set to 'A' by default.
 % if(isempty(fp.s_calibrate))
 %     adjusted=0;
@@ -71,8 +72,8 @@ end
     adjusted = 1;
 % end
 
-%turn off calibration for the moment...: (turned back on 6/11/2007:AT)
-%adjusted=0;
+% (Calibration was turned on in 6/11/2007:AT)
+adjusted = 1; % calibration turned off in 09/12/2019: GP (0 is off)
 
 if adjusted
     datamode = 'A';
