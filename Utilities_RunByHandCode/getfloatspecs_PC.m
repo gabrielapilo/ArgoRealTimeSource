@@ -1,6 +1,6 @@
 %run with mypark_depths2
 clear
-fn = '/home/argo/ArgoRT/Deployment_Planning/deplocs19_20_seabird.csv';
+fn = 'V:/ArgoRT/Deployment_Planning/deplocs19_20_mrv.csv';
 K = load(fn);
 
 %holddepy=-45.92;
@@ -38,7 +38,7 @@ data = [GLAT; GLON]'   %; RANG]';
 
 
 % Get climatological data : temperature and salinity at 2000m
-addpath /home/eez_data/software/matlab
+addpath T:\software\matlab
 sdp = [0;10;20;30;50;75;100;125;150;200;250;300;400;500;600;700;...
     800;900;1000;1100;1200;1300;1400;1500;1800;2000;2500];
 [tc,out] = get_clim_profs('t',data(:,2),data(:,1),sdp,[],'cars2006',1);
