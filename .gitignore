@@ -1,4 +1,4 @@
 /GroupSpecific/*
 /MatlabCodeA/*
-/DMsoftware/writeDMQCnew
-/DMsoftware/writeDMQCnewBD
+/DMsoftware/*
+*.m~
