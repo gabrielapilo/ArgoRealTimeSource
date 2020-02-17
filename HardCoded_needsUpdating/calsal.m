@@ -389,8 +389,14 @@ for kk = ical(:)'
             
             filecal = [ARGO_SYS_PARAM.root_dir 'calsal_output/calibrated.txt'];
             
+            % Shows last suggested cal coeff
             last = [];
-            for jj = kk-14:kk;
+            if length(kk) > 16;
+                beginning = kk-14;
+            else
+                beginning = 1;
+            end
+            for jj = beginning:kk;
                 lt = float(jj).c_ratio;
                 last = [last, lt];
             end
@@ -398,8 +404,8 @@ for kk = ical(:)'
             fff = fopen(filecal,'w');
             fprintf(fff,'%s: %s; %s; %s\n\n %s\n\n %s\n','Calibration suggested',...
                 num2str(ARGO_ID_CROSSREF(IN,1)),num2str(ARGO_ID_CROSSREF(IN,2)),...
-                num2str(ARGO_ID_CROSSREF(IN,5)),ttx, 'The last 15 suggested calibration ratios are (Profile, c_ratio):');
-            fprintf(fff,'%.0f %2.4f\r\n', [[kk-14:kk]; last]);
+                num2str(ARGO_ID_CROSSREF(IN,5)),ttx, 'The last suggested calibration ratios are (Profile, c_ratio):');
+            fprintf(fff,'%.0f %2.4f\r\n', [[beginning:kk]; last]);
             fclose(fff);
             
             system(['cat ' filecal ' | mail -s "[SEC=UNCLASSIFIED] Calibration suggested ' ...
