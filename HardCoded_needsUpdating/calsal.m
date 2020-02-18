@@ -388,24 +388,10 @@ for kk = ical(:)'
             IN = find(ARGO_ID_CROSSREF(:,1)==float(kk).wmo_id);
             
             filecal = [ARGO_SYS_PARAM.root_dir 'calsal_output/calibrated.txt'];
-            
-            % Shows last suggested cal coeff
-            last = [];
-            if length(kk) > 16;
-                beginning = kk-14;
-            else
-                beginning = 1;
-            end
-            for jj = beginning:kk;
-                lt = float(jj).c_ratio;
-                last = [last, lt];
-            end
-            
+           
             fff = fopen(filecal,'w');
             fprintf(fff,'%s: %s; %s; %s\n\n %s\n\n %s\n','Calibration suggested',...
-                num2str(ARGO_ID_CROSSREF(IN,1)),num2str(ARGO_ID_CROSSREF(IN,2)),...
-                num2str(ARGO_ID_CROSSREF(IN,5)),ttx, 'The last suggested calibration ratios are (Profile, c_ratio):');
-            fprintf(fff,'%.0f %2.4f\r\n', [[beginning:kk]; last]);
+                num2str(ARGO_ID_CROSSREF(IN,1)),num2str(ARGO_ID_CROSSREF(IN,2)));
             fclose(fff);
             
             system(['cat ' filecal ' | mail -s "[SEC=UNCLASSIFIED] Calibration suggested ' ...
