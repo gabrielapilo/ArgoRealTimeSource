@@ -9,7 +9,7 @@
 % if 'retrieve is set to 1, then profiles are restored to quality 1.
 % Set retrieve to -1 to greylist
 %
-% usage: rerun_grey_listed(dbdat,startprof,endprof,[retrieve],[flg])
+% usage: rerun_grey_listed(wmo_id,startprof,endprof,[retrieve],[flg])
 
 function rerun_grey_listed(wmo_id, startprof,endprof,retrieve,flg)
 
