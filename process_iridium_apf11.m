@@ -791,11 +791,28 @@ if any(stage==1)
     % Update float summary plots and web page
     
     try
-        web_float_summary(float,dbdat,1);
-        time_section_plot(float);
-        waterfallplots(float);
-        locationplots(float);
-        tsplots(float);
+        
+        if strcmp('shelf',dbdat.status) % Plots data of shelf floats, even with bad QC flag
+            shelf_float = float;
+            for kk = 1: length(shelf_float); % Removes bad flag, just for plotting
+                shelf_float(kk).s_qc = 1;
+                shelf_float(kk).p_qc = 1;
+                shelf_float(kk).t_qc = 1;
+            end
+            web_float_summary(shelf_float,dbdat,1);
+            time_section_plot(shelf_float);
+            waterfallplots(shelf_float);
+            locationplots(shelf_float);
+            tsplots(shelf_float);
+        else
+            web_float_summary(float,dbdat,1);
+            time_section_plot(float);
+            waterfallplots(float);
+            locationplots(float);
+            tsplots(float);
+        end
+        
+        
         %        try
         %             trajectory_nc(dbdat,float,np);
         %        end
