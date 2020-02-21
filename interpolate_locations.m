@@ -6,7 +6,12 @@
 %  then generates the tesac and netcdf files for the float for delivery to
 %  the GDACs and GTS.
 
-function [float,pro,gn]=interpolate_locations(dbdat,float,pro)
+function [float,pro,gn]=interpolate_locations(dbdat,float,pro,dbdatstatus)
+
+if strcmp('shelf',dbdatstatus)
+    gn = [];
+    return
+end
 
 global ARGO_SYS_PARAM
 
