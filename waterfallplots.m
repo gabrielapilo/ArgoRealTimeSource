@@ -172,7 +172,7 @@ set(gca,'XTickLabel',[]);
 %xlabel(texlabel('Potential Density Anomoly (sigma_0)'),'fontsize',10);
 xlabel('Profile number','fontsize',10);
 ylabel('Depth (db)','fontsize',12);
-title(['Argo ' fwmo 'Potential Density Anomoly (sigma_0)']);
+title(['Argo ' fwmo 'Potential Density Anomaly (sigma_0)']);
 
 fnm = [fpth 'PD_' fwmo '_waterfall'];
 if(ispc)

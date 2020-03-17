@@ -55,7 +55,7 @@ xlim = [julian(yrs(1),1,1)  julian(yrs(end),12,31)];
 ttic = xlim(1):(365.25/12):xlim(2);
 
 xll = ['J';'F';'M';'A';'M';'J';'J';'A';'S';'O';'N';'D'];
-labels = {'Temperature','Salinity','Potential Density anomoly','Oxygen'};
+labels = {'Temperature','Salinity','Potential Density anomaly','Oxygen'};
 unts = {'^oC','psu','\sigma_0','micromole/kg'};
 fpre = {'T','S','PD','O2'};
 

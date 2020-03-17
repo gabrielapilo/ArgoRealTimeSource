@@ -63,7 +63,7 @@ end
 
 % datvec = fp.datetime_vec(1,:);
 %find the first occurrence of a good position
-order = [1,2,0,5,8];
+order = [1,2,0,5,8,3,4];
 [~,ia,~] = intersect(fp.pos_qc,order,'stable');
 
 datvec = gregorian(fp.jday_ascent_end);

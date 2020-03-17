@@ -9,7 +9,7 @@
 %   To a single netCDF file. If only one profile, the fileanme will include
 %   its profilenumber, otherwise it will just have float WMO number. 
 %
-% Author:  Jeff Dunn CSIRO/BoM  Aug 2006
+% Author:  Jeff Dunn CSIRO/BoM  Aug 2008
 %
 %  Devolved from matlabnetcdf scripts (Ann Thresher ?)
 % 
@@ -786,7 +786,7 @@ for ii = 1:nin
     
     %position information
     %find the first occurrence of a good position
-    order = [1,2,0,5,8,9,7]; %what is 7 for?
+    order = [1,2,0,5,8,9,3,4,7]; % 7 is "unused", but kept here
     [~,ia,~] = intersect(fp.pos_qc,order,'stable');
     
     if isfield(fp,'jday_location') & ~isempty(fp.jday_location)

@@ -52,7 +52,7 @@ end
 
 %position information
 %find the first occurrence of a good position
-order = [1,2,0,5,8,9];
+order = [1,2,0,5,8,9,3,4,7];
 [~,ia,~] = intersect(fp.pos_qc,order,'stable');
 
 if(fp.pos_qc(ia(1)) == 9) | strcmp('evil',dbdat.status) | strcmp('hold',dbdat.status)

@@ -3108,7 +3108,7 @@ for ii = 1:nin
     
     %position information
     %find the first occurrence of a good position
-    order = [1,2,0,5,8,9,7]; %what is 7 for?
+    order = [1,2,0,5,8,9,3,4,7]; %what is 7 for?
     [~,ia,~] = intersect(fp.pos_qc,order,'stable');
     
     if isfield(fp,'jday_location') & ~isempty(fp.jday_location)
