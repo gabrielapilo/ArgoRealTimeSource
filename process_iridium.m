@@ -1138,6 +1138,17 @@ if any(stage==1)
                     pro.GPSsatellites(ff)= NaN;
                 end
             end
+            
+            % Tests if location_date is acceptable; if not, uses profile date
+                J1 = julian([1997 1 1 0 0 0]);
+                J2 = julian(str2num(datestr(now,'yyyy mm dd HH MM SS')));
+                ibad = julian(location_date) < J1 | julian(location_date) > J2;
+                if any(ibad)
+                    location_date = gregorian(jdays);
+                    pro.datetime_vec(ff,1:6)=location_date;
+                    pro.jday_location(ff)=julian(location_date);
+                end
+                
             pro.jday=jdays;
             pro.jday_ascent_end=jdays;
         end
