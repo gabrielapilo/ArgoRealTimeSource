@@ -274,6 +274,8 @@ while row_idx <= length(tdata{1})
                 regexp(tdata{1}{row_idx},'dbars','end')-5));
             DSP(dcount,2) = p;
         end
+    else
+        dcount = 0;
     end
     %look for remaining DSP values:
     if ~isnan(t_date) & strfind(tdata{1}{row_idx},'Descent()')
