@@ -48,7 +48,7 @@ end
 % then, look for missing profiles or profiles with unreasonable numbers:
 
 %if (np > old_np + 2 & ~isempty(fp.jday))  % be generous
-if (np < old_np)
+if (np < old_np) & ~isempty(float(ilast).jday)
     est_prof_interval=abs(float(ilast).jday(1)-startjday)/finalprof;
     new_prof_interval=abs(fp.jday(1)-startjday)/max(1,np-1);
     if new_prof_interval==0;return;end  %this is a true first profile 
@@ -61,6 +61,9 @@ if (np < old_np)
         % and could be rollover
     end
 %     return % finished because np is greater than old np so not rollover...
+elseif (np < old_np) & isempty(float(ilast).jday) % older profile has no data information
+    logerr(3,['Assumed that profile number ' num2str(np) ' is correct, no information from oldest profile']);
+    return % assume profile number is consistent, wait for more information next time float surfaces
 elseif(np >= old_np)
     return
 end
