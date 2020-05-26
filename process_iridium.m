@@ -313,7 +313,7 @@ if any(stage==1)
             pro.park_p(j)=pd(1);
             pro.park_t(j)=pd(2);
             if(length(gg)>68);pro.park_s(j)=pd(3);end
-            if(length(gg)>76);pro.park_SBEOxyfreq(j)=pd(4);end
+            if(length(gg)>76) & length(pd)>3; pro.park_SBEOxyfreq(j)=pd(4);end
         end
     end
     if(~isempty(pro.park_s))
