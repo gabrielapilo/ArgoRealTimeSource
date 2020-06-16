@@ -25,6 +25,8 @@ function [salt_cor] = celltm_sbe41(salt,temp,pres,e_time,alpha,tau);
 %
 % For SBE-41 CTDs I have estimated alpha = 0.021 and tau = 21.0 s using
 % data from PMEL and UW Apex floats equipped with SBE-41 CTDs.
+% (We're not using these values anymore - now, we use the alpha and tau 
+% values from Johnson et al., 2007; GSP 16/6/2020)
 % 
 % For SBE-41 CTDs I have estimated alpha = 0.164 and tau = 5.87 s using
 % 1 Hz data in Arctic ocean thermohaline staircases from three Ice-Tethered

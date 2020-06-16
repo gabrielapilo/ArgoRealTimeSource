@@ -26,6 +26,7 @@ end
 % Doco in celltm_sbe41.m quotes alpha=.021 & tau=21.0 for Apex floats, and 
 % alpha=.164 and tau=5.87 for "Ice-Tethered profiles with asc rates ~.25
 % dbar/s"
+% GSP, 16/6/2020: we are now using tau and alpha from Johnson et al., 2007
 %
 %   In write_celltm_and_press_corr_apex_sbe41.m (author unknown) alpha=.173 
 % and tau=6.07 are used, without comment. Tseviet says these are the coeffs  
@@ -35,11 +36,11 @@ end
 % 2.3 times the size of adjustment given by the SBE-41 coeffs! 
 
 if strcmp(dbdat.ctd_sensor_type,'sbe-41')
-   alpha = .021;  
-   tau = 21.0;
+   alpha = .0267;  
+   tau = 18.6;
 elseif strcmp(dbdat.ctd_sensor_type,'sbe-41cp')
-   alpha = .173;  
-   tau = 6.07;
+   alpha = .141;  
+   tau = 6.68;
 else
    % Don't know how to cal this, so just return (without setting TLcal flag)
    return
