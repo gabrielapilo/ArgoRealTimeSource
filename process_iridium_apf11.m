@@ -326,7 +326,8 @@ if any(stage==1)
             jday_ddm = [];
         end
         
-        ii = find(cellfun(@isempty,strfind(c,'Profiling Mission'))==0);
+        %ii = find(cellfun(@isempty,strfind(c,'Profiling Mission'))==0);
+        ii = find(cellfun(@isempty,strfind(c,'Profiling Mission'))==0 | cellfun(@isempty,strfind(c,'ASCENT'))==0);
         if ~isempty(ii)
             jday_prm = pts(c{ii});
         else

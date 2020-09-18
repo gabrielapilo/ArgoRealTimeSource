@@ -77,6 +77,31 @@ if ~isempty(fnm)
     
     % now go and get the mission information from the system log file:
     l=fgetl(fid);
+    
+    if datenum(str2num(['20' l(34:35)]),str2num(l(31:32)),str2num(l(28:29))) >= datenum(2020,05,03); % firmware update 2020
+        
+    while(l~=-1)
+        if ~isempty(strfind(l,'mission_cfg'));
+            config=strfind(l,'mission_cfg');
+            if ~isempty(config);
+                l=l(config+12:end);
+                par=strfind(l,' ');
+                if ~isempty(par)
+                    mn=['ms.' l(1:par-1) '=' l(par+1:end) ';'];
+                    try
+                        eval(mn);
+                    catch
+                        mn=['ms.' l(1:par-1) '= ''' l(par+1:end) ''';'];
+                        eval(mn);
+                    end
+                end
+            end
+        end
+        l=fgetl(fid);
+    end
+        
+    else % firmware pre-2020
+    
     while(l~=-1)
         if isempty(strfind(l,'Mission Parameters'))
             config=strfind(l,'MissionCfg');
@@ -99,6 +124,8 @@ if ~isempty(fnm)
         
     end
     
+    end
+
     fclose(fid);
     
 else
