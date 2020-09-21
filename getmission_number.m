@@ -247,7 +247,11 @@ for i=1:m
         namesC{j}='CONFIG_TelemetryRetryInterval_seconds';
         for k=n0:n1
             if dbdat.subtype==1023
-                values(j,k)=mm(k).TelemetryRetryInterval;
+                if isnumeric(mm(k).TelemetryRetryInterval); 
+                    values(j,k)=mm(k).TelemetryRetryInterval;    
+                else % i.e., "not found"
+                    values(j,k)=NaN;
+                end
             else
                 values(j,k)=mm(k).TelemetryRetry;
             end
