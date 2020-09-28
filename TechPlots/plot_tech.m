@@ -53,6 +53,9 @@ eng = getadditionalinfo(dbdat.wmo_id);
         case '854'
             aa = ['S2A '];
             mak = 'MRV';
+        case '867'
+            aa = ['MRV'];
+            mak = 'MRV';
     end
 fig1 = figure(1);clf;hold on;axis off
 fig1.OuterPosition=[230 250 600 400];
