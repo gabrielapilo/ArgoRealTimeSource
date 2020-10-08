@@ -537,8 +537,8 @@ for nn = gotcyc
                     %position quality information
                     if ~isnan(fvv.lon(mind)) & ~isnan(fvv.lat(mind))
                         if isfield(fvv,'qcflags') && ~isempty(fvv.qcflags)
-%                             posqc(a) = num2str(fvv.qcflags(mind));
-                            posqc(a) = num2str(fvv.qcflags(1));
+                            posqc(a) = num2str(fvv.qcflags(mind));
+%                             posqc(a) = num2str(fvv.qcflags(1)); % this was uncommented, GSP, 8/10/20
                         else
                             posqc(a) = '1'; %good
                         end
