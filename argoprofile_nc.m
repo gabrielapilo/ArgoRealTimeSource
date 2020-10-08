@@ -787,7 +787,7 @@ for ii = 1:nin
     %position information
     %find the first occurrence of a good position
     order = [1,2,0,5,8,9,3,4,7]; % 7 is "unused", but kept here
-    [~,ia,~] = intersect(fp.pos_qc,order,'stable');
+    [~,ia,~] = intersect(fp.pos_qc,order,'stable'); 
     
     if isfield(fp,'jday_location') & ~isempty(fp.jday_location)
         jday_ref_1950 = fp.jday_location(ia(1)) - julian([1950 1 1 0 0 0]);
