@@ -3,4 +3,4 @@
 
 %[st,ww]=system(['cat ' rptfnm ' | mail -s"[SEC=UNCLASSIFIED] ArgoRT Report oeb-mog-uot" ' ARGO_SYS_PARAM.operator_addrs])
 
-system(['cat ' rptfnm ' | mail -s "[SEC=UNCLASSIFIED] ArgoRT Report" ' ARGO_SYS_PARAM.operator_addrs]);
+system(['cat ' rptfnm ' | mail -s "[SEC=OFFICIAL] ArgoRT Report" ' ARGO_SYS_PARAM.operator_addrs]);

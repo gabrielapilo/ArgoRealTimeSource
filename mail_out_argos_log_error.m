@@ -10,4 +10,4 @@ filebad='badfile.txt';
 fff=fopen(filebad,'w');
 fprintf(fff,'%s:%s;%s;%s',filename,num2str(ARGO_ID_CROSSREF(kk,1)),num2str(ARGO_ID_CROSSREF(kk,2)),num2str(ARGO_ID_CROSSREF(kk,5)));
 fclose(fff);
-system(['cat ' filebad ' | mail -s"[SEC=UNCLASSIFIED] Argos log file caused crash ' filename ' " ' ARGO_SYS_PARAM.operator_addrs])
+system(['cat ' filebad ' | mail -s"[SEC=OFFICIAL] Argos log file caused crash ' filename ' " ' ARGO_SYS_PARAM.operator_addrs])
