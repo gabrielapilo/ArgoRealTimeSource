@@ -1,14 +1,14 @@
 %run with mypark_depths2
-clear
-fn = '/home/argo/ArgoRT/Deployment_Planning/deplocs19_20_seabird.csv';
+clear; clc; close all
+
+% Load csv file with lat and lon
+fn = '/home/argo/ArgoRT/Deployment_Planning/deplocs_20_21_fixed.csv';
 K = load(fn);
 
-%holddepy=-45.92;
-%holddepx=137.86;
+% Or add one single lat and lon
+% holddepy=-62.5;
+% holddepx=70;
 
-% holddepy=[-62.5 -62 -60 -10 -27 -30]
-% holddepx=[115 117.25 122.75 85.25 107 110]
-% 
 % f= [-46 147.75
 % -48 147
 % -50 146.25
@@ -20,12 +20,9 @@ holddepx=K(:,2);
 % holddepy=reb(:,1)';
 % holddepx=reb(:,2)';
 % 
+
 glat=holddepy;
 glon=holddepx;
-
-%glat=holddepy(33:52);
-%glon=holddepx(33:52);
-
 
 GLAT = glat';
 GLON = glon';
@@ -41,8 +38,10 @@ data = [GLAT; GLON]'   %; RANG]';
 addpath /home/eez_data/software/matlab
 sdp = [0;10;20;30;50;75;100;125;150;200;250;300;400;500;600;700;...
     800;900;1000;1100;1200;1300;1400;1500;1800;2000;2500];
-[tc,out] = get_clim_profs('t',data(:,2),data(:,1),sdp,[],'cars2006',1);
-[sc,out] = get_clim_profs('s',data(:,2),data(:,1),sdp,[],'cars2006',1);
+% [tc,out] = get_clim_profs('t',data(:,2),data(:,1),sdp,[],'cars2006',1);
+% [sc,out] = get_clim_profs('s',data(:,2),data(:,1),sdp,[],'cars2006',1);
+[tc,out] = get_clim_profs('t',data(:,2),data(:,1),sdp,[]); %cars latest
+[sc,out] = get_clim_profs('s',data(:,2),data(:,1),sdp,[]);
 figure
 col = jet(length(data));
 subplot(1,2,1)
@@ -51,15 +50,16 @@ hold on
 for l=1:m
     h2(l)=plot(tc(:,l),sdp,'-','color',col(l,:));
 end
-axis ij
+axis ij; grid on
 xlabel('Potential Temperature (C)')
 ylabel('Pressure (dbar)')
+
 subplot(1,2,2)
 hold on
 for l=1:m
     plot(sc(:,l),sdp,'-','color',col(l,:))
 end
-axis ij
+axis ij; grid on
 xlabel('Salinity (psu)')
 ylabel('Pressure (dbar)')
 %legend(h2,int2str([1:length(data)]'))
@@ -73,13 +73,13 @@ data2 = [data2 tc(1,:)' sc(1,:)' tc(19,:)' sc(19,:)' tc(26,:)' sc(26,:)'];  % Ap
 % glon=glon'
 
 data3=[glat glon data2];
-fnm=input('enter the name of the file for the data outputs:','s');
-% save floatsdata13-14.txt data3 -ascii
-save(fnm,'-ascii','data3')
+% fnm=input('enter the name of the file for the data outputs:','s');
+save /home/argo/ArgoRT/Deployment_Planning/floatsdata_deploy_20_21_cars2009.txt data3 -ascii
+% save(fnm,'-ascii','data3')
 completedata=data3  %[glat glon data2];
 % save holddepdata12-13.mat holddepx holddepy
-fnm2=[fnm(1:end-3) '.mat']
-save(fnm2,'-mat','holddepx','holddepy');
+% fnm2=[fnm(1:end-3) '.mat']
+% save(fnm2,'-mat','holddepx','holddepy');
 % Find conditions at profile depth for floats that don't all go to 2000
 %ifl = [31:36 59:64];    %IX1 and 6 navy floats
 %ifl_pr = [2000 2000 2000 1900 1800 1650 1800 1800 2000 1650 2000 1800]
@@ -94,7 +94,9 @@ save(fnm2,'-mat','holddepx','holddepy');
 %data2(ifl(k),6)=spark(k);
 %end
 
-title(['Float deployment planning to date ' date ' 2017-18 floats'])
+subplot(1,2,2)
+title(['Float deployment planning to date ' date ...
+    '                                                                                           '])
 % save_fig (['Float_deployment_planning_17-8_2.gif'])
 
 
