@@ -1234,7 +1234,7 @@ if any(stage==1)
     %                 % check for missing profile locations from ice floats and
     % add to the affected profiles:
     try
-        [float,pro,gennc]=interpolate_locations(dbdat,float,pro);
+        [float,pro,gennc]=interpolate_locations(dbdat,float,pro,dbdat.status);
     catch
         logerr(5,['Interpolate_locations.m fails for profile ' num2str(pro.profile_number)])
     end
