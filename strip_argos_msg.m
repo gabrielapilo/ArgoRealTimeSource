@@ -293,7 +293,7 @@ if isempty(strmatch(fnm,'iridium'))
 	    % starts with a date to confirm this
 
 	    yr = sscanf(nxtline(6:10),'%d');
-	    if length(yr)~=1 || yr<1999 || yr>2020
+	    if length(yr)~=1 || yr<1999 || yr>2050
 	       logerr(3,['STRIP: Strange date Line#' num2str(nlin) '> ' nxtline]);
 	    end
 	    try
