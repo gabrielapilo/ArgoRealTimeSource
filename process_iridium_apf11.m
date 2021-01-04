@@ -215,10 +215,12 @@ if any(stage==1)
     if ~isempty(findstr('science_log',fn)) %want to do this for the science_log.csv file only
         c = [];
         for bb = 1:length(pmeta.ftp_fname)
-            fid=fopen([idatapath pmeta.ftp_fname{bb}]);
-            cc = textscan(fid,'%s','delimiter','\n');
-            fclose(fid);
-            c = [c;cc{:}];
+            if~isempty(findstr(num2str(dbdat.argos_id),pmeta.ftp_fname{bb})) % Otherwise reads files from other APF11s
+                fid=fopen([idatapath pmeta.ftp_fname{bb}]);
+                cc = textscan(fid,'%s','delimiter','\n');
+                fclose(fid);
+                c = [c;cc{:}];
+            end
         end
         
         %for all format types, the cp profile is labelled as
