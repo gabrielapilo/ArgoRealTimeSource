@@ -86,7 +86,15 @@ if(m>0)
                 pmeta.ftptime = ftptime;
                 pmeta.ftp_fname = msgfn{ii,1};
                 if length(pmeta.wmo_id)>1
-                    pmeta.wmo_id=pmeta.wmo_id(2);  % assume you want the live version and punt if this isn't true
+                    
+                    % Finds the 'live' version
+                    for kk = 1: length(pmeta.wmo_id);
+                        dbdat = getdbase(pmeta.wmo_id(kk));
+                        if strcmp(dbdat.status, 'live')
+                            live_fl = kk;
+                        end
+                    end
+                    pmeta.wmo_id=pmeta.wmo_id(live_fl);  % assume you want the live version and punt if this isn't true
                 end
                 
                 dbdat = getdbase(pmeta.wmo_id);
