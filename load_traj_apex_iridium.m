@@ -157,7 +157,8 @@ if pn == 1
     %look in 000files dir
     fn_p = [ARGO_SYS_PARAM.iridium_path 'iridium_processed/000files/' pmeta.ftp_fname];
 else
-    fn_p = [ARGO_SYS_PARAM.iridium_path 'iridium_processed/' num2str(pmeta.wmo_id) '/' pmeta.ftp_fname];
+%     fn_p = [ARGO_SYS_PARAM.iridium_path 'iridium_processed/' num2str(pmeta.wmo_id) '/' pmeta.ftp_fname];
+    fn_p = [ARGO_SYS_PARAM.iridium_path pmeta.ftp_fname]; %GSP
 end
 fid = fopen([fn_p(1:end-7) np '.msg'],'r');
 if fid < 0
@@ -694,17 +695,20 @@ end
 surf_t = [600, 701];
 mc_current = [100, repmat(190,1,size(DSP,1)), 250, ...
             traj_float_order(ij), 300, 301, 400, ast_order, surf_t(ik), 903];%, 501
-%mc order information. Keep any existing mc_order if this is a reprocess:
-if length(traj) < pn
+% mc order information. 
+% Keep any existing mc_order if this is a reprocess past 13/01/2021
+if length(traj) < pn & fpp(pn).jday > julian(2021,1,13) 
     traj(pn).traj_mc_order = mc_current;
     %now the indices:
     traj(pn).traj_mc_index = [1, 1:size(DSP,1), 1, ...
         tc_ind(ij), ones(1,3), ast_ind, ones(1,3)];
+% If mc_order was last updated before 13/01/2021, start over (to comply with GDAC file checker)
 else
+    disp(['Re-doing mc_order - ' num2str(dbdat.wmo_id)])
     iend = find(traj(pn).traj_mc_order == 903);
     traj(pn).traj_mc_order = [mc_current traj(pn).traj_mc_order(iend+1:end)];
     traj(pn).traj_mc_index = [1, 1:size(DSP,1), 1, ...
-        tc_ind(ij), ones(1,3), ast_ind, ones(1,3), traj(pn).traj_mc_index(iend+1:end)];    
+        tc_ind(ij), ones(1,3), ast_ind, ones(1,3), traj(pn).traj_mc_index(iend+1:end)];   
 end
 %put the satellite information on the previous profile:
 if pn > 1
@@ -780,6 +784,11 @@ end
 for a = 1:length(fld_n)
     eval(['data = ' fld_n{a} ';'])
     [m,n] = size(data);
+    
+%     if strcmp(fld_n{a},'AST') & m>1; % Only attributes first value, GP
+%         data = data(1,:); m = 1;
+%     end
+    
     if ~isnan(data) & (m == 1 & n == 1)
         traj(pn).(fld_n{a}).juld   = julian(str2num([datestr(data-rtc_skew,'yyyy mm dd HH MM SS')]));
         traj(pn).(fld_n{a}).stat = num2str(statval_n(a));

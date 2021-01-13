@@ -341,9 +341,10 @@ for nn = gotcyc
     for jj = 1:length(nvnm)
         nnm = nvnm{jj};
         tnm = tvnm{jj};
+%         if isfield(fv,'AST') & length(fv.AST.juld) > 1;keyboard; end
         if isfield(fv,tnm) && isfield(fv.(tnm),'juld') && ~isempty(fv.(tnm).juld)
-            if ~isnan(fv.(tnm).juld(end))
-                ncwrite(fname,['JULD_' nnm],fv.(tnm).juld(end)-j1950,ii);
+            if ~isnan(fv.(tnm).juld(1)) 
+                ncwrite(fname,['JULD_' nnm],fv.(tnm).juld(1)-j1950,ii); % now gets first juld
             end
             if isfield(fv.(tnm),'stat')
                 ncwrite(fname,['JULD_' nnm '_STATUS'],fv.(tnm).stat(end),ii)
