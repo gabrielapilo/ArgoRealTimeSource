@@ -61,10 +61,14 @@ for a = 1:length(flds)
         if isfield(fld,parmnm{b})
             dat = fld.(parmnm{b});
             qc = ones(size(dat));
+%             qc2 = ones(size(dat));
             
-            if b==1
+            if b==1 
                 ip = find(dat < -5);
             end
+%             if b == 1 % PRES QC test 2
+%                 ip2 = find(dat >= -5 & dat <= -2.4);
+%             end
             if b == 2
                 ip = find(dat<=-2.5 | dat>40.);
             end
@@ -76,6 +80,14 @@ for a = 1:length(flds)
                 newv = repmat(4,size(ip));
                 qc(ip) = max([qc(ip), newv],[],2);
             end
+%             if ~isempty(ip2); % If PRES within ranges, QC3 to P,T,S
+%                 newv2 = repmat(3,size(ip2));
+%                 qc2(ip2) = max([qc2(ip2), newv2],[],2);
+%                 fld.(parmnmq{1}) = qc2;
+%                 fld.(parmnmq{2}) = qc2;
+%                 fld.(parmnmq{3}) = qc2;
+%             end
+            
             fld.(parmnmq{b}) = qc;
             %and get rid of very large values eg 3.4095e+38 which have
             %occurred in dodgy CTDs and cause problems with ncwrite:
@@ -94,10 +106,14 @@ for b = 1:length(fpparmn)
     if isfield(fp,fpparmn{b})
         dat = fp.(fpparmn{b});
         qc = ones(size(dat));
+%         qc2 = ones(size(dat));
         
         if b==1 || b == 4
             ip = find(dat < -5);
         end
+%         if b==1 || b == 4
+%             ip2 = find(dat >= -5 & dat <= -2.4);
+%         end
         if b == 2 || b == 5
             ip = find(dat<=-2.5 | dat>40.);
         end
@@ -109,6 +125,13 @@ for b = 1:length(fpparmn)
             newv = repmat(4,1,length(ip));
             qc(ip) = max([qc(ip); newv]);
         end
+%         if ~isempty(ip2)
+%             newv2 = repmat(3,1,length(ip2));
+%             qc2(ip2) = max([qc2(ip2); newv2]);
+%             fp.(fpparmnq{1}) = qc2;
+%             fp.(fpparmnq{2}) = qc2;
+%             fp.(fpparmnq{3}) = qc2;
+%         end
         fp.(fpparmnq{b}) = qc;
     end
 end
