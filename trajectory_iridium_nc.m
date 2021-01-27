@@ -370,13 +370,14 @@ for nn = gotcyc
         if isfield(traj(nn),'PTM') && isfield(traj(nn).PTM,'juld') && ~isempty(traj(nn).PTM.juld)
             fv = traj(nn).PTM;
             %Need a weighted mean to use status flag of '1', however, will
-            %use median for now until I figure out a better way.
+            %use median for now until I figure out a better way (RC), and
+            %use a flag of '3' (GSP)
             pp = fv.pressure;
             ip = ~isnan(pp) & fv.pressure_qc < 3;
             rpp(nn) = median(pp(ip));
             rppq(nn) = min(fv.pressure_qc(ip));
             ncwrite(fname,'REPRESENTATIVE_PARK_PRESSURE',rpp(nn),ii);
-            ncwrite(fname,'REPRESENTATIVE_PARK_PRESSURE_STATUS','1',ii);
+            ncwrite(fname,'REPRESENTATIVE_PARK_PRESSURE_STATUS','3',ii);
         else
             rpp(nn) = NaN;
             rppq(nn) = NaN;
