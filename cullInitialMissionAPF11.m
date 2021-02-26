@@ -48,28 +48,53 @@ floatTech=[];
 % fn= [ARGO_SYS_PARAM.root_dir 'matfiles/float' num2str(wmo_id) 'aux.mat']
 
 l=fgetl(fid2);
-while(l~=-1)
-    if isempty(strfind(l,'Mission Parameters'))
-        config=strfind(l,'MissionCfg');
-        if ~isempty(config) & isempty(strfind(l,'|-----'))
-            l=l(config+11:end);
-            par=strfind(l,' ');
-            %         par2=strfind(l,')');
-            if ~isempty(par)
-                mn=['ms.' l(1:par-1) '=' l(par+1:end) ';'];
-                try
-                    eval(mn);
-                catch
-                    mn=['ms.' l(1:par-1) '= ''' l(par+1:end) ''';'];
-                    eval(mn);
-                end                    
+
+if datenum(str2num(['20' l(34:35)]),str2num(l(31:32)),str2num(l(28:29))) >= datenum(2020,05,03); % firmware update 2020
+    
+    while(l~=-1)
+        if ~isempty(strfind(l,'mission_cfg'));
+            config=strfind(l,'mission_cfg');
+            if ~isempty(config);
+                l=l(config+12:end);
+                par=strfind(l,' ');
+                if ~isempty(par)
+                    mn=['ms.' l(1:par-1) '=' l(par+1:end) ';'];
+                    try
+                        eval(mn);
+                    catch
+                        mn=['ms.' l(1:par-1) '= ''' l(par+1:end) ''';'];
+                        eval(mn);
+                    end
+                end
             end
         end
+        l=fgetl(fid2);
     end
-    l=fgetl(fid2);
     
+else % firmware pre-2020
+    
+    while(l~=-1)
+        if isempty(strfind(l,'Mission Parameters'))
+            config=strfind(l,'MissionCfg');
+            if ~isempty(config) & isempty(strfind(l,'|-----'))
+                l=l(config+11:end);
+                par=strfind(l,' ');
+                %         par2=strfind(l,')');
+                if ~isempty(par)
+                    mn=['ms.' l(1:par-1) '=' l(par+1:end) ';'];
+                    try
+                        eval(mn);
+                    catch
+                        mn=['ms.' l(1:par-1) '= ''' l(par+1:end) ''';'];
+                        eval(mn);
+                    end
+                end
+            end
+        end
+        l=fgetl(fid2);
+        
+    end
 end
-
 fclose(fid2);
 
 % This is by definition mission 1
