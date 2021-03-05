@@ -223,6 +223,33 @@ if any(stage==1)
             end
         end
         
+        % Checks if there are duplicated CTD_CP values in science_log.csv
+        % First, remove timestamp of CTD_CP measurements:
+        ii = find(cellfun(@isempty,strfind(c,'CTD_CP'))==0);
+        VAR = {};
+        for pm = 1:length(ii);
+            gg = c{ii(pm)};
+            VAR{pm} = gg(24:end); 
+        end
+        VAR = VAR';
+        % Second, looks for non-duplicated values
+        [~,ind] = unique(VAR(:)); % these are the non duplicated values
+        
+        % If there are duplicated values, removes them:
+        if length(ind) < length(ii)-10
+            
+            ind_sorted = sort(ind);
+            [~,d] = max(diff(ind_sorted)); %Copy begins one line below this
+            
+            % Find "d+1" index in science_log_file:
+            % iind(1) is the last value of the first copy, probably a bad value
+            iind = find(cellfun(@isempty,strfind(c,VAR(d)))==0);
+            
+            % Removes redundant data from "c"
+            to_remove = iind(1):iind(2)-1;
+            c(to_remove) = [];
+        end
+        
         %for all format types, the cp profile is labelled as
         %'CTD_CP' for pumped CTD or 'CTC_CP+' for unpumped CTDs.
         ii = find(cellfun(@isempty,strfind(c,'CTD_CP'))==0);
