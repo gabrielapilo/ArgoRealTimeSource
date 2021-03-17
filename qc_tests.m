@@ -877,6 +877,9 @@ for ii = ipf(:)'
         end
 
         % Test25: MEDian with a Distance test (MEDD test) - Argo QC Manualv3.3
+        ck_gsw = exist('gsw_SAAR.m'); % checks if gsw_v3.06 is installed
+        if ck_gsw > 0;
+                
         fp.testsperformed(25) = 1;
         
         % removes negative pressures
@@ -909,6 +912,7 @@ for ii = ipf(:)'
                 ' - could not apply MEDD test'])
         end
                 
+        end
     end
     %copy the profile back to the main structure
     fpp(ii) = fp;
