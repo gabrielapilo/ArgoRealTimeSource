@@ -911,7 +911,33 @@ for ii = ipf(:)'
             display(['No position in ' num2str(float(1).wmo_id) '_' num2str(prof) ...
                 ' - could not apply MEDD test'])
         end
-                
+           
+        else % If can't do the MEDD test because gsw_v3.06 is missing, does QC test# 11
+            
+            logerr(3,'No gibbs seawater package v3.06 - cannot apply MEDD test; applying QC test #11 instead')
+            
+            if nlev>=3 %nlev is the number of p_raw values
+            fp.testsperformed(11) = 1;
+            
+            jj = 2:(nlev-1);
+            
+            testv = abs(fp.t_raw(jj) - (fp.t_raw(jj+1)+fp.t_raw(jj-1))/2);
+            kk = find(testv>9 | (fp.p_raw(jj)>500 & testv>3));
+            if ~isempty(kk)
+                newv = repmat(4,1,length(kk));
+                fp.t_qc(kk+1) = max([fp.t_qc(kk+1); newv]);
+                fp.s_qc(kk+1) = max([fp.s_qc(kk+1); newv]);
+                fp.testsfailed(11) = 1;
+            end
+            
+            testv = abs(fp.s_raw(jj) - (fp.s_raw(jj+1)+fp.s_raw(jj-1))/2);
+            kk = find(testv>1.5 | (fp.p_raw(jj)>500 & testv>0.5));
+            if ~isempty(kk)
+                newv = repmat(4,1,length(kk));
+                fp.s_qc(kk+1) = max([fp.s_qc(kk+1); newv]);
+                fp.testsfailed(11) = 1;
+            end
+            end
         end
     end
     %copy the profile back to the main structure
