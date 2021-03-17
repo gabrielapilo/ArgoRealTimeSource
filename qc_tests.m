@@ -513,27 +513,30 @@ for ii = ipf(:)'
         
         
         % Test11: Gradient Test
+        % Argo Quality Contro Manual for CTD and Traj Data V3.3 (Jan 2020)
+        % made this test obsolete for T and S, but I kept it active for
+        % BGC variables (GSP)
         if nlev>=3 %nlev is the number of p_raw values
             fp.testsperformed(11) = 1;
             
             jj = 2:(nlev-1);
             
-            testv = abs(fp.t_raw(jj) - (fp.t_raw(jj+1)+fp.t_raw(jj-1))/2);
-            kk = find(testv>9 | (fp.p_raw(jj)>500 & testv>3));
-            if ~isempty(kk)
-                newv = repmat(4,1,length(kk));
-                fp.t_qc(kk+1) = max([fp.t_qc(kk+1); newv]);
-                fp.s_qc(kk+1) = max([fp.s_qc(kk+1); newv]);
-                fp.testsfailed(11) = 1;
-            end
-            
-            testv = abs(fp.s_raw(jj) - (fp.s_raw(jj+1)+fp.s_raw(jj-1))/2);
-            kk = find(testv>1.5 | (fp.p_raw(jj)>500 & testv>0.5));
-            if ~isempty(kk)
-                newv = repmat(4,1,length(kk));
-                fp.s_qc(kk+1) = max([fp.s_qc(kk+1); newv]);
-                fp.testsfailed(11) = 1;
-            end
+%             testv = abs(fp.t_raw(jj) - (fp.t_raw(jj+1)+fp.t_raw(jj-1))/2);
+%             kk = find(testv>9 | (fp.p_raw(jj)>500 & testv>3));
+%             if ~isempty(kk)
+%                 newv = repmat(4,1,length(kk));
+%                 fp.t_qc(kk+1) = max([fp.t_qc(kk+1); newv]);
+%                 fp.s_qc(kk+1) = max([fp.s_qc(kk+1); newv]);
+%                 fp.testsfailed(11) = 1;
+%             end
+%             
+%             testv = abs(fp.s_raw(jj) - (fp.s_raw(jj+1)+fp.s_raw(jj-1))/2);
+%             kk = find(testv>1.5 | (fp.p_raw(jj)>500 & testv>0.5));
+%             if ~isempty(kk)
+%                 newv = repmat(4,1,length(kk));
+%                 fp.s_qc(kk+1) = max([fp.s_qc(kk+1); newv]);
+%                 fp.testsfailed(11) = 1;
+%             end
             
             if dbdat.oxy
                 if length(fp.oxy_raw)~=length(fp.p_raw)
@@ -872,7 +875,40 @@ for ii = ipf(:)'
             fp.oxyT_qc=QC.t;
             %        fp.s_oxygen_qc=QC.s;
         end
+
+        % Test25: MEDian with a Distance test (MEDD test) - Argo QC Manualv3.3
+        fp.testsperformed(25) = 1;
         
+        % removes negative pressures
+        PRES_positive = fp.p_raw;
+        PRES_positive(PRES_positive < 0 | PRES_positive > 11000) = nan;
+        
+        % Looks for position with highest QC flag
+        order = [1,2,0,5,8,9,3,4,7]; 
+        [~,ia,~] = intersect(fp.pos_qc,order,'stable');
+        
+        if ~isempty(ia);
+            [SA, in_ocean] = gsw_SA_from_SP(fp.s_raw, PRES_positive, fp.lon(ia), fp.lat(ia)); % needs updated GSW (v 3.06)
+            CT = gsw_CT_from_t(SA, fp.s_raw, fp.p_raw);
+            DENS = gsw_rho(SA, CT, 0);
+            [SPIKE_T,SPIKE_S,BO_T,BO_S,... % logical arrays with "1" when spikes are identified
+            TEMP_med,TEMP_medm,TEMP_medp,...
+            PSAL_med,PSAL_medm,PSAL_medp,...
+            DENS_med,DENS_medm,DENS_medp] = ...
+                QTRT_spike_check_MEDD_main(fp.p_raw,fp.t_raw,fp.s_raw,DENS,fp.lat(ia));
+          
+            % Applies QC4 to data points with spikes
+            fp.t_qc(SPIKE_T' == 1) = 4;
+            fp.s_qc(SPIKE_S' == 1) = 4;
+            
+            if any(SPIKE_T) | any(SPIKE_S);
+                fp.testsfailed(25) = 1;
+            end
+        else
+            display(['No position in ' num2str(float(1).wmo_id) '_' num2str(prof) ...
+                ' - could not apply MEDD test'])
+        end
+                
     end
     %copy the profile back to the main structure
     fpp(ii) = fp;
