@@ -882,14 +882,14 @@ end
    [~,ia,~] = intersect(fp.pos_qc,order,'stable');
         
    if ~isempty(ia);
-       [SA, in_ocean] = gsw_SA_from_SP(fp.s_raw, PRES_positive, fp.lon(ia), fp.lat(ia)); % needs updated GSW (v 3.06)
+       [SA, in_ocean] = gsw_SA_from_SP(fp.s_raw, PRES_positive, fp.lon(ia(1)), fp.lat(ia(1))); % needs updated GSW (v 3.06)
        CT = gsw_CT_from_t(SA, fp.s_raw, fp.p_raw);
        DENS = gsw_rho(SA, CT, 0);
        [SPIKE_T,SPIKE_S,BO_T,BO_S,... % logical arrays with "1" when spikes are identified
        TEMP_med,TEMP_medm,TEMP_medp,...
        PSAL_med,PSAL_medm,PSAL_medp,...
        DENS_med,DENS_medm,DENS_medp] = ...
-            QTRT_spike_check_MEDD_main(fp.p_raw,fp.t_raw,fp.s_raw,DENS,fp.lat(ia));
+            QTRT_spike_check_MEDD_main(fp.p_raw,fp.t_raw,fp.s_raw,DENS,fp.lat(ia(1)));
           
        % Applies QC4 to data points with spikes
        fp.t_qc(SPIKE_T' == 1) = 4;
