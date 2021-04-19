@@ -499,6 +499,16 @@ if any(stage>=1)
 	 np = np+1;
       end
       
+      % Check if numbers of fields in structures are the same
+      tempfloat = float(np-1);
+      if length(fieldnames(tempfloat)) > length(fieldnames(fp));
+          % Find missing fields in fp and add them
+          missing_fields = setdiff(fieldnames(tempfloat),fieldnames(fp));
+          for imiss = 1: length(missing_fields);     
+              fp.(char(missing_fields(imiss))) = [];
+          end
+      end
+      
       float(np) = fp;      
 
    elseif dbdat.maker~=2
