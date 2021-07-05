@@ -90,11 +90,13 @@ if(m>0)
                     % Finds the 'live' version
                     for kk = 1: length(pmeta.wmo_id);
                         dbdat = getdbase(pmeta.wmo_id(kk));
-                        if strcmp(dbdat.status, 'live')
+                        if strcmp(dbdat.status, 'live') | strcmp(dbdat.status, 'suspect') ...
+                                | strcmp(dbdat.status, 'exhausted') | strcmp(dbdat.status, 'hold') ...
+                                | strcmp(dbdat.status, 'shelf')
                             live_fl = kk;
                         end
                     end
-                    pmeta.wmo_id=pmeta.wmo_id(live_fl);  % assume you want the live version and punt if this isn't true
+                    pmeta.wmo_id=pmeta.wmo_id(live_fl);  % get the float not going through the new system
                 end
                 
                 dbdat = getdbase(pmeta.wmo_id);
