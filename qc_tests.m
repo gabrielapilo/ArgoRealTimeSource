@@ -325,11 +325,21 @@ for ii = ipf(:)'
         fp.testsperformed(6) = 1;
         
         ip = find(fp.p_raw < -5);
+        ip2 = find(fp.p_raw >= -5 & fp.p_raw <= -2.4); % QC manual v3.5 (2021)
         jj = find(fp.t_raw<=-2.5 | fp.t_raw>40.);
         kk = find(fp.s_raw<2.0 | fp.s_raw>41.);
         if ~isempty(ip)
             newv = repmat(4,1,length(ip));
             fp.p_qc(ip) = max([fp.p_qc(ip); newv]);
+            fp.t_qc(ip) = max([fp.t_qc(ip); newv]); % QC manual v3.5 (2021)
+            fp.s_qc(ip) = max([fp.s_qc(ip); newv]); % QC manual v3.5 (2021)
+            fp.testsfailed(6) = 1;
+        end
+        if ~isempty(ip2)
+            newv = repmat(3,1,length(ip2));
+            fp.p_qc(ip2) = max([fp.p_qc(ip2); newv]);
+            fp.t_qc(ip2) = max([fp.t_qc(ip2); newv]);
+            fp.s_qc(ip2) = max([fp.s_qc(ip2); newv]);
             fp.testsfailed(6) = 1;
         end
         if ~isempty(jj)
