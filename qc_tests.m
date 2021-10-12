@@ -320,6 +320,54 @@ for ii = ipf(:)'
         fp.pos_qc(jj) = 1;
     end
     
+    % Test15: Grey List Test
+        %load up the grey list
+        glist = load_greylist;
+        ib = find(glist.wmo_id == dbdat.wmo_id);
+        fp.testsperformed(15) = 1;
+        
+        if ~isempty(ib) %float is on the greylist
+            %check the date range:
+            if datenum(gregorian(fp.jday(1))) > min(glist.start(ib)) & ...
+                    datenum(gregorian(fp.jday(1))) < max(glist.end(ib))
+                
+                fp.testsfailed(15) = 1;
+                vv=1:length(fp.p_raw);
+                im = find(cellfun(@isempty,strfind(glist.var(ib),'PSAL'))==0);
+                ij = find(cellfun(@isempty,strfind(glist.var(ib),'TEMP'))==0);
+                ik = find(cellfun(@isempty,strfind(glist.var(ib),'PRES'))==0);
+                if strcmp(dbdat.status,'evil')
+                    fp.p_qc(vv) = 4;
+                    fp.s_qc(vv) = 4;
+                    fp.t_qc(vv) = 4;
+                else
+                    if ~isempty(im) %psal
+                        newv = repmat(glist.flag(ib(im)),1,length(vv));
+                        fp.s_qc(vv) = max([fp.s_qc(vv); newv]);
+                        vvs = qc_apply(fp.s_raw,fp.s_qc);
+                    end
+                    if ~isempty(ij) %temp
+                        newv = repmat(glist.flag(ib(ij)),1,length(vv));
+                        fp.t_qc(vv) = max([fp.t_qc(vv); newv]);
+                        vvt = qc_apply(fp.t_raw,fp.t_qc);
+                        fp.s_qc(vv) = max([fp.s_qc(vv); newv]);
+                        vvs = qc_apply(fp.s_raw,fp.s_qc);
+                        if ~isempty(im) %temp and psal
+                            fp.p_qc(vv) = max([fp.p_qc(vv); newv]);
+                            pii = qc_apply(fp.p_calibrate,fp.p_qc);
+                        end
+                    end
+                    if ~isempty(ik) %pres
+                        newv = repmat(glist.flag(ib(ik)),1,length(vv));
+                        fp.p_qc(vv) = max([fp.p_qc(vv); newv]);
+                        pii = qc_apply(fp.p_calibrate,fp.p_qc);
+                        fp.s_qc(vv) = max([fp.s_qc(vv); newv]);
+                        vvs = qc_apply(fp.s_raw,fp.s_qc);
+                    end
+                end
+            end
+        end
+        
     if ~posonly
         % Test6: Global Range Test:
         fp.testsperformed(6) = 1;
@@ -521,6 +569,69 @@ for ii = ipf(:)'
         % Argo Quality Control Manual V2.1 (Nov 30, 2005) states
         % that this test is obsolete
         
+                % Test25: MEDian with a Distance test (MEDD test) - Argo QC Manualv3.3
+        ck_gsw = exist('gsw_SAAR.m'); % checks if gsw_v3.06 is installed
+        if ck_gsw > 0;
+                
+        fp.testsperformed(25) = 1;
+        
+        % removes negative pressures
+        PRES_positive = fp.p_raw;
+        PRES_positive(PRES_positive < 0 | PRES_positive > 11000) = nan;
+        
+        % Looks for position with highest QC flag
+        order = [1,2,0,5,8,9,3,4,7]; 
+        [~,ia,~] = intersect(fp.pos_qc,order,'stable');
+        
+        if ~isempty(ia);
+            [SA, in_ocean] = gsw_SA_from_SP(fp.s_raw, PRES_positive, fp.lon(ia(1)), fp.lat(ia(1))); % needs updated GSW (v 3.06)
+            CT = gsw_CT_from_t(SA, fp.s_raw, fp.p_raw);
+            DENS = gsw_rho(SA, CT, 0);
+            [SPIKE_T,SPIKE_S,BO_T,BO_S,... % logical arrays with "1" when spikes are identified
+            TEMP_med,TEMP_medm,TEMP_medp,...
+            PSAL_med,PSAL_medm,PSAL_medp,...
+            DENS_med,DENS_medm,DENS_medp] = ...
+                QTRT_spike_check_MEDD_main(fp.p_raw,fp.t_raw,fp.s_raw,DENS,fp.lat(ia(1)));
+          
+            % Applies QC4 to data points with spikes
+            fp.t_qc(SPIKE_T' == 1) = 4;
+            fp.s_qc(SPIKE_S' == 1) = 4;
+            
+            if any(SPIKE_T) | any(SPIKE_S);
+                fp.testsfailed(25) = 1;
+            end
+        else
+            display(['No position in ' num2str(float(1).wmo_id) '_' num2str(prof) ...
+                ' - could not apply MEDD test'])
+        end
+           
+        else % If can't do the MEDD test because gsw_v3.06 is missing, does QC test# 11
+            
+            logerr(3,'No gibbs seawater package v3.06 - cannot apply MEDD test; applying QC test #11 instead')
+            
+            if nlev>=3 %nlev is the number of p_raw values
+            fp.testsperformed(11) = 1;
+            
+            jj = 2:(nlev-1);
+            
+            testv = abs(fp.t_raw(jj) - (fp.t_raw(jj+1)+fp.t_raw(jj-1))/2);
+            kk = find(testv>9 | (fp.p_raw(jj)>500 & testv>3));
+            if ~isempty(kk)
+                newv = repmat(4,1,length(kk));
+                fp.t_qc(kk+1) = max([fp.t_qc(kk+1); newv]);
+                fp.s_qc(kk+1) = max([fp.s_qc(kk+1); newv]);
+                fp.testsfailed(11) = 1;
+            end
+            
+            testv = abs(fp.s_raw(jj) - (fp.s_raw(jj+1)+fp.s_raw(jj-1))/2);
+            kk = find(testv>1.5 | (fp.p_raw(jj)>500 & testv>0.5));
+            if ~isempty(kk)
+                newv = repmat(4,1,length(kk));
+                fp.s_qc(kk+1) = max([fp.s_qc(kk+1); newv]);
+                fp.testsfailed(11) = 1;
+            end
+            end
+        end
         
         % Test11: Gradient Test
         % Argo Quality Contro Manual for CTD and Traj Data V3.3 (Jan 2020)
@@ -677,53 +788,6 @@ for ii = ipf(:)'
             end
         end
         
-        % Test15: Grey List Test
-        %load up the grey list
-        glist = load_greylist;
-        ib = find(glist.wmo_id == dbdat.wmo_id);
-        fp.testsperformed(15) = 1;
-        
-        if ~isempty(ib) %float is on the greylist
-            %check the date range:
-            if datenum(gregorian(fp.jday(1))) > min(glist.start(ib)) & ...
-                    datenum(gregorian(fp.jday(1))) < max(glist.end(ib))
-                
-                fp.testsfailed(15) = 1;
-                vv=1:length(fp.p_raw);
-                im = find(cellfun(@isempty,strfind(glist.var(ib),'PSAL'))==0);
-                ij = find(cellfun(@isempty,strfind(glist.var(ib),'TEMP'))==0);
-                ik = find(cellfun(@isempty,strfind(glist.var(ib),'PRES'))==0);
-                if strcmp(dbdat.status,'evil')
-                    fp.p_qc(vv) = 4;
-                    fp.s_qc(vv) = 4;
-                    fp.t_qc(vv) = 4;
-                else
-                    if ~isempty(im) %psal
-                        newv = repmat(glist.flag(ib(im)),1,length(vv));
-                        fp.s_qc(vv) = max([fp.s_qc(vv); newv]);
-                        vvs = qc_apply(fp.s_raw,fp.s_qc);
-                    end
-                    if ~isempty(ij) %temp
-                        newv = repmat(glist.flag(ib(ij)),1,length(vv));
-                        fp.t_qc(vv) = max([fp.t_qc(vv); newv]);
-                        vvt = qc_apply(fp.t_raw,fp.t_qc);
-                        fp.s_qc(vv) = max([fp.s_qc(vv); newv]);
-                        vvs = qc_apply(fp.s_raw,fp.s_qc);
-                        if ~isempty(im) %temp and psal
-                            fp.p_qc(vv) = max([fp.p_qc(vv); newv]);
-                            pii = qc_apply(fp.p_calibrate,fp.p_qc);
-                        end
-                    end
-                    if ~isempty(ik) %pres
-                        newv = repmat(glist.flag(ib(ik)),1,length(vv));
-                        fp.p_qc(vv) = max([fp.p_qc(vv); newv]);
-                        pii = qc_apply(fp.p_calibrate,fp.p_qc);
-                        fp.s_qc(vv) = max([fp.s_qc(vv); newv]);
-                        vvs = qc_apply(fp.s_raw,fp.s_qc);
-                    end
-                end
-            end
-        end
         
         
         % Test16: Gross Salinity or Temperature Sensor Drift
@@ -886,69 +950,7 @@ for ii = ipf(:)'
             %        fp.s_oxygen_qc=QC.s;
         end
 
-        % Test25: MEDian with a Distance test (MEDD test) - Argo QC Manualv3.3
-        ck_gsw = exist('gsw_SAAR.m'); % checks if gsw_v3.06 is installed
-        if ck_gsw > 0;
-                
-        fp.testsperformed(25) = 1;
-        
-        % removes negative pressures
-        PRES_positive = fp.p_raw;
-        PRES_positive(PRES_positive < 0 | PRES_positive > 11000) = nan;
-        
-        % Looks for position with highest QC flag
-        order = [1,2,0,5,8,9,3,4,7]; 
-        [~,ia,~] = intersect(fp.pos_qc,order,'stable');
-        
-        if ~isempty(ia);
-            [SA, in_ocean] = gsw_SA_from_SP(fp.s_raw, PRES_positive, fp.lon(ia(1)), fp.lat(ia(1))); % needs updated GSW (v 3.06)
-            CT = gsw_CT_from_t(SA, fp.s_raw, fp.p_raw);
-            DENS = gsw_rho(SA, CT, 0);
-            [SPIKE_T,SPIKE_S,BO_T,BO_S,... % logical arrays with "1" when spikes are identified
-            TEMP_med,TEMP_medm,TEMP_medp,...
-            PSAL_med,PSAL_medm,PSAL_medp,...
-            DENS_med,DENS_medm,DENS_medp] = ...
-                QTRT_spike_check_MEDD_main(fp.p_raw,fp.t_raw,fp.s_raw,DENS,fp.lat(ia(1)));
-          
-            % Applies QC4 to data points with spikes
-            fp.t_qc(SPIKE_T' == 1) = 4;
-            fp.s_qc(SPIKE_S' == 1) = 4;
-            
-            if any(SPIKE_T) | any(SPIKE_S);
-                fp.testsfailed(25) = 1;
-            end
-        else
-            display(['No position in ' num2str(float(1).wmo_id) '_' num2str(prof) ...
-                ' - could not apply MEDD test'])
-        end
-           
-        else % If can't do the MEDD test because gsw_v3.06 is missing, does QC test# 11
-            
-            logerr(3,'No gibbs seawater package v3.06 - cannot apply MEDD test; applying QC test #11 instead')
-            
-            if nlev>=3 %nlev is the number of p_raw values
-            fp.testsperformed(11) = 1;
-            
-            jj = 2:(nlev-1);
-            
-            testv = abs(fp.t_raw(jj) - (fp.t_raw(jj+1)+fp.t_raw(jj-1))/2);
-            kk = find(testv>9 | (fp.p_raw(jj)>500 & testv>3));
-            if ~isempty(kk)
-                newv = repmat(4,1,length(kk));
-                fp.t_qc(kk+1) = max([fp.t_qc(kk+1); newv]);
-                fp.s_qc(kk+1) = max([fp.s_qc(kk+1); newv]);
-                fp.testsfailed(11) = 1;
-            end
-            
-            testv = abs(fp.s_raw(jj) - (fp.s_raw(jj+1)+fp.s_raw(jj-1))/2);
-            kk = find(testv>1.5 | (fp.p_raw(jj)>500 & testv>0.5));
-            if ~isempty(kk)
-                newv = repmat(4,1,length(kk));
-                fp.s_qc(kk+1) = max([fp.s_qc(kk+1); newv]);
-                fp.testsfailed(11) = 1;
-            end
-            end
-        end
+
     end
     %copy the profile back to the main structure
     fpp(ii) = fp;
