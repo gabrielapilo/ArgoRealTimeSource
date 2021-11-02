@@ -840,7 +840,7 @@ netcdf.putVar(ncid,SENSORID,[0,2],[8,1],'CTD_PRES');
 if dbdat.RBR
     netcdf.putVar(ncid,SENSORMAKERID,[0,0],[3,1],'RBR');
     netcdf.putVar(ncid,SENSORMAKERID,[0,1],[3,1],'RBR');
-    netcdf.putVar(ncid,SENSORMAKERID,[0,2],[3,1],'RBR');
+    netcdf.putVar(ncid,SENSORMAKERID,[0,2],[6,1],'KELLER');
 else
     netcdf.putVar(ncid,SENSORMAKERID,[0,0],[3,1],'SBE');
     netcdf.putVar(ncid,SENSORMAKERID,[0,1],[3,1],'SBE');
