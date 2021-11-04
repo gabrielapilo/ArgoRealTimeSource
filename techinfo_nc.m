@@ -557,8 +557,8 @@ for jj = pnum(:)'
         i=i+1;
         [tn,tv]=loadfield(tn,tv,n_tech_F+i,'VOLTAGE_BatteryCPUDepth_volts',fpp(jj).CPUpumpvoltage);
         
-        i=i+1;
-        [tn,tv]=loadfield(tn,tv,n_tech_F+i,'VOLTAGE_BatteryPumpOnSurface_volts',fpp(jj).SBEpumpSURFACEvoltage);
+%         i=i+1;
+%         [tn,tv]=loadfield(tn,tv,n_tech_F+i,'VOLTAGE_BatteryPumpOnSurface_volts',fpp(jj).SBEpumpSURFACEvoltage);
         
         i=i+1;
         [tn,tv]=loadfield(tn,tv,n_tech_F+i,'VOLTAGE_BatteryPumpStartProfile_volts',fpp(jj).SBEpumpvoltage);
