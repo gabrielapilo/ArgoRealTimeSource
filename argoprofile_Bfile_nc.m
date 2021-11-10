@@ -4209,7 +4209,7 @@ netcdf.putVar(ncid,NPARADAMOID,[0,0],[n,m],pdm');
 netcdf.close(ncid)
 
 if exist('isingdac')==2
-    if isingdac(fname)~=2 & ~strcmp('evil',dbdat.status) & ~strcmp('hold',dbdat.status) %DON'T DELIVER these!!!!!
+    if isingdac(fname)~=2 & ~strcmp('evil',dbdat.status) %& ~strcmp('hold',dbdat.status) %DON'T DELIVER these!!!!!
         if ispc
             [status,ww] = system(['copy /Y ' fname ' ' ARGO_SYS_PARAM.root_dir 'export']);
         else

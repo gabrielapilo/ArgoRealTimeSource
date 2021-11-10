@@ -493,6 +493,7 @@ for nn = gotcyc
         mc = traj_mc_order(a);
         mind = traj_mc_index(a);
         
+%         if nn==127 & mc==703; keyboard; end
         %fill the arrays using vnms information:
         vnm = vnms{mc};
         
@@ -692,7 +693,7 @@ end       % Loop on every cycle
 %History records get added in DM QC.
 
 %Delivery.
-if ~strcmp('evil',dbdat.status) & ~strcmp('hold',dbdat.status)
+if ~strcmp('evil',dbdat.status) %& ~strcmp('hold',dbdat.status)
     
     [status,ww] = system(['cp -f ' fname ' ' ARGO_SYS_PARAM.root_dir 'export']);
     if status~=0
