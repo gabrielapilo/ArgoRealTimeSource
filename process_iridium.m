@@ -1162,7 +1162,7 @@ if any(stage==1)
     end
     %check previous profile has location information, could be
     %extracted from this log file
-    if length(float) > 1
+    if length(float) > 1 & np>1
         if isnan(float(np-1).lat)
             % open and parse file
             fid=fopen([pmeta.ftp_fname(1:end-3) 'log'],'r');
@@ -1563,6 +1563,7 @@ if any(stage==1)
         
         % Calibrate conductivity, salinity...
         
+%         [float,cal_rep] = calsal_DMoffset(float,np);
         [float,cal_rep] = calsal(float,np);
         
         % Thermal lag calc presently applies to SBE-41 & 41CP sensors only, and
@@ -1648,7 +1649,7 @@ if any(stage==1)
         if dbdat.subtype ~= 9999
             %load the traj mat file:
             tfnm = [ARGO_SYS_PARAM.root_dir 'trajfiles/T' num2str(pmeta.wmo_id)];
-            if exist([tfnm '.mat'],'file')==2
+            if exist([tfnm '.mat'],'file')==2     
                 load(tfnm);
             else
                 traj = [];
@@ -1725,8 +1726,8 @@ if ~isempty(stage)
     prec.ftptime = pmeta.ftptime;
     prec.proc_stage = max(stage);
     PROC_RECORDS(nprec) = prec;
-    load(PREC_FNM,'ftp_details');
-    save(PREC_FNM,'PROC_RECORDS','ftp_details','-v6');
+%     load(PREC_FNM,'ftp_details');
+%     save(PREC_FNM,'PROC_RECORDS','ftp_details','-v6');
 end
 
 return
