@@ -8,7 +8,7 @@
 
 function [float,pro,gn]=interpolate_locations(dbdat,float,pro,dbdatstatus)
 
-if strcmp('shelf',dbdatstatus)
+if strcmp('shelf',dbdatstatus) | strcmp('hold',dbdatstatus)
     gn = [];
     return
 end
