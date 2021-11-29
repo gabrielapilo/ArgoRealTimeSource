@@ -6,6 +6,10 @@ global ARGO_SYS_PARAM ARGO_ID_CROSSREF
 
 kk=find(ARGO_ID_CROSSREF(:,1)==wmo);
 
+% Check if its a newsystem float
+newsystem_fl = load([ARGO_SYS_PARAM.root_dir 'src/newsystem.txt']);
+if isempty(find(ARGO_ID_CROSSREF(kk,2) == newsystem_fl))
+
 filedead='deadfloat.txt';
 fff=fopen(filedead,'w');
 fprintf(fff,'%s: %s; %s; %s','Hey - dead float talking!',...
@@ -14,3 +18,6 @@ fclose(fff);
 		
 system(['cat ' filedead ' | mail -s "[SEC=OFFICIAL] Warning - dead float alive? ' num2str(wmo) ...
     ' "  '  ARGO_SYS_PARAM.overdue_operator_addrs])
+else
+    unix(['rm -f ' ARGO_SYS_PARAM.iridium_path '*' num2str(ARGO_ID_CROSSREF(kk,2)) '.*'])
+end

@@ -78,6 +78,14 @@ if(m>0)
                 % so either a corrupted id or the database is out of date.
                 if isempty(flist)
                     logerr(3,['? New float, Argos ID=' num2str(argosid)]);
+                    % load txt with newsystem floats
+                    newsystem_fl = load([ARGO_SYS_PARAM.root_dir 'src/newsystem.txt']);
+                    if ~isempty(find(argosid == newsystem_fl))
+                        logerr(3,['Float ' num2str(argosid) ' is going through the new system (removing file from iridium_data)']);
+                        unix(['rm -f ' ARGO_SYS_PARAM.iridium_path num2str(argosid) '.*'])
+                    else
+                        logerr(3,['? New float, Argos ID=' num2str(argosid)]);
+                    end
                 end
                 %                 return
             else
