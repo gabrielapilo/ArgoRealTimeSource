@@ -129,13 +129,20 @@ if ~isempty(fnm)
     fclose(fid);
     
 else
-    if pn>1
+    if pn>1 & length(floatTech.Mission) >= pn-1
         ms=floatTech.Mission(pn-1);
+    elseif pn>1 & length(floatTech.Mission) < pn-1
+        ms=floatTech.Mission(end);
     elseif pn==1 & ~isempty(floatTech.Mission(1).mission_number)
         ms=floatTech.Mission(1);
     end
 end
 
+% now calculate mission number and identify whether it's a new or old
+% mission: Whenever piston position changes too much between cycles, it's
+% considered as a new mission
+
+count_thresh = 100;
 if ~isempty(ms)
     names = fieldnames(ms);
     
@@ -153,11 +160,11 @@ if ~isempty(ms)
                     v1=getfield(ms,names{gg});
                     v2=getfield(floatTech.Mission(g),names{gg});
                     if strmatch(names{gg},'DeepDescentCount') & (pn-g==1);
-                        if abs(v1-v2)>10
+                        if abs(v1-v2)>count_thresh
                             differs=1;
                         end
                     elseif strmatch(names{gg},'ParkDescentCount') & (pn-g==1);
-                        if abs(v1-v2)>10
+                        if abs(v1-v2)>count_thresh
                             differs=1;
                         end
                     else
