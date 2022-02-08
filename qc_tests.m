@@ -189,7 +189,7 @@ for ii = ipf(:)'
             jj = find(cellfun(@isempty,strfind(flds,'Pressure'))==0);
             kk = find(cellfun(@isempty,strfind(flds,'Deep'))==0);
             jj = intersect(jj,kk);
-            configpress = floatTech.Mission(ii).(flds{jj});
+            configpress = floatTech.Mission(ii).(flds{jj(end)});
         else
             configpress = dbdat.profpres;
         end
