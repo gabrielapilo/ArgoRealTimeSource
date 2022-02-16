@@ -58,6 +58,21 @@ end
 
 for i=1:length(ufloats)
     % check for number multiple profiles reported:
+    
+    % First check if this float is going through new system
+    newfloat = 0;
+    newsystem_fl = load([ARGO_SYS_PARAM.root_dir 'src/newsystem.txt']);
+    if ~isempty(find(str2num(ufloats{i}) == newsystem_fl))
+        logerr(3,['Float ' ufloats{i} ' is going through the new system (removing file from iridium_data)']);
+        unix(['rm -f ' ARGO_SYS_PARAM.iridium_path 'f' (ufloats{i}) '.*'])
+        newfloat = 1;
+    end
+    
+    if newfloat
+        newfloat = 0;
+        continue
+    end
+                    
     isfloat=0;
     np = unique(pn(iu==i));
     for j = 1:length(np)
@@ -82,15 +97,7 @@ for i=1:length(ufloats)
             % not interested in. Otherwise, it is not known to our database,
             % so either a corrupted id or the database is out of date.
             if isempty(flist)
-                    logerr(3,['? New float, Argos ID=' num2str(argosid)]);
-                    % load txt with newsystem floats
-                    newsystem_fl = load([ARGO_SYS_PARAM.root_dir 'src/newsystem.txt']);
-                    if ~isempty(find(argosid == newsystem_fl))
-                        logerr(3,['Float ' num2str(argosid) ' is going through the new system (removing file from iridium_data)']);
-                        unix(['rm -f ' ARGO_SYS_PARAM.iridium_path 'f' num2str(argosid) '.*'])
-                    else
-                        logerr(3,['? New float, Argos ID=' num2str(argosid)]);
-                    end
+               logerr(3,['? New float, Argos ID=' ufloats{i}]);
             end
             isfloat = 0;
         elseif currenttime-ftptime(1)>=hr     % check whether this is more than 1 hour old - if so, then safe to process:
