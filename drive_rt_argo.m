@@ -15,6 +15,6 @@ global ARGO_SYS_PARAM
 
 set_argo_sys_params
 
-strip_argos_msg(lfile);
+strip_argos_msg(lfile)
 
 web_processing_report

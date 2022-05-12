@@ -640,11 +640,11 @@ end
 if isfield(ARGO_SYS_PARAM,'processor')
     if ~isempty(strfind(ARGO_SYS_PARAM.processor,'CSIRO'))
         
-        retrieve_phy_data %this data is delivered to the 'incoming' ftp site and
+%         retrieve_phy_data %this data is delivered to the 'incoming' ftp site and
         %needs to be copied to iridium_data
     end
 end
-extract_phy_data   %polynya floats. 3 only.
+% extract_phy_data   %polynya floats. 3 only.
 
 extract_Solo2_data  % new code to process solo2 floats ourselves
 	  

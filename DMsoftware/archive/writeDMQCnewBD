@@ -1,0 +1,56 @@
+#!/usr/bin/expect -f
+
+trap exit SIGINT		;# exit on ^C
+match_max -d 100000
+
+set timeout 18000
+
+cd /home/argo/ArgoRT/DMQC/
+
+spawn ftp eftp.ifremer.fr
+expect {
+       timeout	exit
+       eof	exit
+       failed	exit
+       "):"
+       }
+send "c1f5fc\r"
+expect "Password:"
+send "Y7Wn5ueA\r"
+expect "ftp>"
+send "cd submit\r"
+expect "ftp>"
+send "binary\r"
+expect "ftp>"
+send "prompt\r"
+expect "ftp>"
+send "epsv4\r"
+expect "ftp>"
+send "mput BD*.nc\r"
+expect "ftp>"
+send "bye\r"
+expect "} ?"
+
+spawn ftp ftp.usgodae.org
+expect {
+       timeout	exit
+       eof	exit
+       failed	exit
+       "):"
+       }
+send "anonymous\r"
+expect "Password:"
+send "ann.thresher@csiro.au\r"
+expect "ftp>"
+send "cd pub/incoming/argo/csiro/submit\r"
+expect "ftp>"
+send "binary\r"
+expect "ftp>"
+send "prompt\r"
+expect "ftp>"
+send "mput BD*.nc\r"
+expect "ftp>"
+send "bye\r"
+expect "Goodbye."
+
+cd /home/argo/ArgoRT/
