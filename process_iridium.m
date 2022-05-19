@@ -1563,8 +1563,8 @@ if any(stage==1)
         
         % Calibrate conductivity, salinity...
         
-%         [float,cal_rep] = calsal_DMoffset(float,np);
-        [float,cal_rep] = calsal(float,np);
+        [float,cal_rep] = calsal_DMoffset(float,np);
+%         [float,cal_rep] = calsal(float,np);
         
         % Thermal lag calc presently applies to SBE-41 & 41CP sensors only, and
         % uses an estimate of ascent-rate. We may have to actually provide

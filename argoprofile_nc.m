@@ -863,7 +863,8 @@ for ii = 1:nin
                 end
                 
                 float = calibrate_p(float,np);
-                [float,cal_rep] = calsal(float,np);
+%                 [float,cal_rep] = calsal(float,np);
+                [float,cal_rep] = calsal_DMoffset(float,np);
                 float = qc_tests(dbdat,float,np);
                 
                 save(fnm,'float','-v6');
