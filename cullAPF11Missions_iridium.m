@@ -130,7 +130,8 @@ if ~isempty(fnm)
     
 else
     if pn>1 & length(floatTech.Mission) >= pn-1
-        ms=floatTech.Mission(pn-1);
+        ff = find(~cellfun(@isempty,{floatTech.Mission.mission_number})); % find the last know values
+        ms=floatTech.Mission(ff(end));
     elseif pn>1 & length(floatTech.Mission) < pn-1
         ms=floatTech.Mission(end);
     elseif pn==1 & ~isempty(floatTech.Mission(1).mission_number)
