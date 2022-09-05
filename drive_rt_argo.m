@@ -15,6 +15,15 @@ global ARGO_SYS_PARAM
 
 set_argo_sys_params
 
-strip_argos_msg(lfile)
+% Check to see if there are any argos files available
+today = now;
+day1 = datenum(str2num(datestr(now,'YYYY')),1,1);
+doy = round(today-day1);
+
+if doy - str2num(lfile(end-7:end-5)) >= 1; % if argos files too old, process iridium only
+    strip_argos_msg('iridium')
+else
+    strip_argos_msg(lfile)
+end
 
 web_processing_report
