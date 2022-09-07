@@ -15,9 +15,15 @@ fff=fopen(filedead,'w');
 fprintf(fff,'%s: %s; %s; %s','Hey - dead float talking!',...
     num2str(ARGO_ID_CROSSREF(kk,1)),num2str(ARGO_ID_CROSSREF(kk,2)),num2str(ARGO_ID_CROSSREF(kk,5)));
 fclose(fff);
-		
+
+[st,host] = unix('hostname')
+if strcmp(deblank(host),'oa-40-hba')		
+	system(['cat ' filedead ' | ' ARGO_SYS_PARAM.root_dir 'xwmail.sh  mail -s "[SEC=OFFICIAL] Warning - dead float alive? ' num2str(wmo) ...
+    ' "  '  ARGO_SYS_PARAM.overdue_operator_addrs])
+else
 system(['cat ' filedead ' | mail -s "[SEC=OFFICIAL] Warning - dead float alive? ' num2str(wmo) ...
     ' "  '  ARGO_SYS_PARAM.overdue_operator_addrs])
+end
 else
     unix(['rm -f ' ARGO_SYS_PARAM.iridium_path '*' num2str(ARGO_ID_CROSSREF(kk,2)) '.*'])
 end
