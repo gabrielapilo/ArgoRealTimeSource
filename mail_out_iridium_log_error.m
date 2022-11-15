@@ -26,13 +26,13 @@ fclose(fff);
 [st,host] = unix('hostname')
 if strcmp(deblank(host),'oa-40-hba')
 	if (type == 1)
-		system(['cat ' filebad ' | ' ARGO_SYS_PARAM.root_dir 'xwmail.sh mail -s"[SEC=OFFICIAL] Missing Iridium log/msg file for ' filename ' " -r sem018@csiro.au ' ARGO_SYS_PARAM.operator_addrs])
+		system(['cat ' filebad ' | ' ARGO_SYS_PARAM.root_dir 'xwmail.sh mail -s"[SEC=OFFICIAL]_Missing_Iridium_log/msg_file_for_' filename ' " -r sem018@csiro.au ' ARGO_SYS_PARAM.operator_addrs])
 	elseif (type == 2)
-		system(['cat ' filebad ' | ' ARGO_SYS_PARAM.root_dir 'xwmail.sh mail -s"[SEC=OFFICIAL] Iridium log/msg file size zero ' filename ' " -r sem018@csiro.au ' ARGO_SYS_PARAM.operator_addrs])
+		system(['cat ' filebad ' | ' ARGO_SYS_PARAM.root_dir 'xwmail.sh mail -s"[SEC=OFFICIAL]_Iridium_log/msg_file_size_zero_' filename ' " -r sem018@csiro.au ' ARGO_SYS_PARAM.operator_addrs])
 	elseif (type == 3)
-		system(['cat ' filebad ' | ' ARGO_SYS_PARAM.root_dir 'xwmail.sh mail -s"[SEC=OFFICIAL] Iridium log/msg file caused crash ' filename ' " -r sem018@csiro.au ' ARGO_SYS_PARAM.operator_addrs])
+		system(['cat ' filebad ' | ' ARGO_SYS_PARAM.root_dir 'xwmail.sh mail -s"[SEC=OFFICIAL]_Iridium_log/msg_file_caused_crash_' filename ' " -r sem018@csiro.au ' ARGO_SYS_PARAM.operator_addrs])
 	elseif (type == 4)
-		system(['cat ' filebad ' | ' ARGO_SYS_PARAM.root_dir 'xwmail.sh mail -s"[SEC=OFFICIAL] phy file caused crash ' filename ' " -r sem018@csiro.au ' ARGO_SYS_PARAM.operator_addrs])
+		system(['cat ' filebad ' | ' ARGO_SYS_PARAM.root_dir 'xwmail.sh mail -s"[SEC=OFFICIAL]_phy_file_caused_crash_' filename ' " -r sem018@csiro.au ' ARGO_SYS_PARAM.operator_addrs])
 	end
 else
 	if (type == 1)
