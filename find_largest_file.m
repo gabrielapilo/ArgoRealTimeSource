@@ -44,20 +44,20 @@ for ii = 1:length(typ)
         irdat_size = d{5};
     end
     
-    lookhere{1} = [ARGO_SYS_PARAM.rudics_server '/f' num2str(aic(kk,5),'%04i') '/datafiles/' nfilen];
-    lookhere{2} = [ARGO_SYS_PARAM.rudics_server '/f' num2str(aic(kk,5),'%04i') '/badfiles/' nfilen];
-    lookhere{3} = [ARGO_SYS_PARAM.rudics_server '/f' num2str(aic(kk,5),'%04i') '/' nfilen];
-    lookhere{4} = [ARGO_SYS_PARAM.secondary_server '/f' num2str(aic(kk,5),'%04i') '/datafiles/' nfilen];
-    lookhere{5} = [ARGO_SYS_PARAM.secondary_server '/f' num2str(aic(kk,5),'%04i') '/badfiles/' nfilen];
-    lookhere{6} = [ARGO_SYS_PARAM.secondary_server '/f' num2str(aic(kk,5),'%04i') '/' nfilen];
+    %lookhere{1} = [ARGO_SYS_PARAM.rudics_server '/f' num2str(aic(kk,5),'%04i') '/datafiles/' nfilen];
+    %lookhere{2} = [ARGO_SYS_PARAM.rudics_server '/f' num2str(aic(kk,5),'%04i') '/badfiles/' nfilen];
+    %lookhere{3} = [ARGO_SYS_PARAM.rudics_server '/f' num2str(aic(kk,5),'%04i') '/' nfilen];
+    %lookhere{4} = [ARGO_SYS_PARAM.secondary_server '/f' num2str(aic(kk,5),'%04i') '/datafiles/' nfilen];
+    %lookhere{5} = [ARGO_SYS_PARAM.secondary_server '/f' num2str(aic(kk,5),'%04i') '/badfiles/' nfilen];
+    %lookhere{6} = [ARGO_SYS_PARAM.secondary_server '/f' num2str(aic(kk,5),'%04i') '/' nfilen];
     
     siz = [];
-    for i=1:6
-        d=dirc(lookhere{i});
-        if ~isempty(d)
-            siz(i) = d{5};
-        end
-    end
+%     for i=1:6
+%         d=dirc(lookhere{i});
+%         if ~isempty(d)
+%             siz(i) = d{5};
+%         end
+%     end
     
     %look in the stampdated files area
     lookhere{7} = [ARGO_SYS_PARAM.iridium_repository '/f' num2str(aic(kk,5),'%04i') '/stampdatedfiles/*' nfilen];
@@ -78,6 +78,7 @@ for ii = 1:length(typ)
             system(['mv -f ' ARGO_SYS_PARAM.iridium_path nfilen ' ' ARGO_SYS_PARAM.iridium_path '/iridium_bad_files'])
             if imax == 7 %need to change file name
                 system(['cp -f ' lookhere{imax} ' ' ARGO_SYS_PARAM.iridium_path '/' nfilen(end-11:end)]);
+                system(['chmod 0666 '  ARGO_SYS_PARAM.iridium_path '/' nfilen(end-11:end)]);
                 %If we updated any files, copy to BOM ftp
                 BOM_retrieve_Iridium([ARGO_SYS_PARAM.iridium_path nfilen(end-11:end)])
                 %and copy the matching msg/log file to make the pair
@@ -88,6 +89,7 @@ for ii = 1:length(typ)
                 end
             else
                 system(['cp -f ' lookhere{imax} ' ' ARGO_SYS_PARAM.iridium_path '/' nfilen]);
+                system(['chmod 0666 ' ARGO_SYS_PARAM.iridium_path '/' nfilen]);
                 %If we updated any files, copy to BOM ftp
                 BOM_retrieve_Iridium([ARGO_SYS_PARAM.iridium_path nfilen])
                 %and copy the matching msg/log file to make the pair
