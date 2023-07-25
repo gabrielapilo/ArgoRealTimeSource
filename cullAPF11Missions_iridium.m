@@ -169,8 +169,10 @@ if ~isempty(ms)
                             differs=1;
                         end
                     else
-                        if v1~=v2
+                        if length(v1)~=length(v2)
                             differs=1;
+                        elseif v1~=v2 
+                            differs=1;                            
                         end
                     end
                 end
