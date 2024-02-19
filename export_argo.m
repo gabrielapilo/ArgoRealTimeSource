@@ -201,7 +201,8 @@ end
 if ispc
     [status,ww] = system([ARGO_SYS_PARAM.root_dir 'src\GroupSpecific\writeGDAC&']);%%%PUTDATA dengdeng
 else
-    [status,ww] = system([ARGO_SYS_PARAM.root_dir 'src/GroupSpecific/writeGDAC &']);
+    cd([ARGO_SYS_PARAM.root_dir])
+    [status,ww] = system([ARGO_SYS_PARAM.root_dir 'src/GroupSpecific/writeGDAC']);
 end
 if status ~= 0
     logerr(2,['initiating writeGDAC failed: ' ww]);
