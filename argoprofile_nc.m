@@ -908,10 +908,15 @@ for ii = 1:nin
             netcdf.putVar(ncid,NPSALID,[0,ii-1],[length(nan2fv(fp.s_raw(irev),fval)),1],nan2fv(fp.s_raw(irev),fval));
             netcdf.putVar(ncid,NPSALQCID,[0,ii-1],[length(num2str(fp.s_qc(irev),'%1d')),1],num2str(fp.s_qc(irev),'%1d'));
             
-            if adjusted & ~isempty(fp.s_calibrate)
-                sc=qc_apply4(fp.s_calibrate(irev),fp.s_qc(irev));
+            if adjusted
+                if ~isempty(fp.s_calibrate)
+                    sc=qc_apply4(fp.s_calibrate(irev),fp.s_qc(irev));
+                else
+                    sc = fp.s_raw;
+                end
                 netcdf.putVar(ncid,NPSALADID,[0,ii-1],[length(nan2fv(sc,fval)),1], nan2fv(sc,fval));
                 netcdf.putVar(ncid,NPSALADQCID,[0,ii-1],[length(num2str(fp.s_qc(irev),'%1d')),1],num2str(fp.s_qc(irev),'%1d'));
+                
             end
             qcflag = overall_qcflag(fp.s_qc);
             netcdf.putVar(ncid,NPROPSALQCID,ii-1,length(qcflag),qcflag);
