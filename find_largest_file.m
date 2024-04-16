@@ -59,46 +59,56 @@ for ii = 1:length(typ)
 %         end
 %     end
     
-    %look in the stampdated files area
-    lookhere{7} = [ARGO_SYS_PARAM.iridium_repository '/f' num2str(aic(kk,5),'%04i') '/stampdatedfiles/*' nfilen];
-    d=dirc(lookhere{7});
+%     %look in the stampdated files area
+%     lookhere{7} = [ARGO_SYS_PARAM.iridium_repository '/f' num2str(aic(kk,5),'%04i') '/stampdatedfiles/*' nfilen];
+%     d=dirc(lookhere{7});
+%     if ~isempty(d)
+%         [mm,im] = max([d{:,5}]);
+%         siz(7) = mm;
+%         lookhere{7} = [ARGO_SYS_PARAM.iridium_repository '/f' num2str(aic(kk,5),'%04i') '/stampdatedfiles/' d{im,1}];
+%     end
+    
+    %look in iridium_processed files area
+    lookhere{8} = [ARGO_SYS_PARAM.iridium_path 'iridium_processed/' num2str(aic(kk,1)) '/' nfilen];
+    d=dirc(lookhere{8});
     if ~isempty(d)
         [mm,im] = max([d{:,5}]);
-        siz(7) = mm;
-        lookhere{7} = [ARGO_SYS_PARAM.iridium_repository '/f' num2str(aic(kk,5),'%04i') '/stampdatedfiles/' d{im,1}];
+        siz(8) = mm;
+        lookhere{8} = [ARGO_SYS_PARAM.iridium_path 'iridium_processed/' num2str(aic(kk,1)) '/' d{im,1}];
     end
     
     if ~isempty(siz)
         [mm,imax] = max(siz);
         
-        %only bother copying if there is a bigger file, or file didn't make
-        %it to iridium_data folder
+        % from 16/4/2024: only looks for larger file that got processed. If
+        % there is an already larger file processed, leaves the smaller
+        % file in iridium_data for manual check
         if mm > irdat_size
             %move the small file out
-            system(['mv -f ' ARGO_SYS_PARAM.iridium_path nfilen ' ' ARGO_SYS_PARAM.iridium_path '/iridium_bad_files'])
-            if imax == 7 %need to change file name
-                system(['cp -f ' lookhere{imax} ' ' ARGO_SYS_PARAM.iridium_path '/' nfilen(end-11:end)]);
-                system(['chmod 0666 '  ARGO_SYS_PARAM.iridium_path '/' nfilen(end-11:end)]);
+%             system(['mv -f ' ARGO_SYS_PARAM.iridium_path nfilen ' ' ARGO_SYS_PARAM.iridium_path '/iridium_bad_files'])
+%             if imax == 7 %need to change file name
+%                 system(['cp -f ' lookhere{imax} ' ' ARGO_SYS_PARAM.iridium_path '/' nfilen(end-11:end)]);
+%                 system(['chmod 0666 '  ARGO_SYS_PARAM.iridium_path '/' nfilen(end-11:end)]);
+%                 %If we updated any files, copy to BOM ftp
+%                 BOM_retrieve_Iridium([ARGO_SYS_PARAM.iridium_path nfilen(end-11:end)])
+%                 %and copy the matching msg/log file to make the pair
+%                 try
+%                     BOM_retrieve_Iridium([ARGO_SYS_PARAM.iridium_path nfilen2(end-11:end)])
+%                 catch
+%                     logerr(3,['Matching file not copied to BOM: ' nfilen2]);
+%                 end
+%             else
+%                 system(['cp -f ' lookhere{imax} ' ' ARGO_SYS_PARAM.iridium_path '/' nfilen]);
+%                 system(['chmod 0666 ' ARGO_SYS_PARAM.iridium_path '/' nfilen]);
                 %If we updated any files, copy to BOM ftp
-                BOM_retrieve_Iridium([ARGO_SYS_PARAM.iridium_path nfilen(end-11:end)])
+%                 BOM_retrieve_Iridium([ARGO_SYS_PARAM.iridium_path nfilen])
                 %and copy the matching msg/log file to make the pair
-                try
-                    BOM_retrieve_Iridium([ARGO_SYS_PARAM.iridium_path nfilen2(end-11:end)])
-                catch
-                    logerr(3,['Matching file not copied to BOM: ' nfilen2]);
-                end
-            else
-                system(['cp -f ' lookhere{imax} ' ' ARGO_SYS_PARAM.iridium_path '/' nfilen]);
-                system(['chmod 0666 ' ARGO_SYS_PARAM.iridium_path '/' nfilen]);
-                %If we updated any files, copy to BOM ftp
-                BOM_retrieve_Iridium([ARGO_SYS_PARAM.iridium_path nfilen])
-                %and copy the matching msg/log file to make the pair
-                try
-                    BOM_retrieve_Iridium([ARGO_SYS_PARAM.iridium_path nfilen2])
-                catch
-                    logerr(3,['Matching file not copied to BOM: ' nfilen2]);
-                end
-            end
+%                 try
+%                     BOM_retrieve_Iridium([ARGO_SYS_PARAM.iridium_path nfilen2])
+%                 catch
+%                     logerr(3,['Matching file not copied to BOM: ' nfilen2]);
+%                 end
+%             end
             found = 1;
         end
     end

@@ -89,6 +89,7 @@ if(m>0)
                 end
                 %                 return
             else
+                if found(ii) == 0
                 % Set details for the next profile
                 pmeta.wmo_id = idcrossref(argosid,2,1);
                 pmeta.ftptime = ftptime;
@@ -110,6 +111,7 @@ if(m>0)
                 dbdat = getdbase(pmeta.wmo_id);
                 logerr(0,num2str(pmeta.wmo_id));
                 isfloat=1;
+                end
             end
             
             %get the float structure for this float:
