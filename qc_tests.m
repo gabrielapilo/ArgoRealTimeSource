@@ -585,7 +585,7 @@ for ii = ipf(:)'
         
         if ~isempty(ia);
             [SA, in_ocean] = gsw_SA_from_SP(fp.s_raw, PRES_positive, fp.lon(ia(1)), fp.lat(ia(1))); % needs updated GSW (v 3.06)
-            CT = gsw_CT_from_t(SA, fp.s_raw, fp.p_raw);
+            CT = gsw_CT_from_t(SA, fp.t_raw, fp.p_raw);
             DENS = gsw_rho(SA, CT, 0);
             [SPIKE_T,SPIKE_S,BO_T,BO_S,... % logical arrays with "1" when spikes are identified
             TEMP_med,TEMP_medm,TEMP_medp,...
