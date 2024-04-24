@@ -591,8 +591,10 @@ for ii = ipf(:)'
             TEMP_med,TEMP_medm,TEMP_medp,...
             PSAL_med,PSAL_medm,PSAL_medp,...
             DENS_med,DENS_medm,DENS_medp] = ...
-                QTRT_spike_check_MEDD_main(fp.p_raw,fp.t_raw,fp.s_raw,DENS,fp.lat(ia(1)));
-          
+                QTRT_spike_check_MEDD_main(fliplr(fp.p_raw),fliplr(fp.t_raw),fliplr(fp.s_raw),fliplr(DENS),fp.lat(ia(1)));
+          % NOTE: the inputs for QTRT_spike_check_MEDD_main need to go from
+          % surface to bottom!
+            
             % Applies QC4 to data points with spikes
             fp.t_qc(SPIKE_T' == 1) = 4;
             fp.s_qc(SPIKE_S' == 1) = 4;
