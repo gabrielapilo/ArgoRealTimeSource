@@ -912,7 +912,7 @@ for ii = 1:nin
                 if ~isempty(fp.s_calibrate)
                     sc=qc_apply4(fp.s_calibrate(irev),fp.s_qc(irev));
                 else
-                    sc = fp.s_raw;
+                    sc = fp.s_raw(irev);
                 end
                 netcdf.putVar(ncid,NPSALADID,[0,ii-1],[length(nan2fv(sc,fval)),1], nan2fv(sc,fval));
                 netcdf.putVar(ncid,NPSALADQCID,[0,ii-1],[length(num2str(fp.s_qc(irev),'%1d')),1],num2str(fp.s_qc(irev),'%1d'));
