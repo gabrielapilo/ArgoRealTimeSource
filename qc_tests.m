@@ -596,8 +596,8 @@ for ii = ipf(:)'
           % surface to bottom!
             
             % Applies QC4 to data points with spikes
-            fp.t_qc(SPIKE_T' == 1) = 4;
-            fp.s_qc(SPIKE_S' == 1) = 4;
+            fp.t_qc(flipud(SPIKE_T)' == 1) = 4;
+            fp.s_qc(flipud(SPIKE_S)' == 1) = 4;
             
             if any(SPIKE_T) | any(SPIKE_S);
                 fp.testsfailed(25) = 1;
