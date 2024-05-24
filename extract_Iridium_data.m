@@ -69,24 +69,27 @@ if(m>0)
             msgfn{ii,1}
             ftptime = julian(datevec(msgfn{ii,4}));
             argosid = str2num(msgfn{ii,1}(1:4));
-            if ~any(argosidlist==argosid)
+            if ~any(argosidlist==argosid) | any(argosidlist==argosid)
                 % Not a float we know or want
                 logerr(0,'');
                 dbdat = [];
                 % If flist supplied then this is simply one of the floats we are
                 % not interested in. Otherwise, it is not known to our database,
                 % so either a corrupted id or the database is out of date.
-                if isempty(flist)
-                    logerr(3,['? New float, Argos ID=' num2str(argosid)]);
+%                 if isempty(flist)
+%                     logerr(3,['? New float, Argos ID=' num2str(argosid)]);
                     % load txt with newsystem floats
                     newsystem_fl = load([ARGO_SYS_PARAM.root_dir 'src/newsystem.txt']);
-                    if ~isempty(find(argosid == newsystem_fl))
+                    if ~any(argosidlist==argosid)
                         logerr(3,['Float ' num2str(argosid) ' is going through the new system (removing file from iridium_data)']);
                         unix(['rm -f ' ARGO_SYS_PARAM.iridium_path num2str(argosid) '.*'])
+                    elseif any(argosidlist==argosid)
+                        logerr(3,['Float ' num2str(argosid) ' has been migrated to the new system (removing file from iridium_data)']);
+                        unix(['rm -f ' ARGO_SYS_PARAM.iridium_path num2str(argosid) '.*'])
                     else
-                        logerr(3,['? New float, Argos ID=' num2str(argosid)]);
+                        logerr(3,['? Unrecognised float! s/n ' num2str(argosid)]);
                     end
-                end
+%                 end
                 %                 return
             else
                 if found(ii) == 0
