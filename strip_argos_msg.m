@@ -655,9 +655,9 @@ logerr(5,['Processed ' num2str(npro) ' profiles']);
 
 
 % Now transmit all GTS messages and netCDF files 
-if opts.tr_now
-   export_argo;
-end
+% if opts.tr_now
+%    export_argo;
+% end
 
 % Record the ftp file details in the processing records
 %does this get used for iridium data, phy, solo2? Review.
@@ -848,7 +848,7 @@ end
 irej = jb1<(max(jday)-1.5);
 b1tim.lineno(irej) = [];
 b1tim.dat(irej,:) = [];
-
+e
 return
 %--------------------------------------------------------------------
 %  (256*h1 + h2) converts 2 hex (4-bit) numbers to an unsigned byte. 

@@ -603,13 +603,13 @@ netcdf.putVar(ncid,TECHNID,[0,0],[128,n_tech_F],tn')
 
 netcdf.close(ncid)
 
-if ~strcmp('hold',dbdat.status) & ~strcmp('evil',dbdat.status)
-    if ispc
-        [status,ww] = system(['copy /Y ' fname ' ' ARGO_SYS_PARAM.root_dir 'export']);
-    else
-        [status,ww] = system(['cp -f ' fname ' ' ARGO_SYS_PARAM.root_dir 'export']);
-    end
-end
+% if ~strcmp('hold',dbdat.status) & ~strcmp('evil',dbdat.status)
+%     if ispc
+%         [status,ww] = system(['copy /Y ' fname ' ' ARGO_SYS_PARAM.root_dir 'export']);
+%     else
+%         [status,ww] = system(['cp -f ' fname ' ' ARGO_SYS_PARAM.root_dir 'export']);
+%     end
+% end
 
 return
 

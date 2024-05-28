@@ -695,7 +695,7 @@ end       % Loop on every cycle
 %Delivery.
 if ~strcmp('evil',dbdat.status) %& ~strcmp('hold',dbdat.status)
     
-    [status,ww] = system(['cp -f ' fname ' ' ARGO_SYS_PARAM.root_dir 'export']);
+%     [status,ww] = system(['cp -f ' fname ' ' ARGO_SYS_PARAM.root_dir 'export']);
     if status~=0
         logerr(3,['Copy of ' fname ' to export/ failed:' ww]);
     end

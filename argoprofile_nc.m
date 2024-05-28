@@ -1152,18 +1152,18 @@ end
     
     netcdf.close(ncid)
     
-    if exist('isingdac')==2
-        if isingdac(fname)~=2 & ~strcmp('evil',dbdat.status) %& ~strcmp('hold',dbdat.status) %DON'T DELIVER these!!!!!
-            if ispc
-                [status,ww] = system(['copy /Y ' fname ' ' ARGO_SYS_PARAM.root_dir 'export']);
-            else
-                [status,ww] = system(['cp -f ' fname ' ' ARGO_SYS_PARAM.root_dir 'export']);
-            end
-            if status~=0
-                logerr(3,['Copy of ' fname ' to export/ failed:' ww]);
-            end
-        end
-    end
+%     if exist('isingdac')==2
+%         if isingdac(fname)~=2 & ~strcmp('evil',dbdat.status) %& ~strcmp('hold',dbdat.status) %DON'T DELIVER these!!!!!
+%             if ispc
+%                 [status,ww] = system(['copy /Y ' fname ' ' ARGO_SYS_PARAM.root_dir 'export']);
+%             else
+%                 [status,ww] = system(['cp -f ' fname ' ' ARGO_SYS_PARAM.root_dir 'export']);
+%             end
+%             if status~=0
+%                 logerr(3,['Copy of ' fname ' to export/ failed:' ww]);
+%             end
+%         end
+%     end
     if dbdat.oxy
         argoprofile_Bfile_nc(dbdat,fp);
     end

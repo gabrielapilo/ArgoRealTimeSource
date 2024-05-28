@@ -91,6 +91,8 @@ global PREC_FNM PROC_REC_WMO PROC_RECORDS
 global ARGO_REPORT ARGO_RPT_FID
 global THE_ARGO_BIO_CAL_DB  ARGO_BIO_CAL_WMO
 
+wanttraj = 0;
+
 [ dbdat.argos_id dbdat.wmo_id ]
 idatapath = ARGO_SYS_PARAM.iridium_path;
 
@@ -1612,7 +1614,7 @@ if any(stage==1)
 %             write_tesac(dbdat,float(np));
             
             % BOM write BUFR call
-            BOM_write_BUFR;
+%             BOM_write_BUFR;
             if outcome == 1
                 prec.gts_count = 0;
             else
@@ -1643,7 +1645,8 @@ if any(stage==1)
     end
     
     %now the trajectory files. Only for iridium Apex & Seabird at this stage.
-    if dbdat.maker == 1 || dbdat.maker == 4
+    if  wanttraj == 1;
+        if dbdat.maker == 1 || dbdat.maker == 4 
         %not the EM floats which have a 9999 subtype but still 9i
         %controllerboard.
         if dbdat.subtype ~= 9999
@@ -1659,6 +1662,7 @@ if any(stage==1)
             %save the updated traj file:
             save(tfnm,'traj');
             trajectory_iridium_nc(dbdat,float,traj);
+        end
         end
     end
     prec.traj_nc_count = 0;

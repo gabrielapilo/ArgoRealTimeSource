@@ -121,8 +121,9 @@ if ~exist([fnm '.mat'],'file')
     pro = new_profile_struct(dbdat);
     float = pro;           %new_profile_struct(dbdat);
     %   pro = new_profile_struct(dbdat);
+    display('g1')
 else
-    
+    display('g2')
     load(fnm,'float');
     
     stage = unique([stage opts.redo]);
@@ -150,7 +151,7 @@ end
 
 if ~isempty(stage)
     % --- Find the processing record for this float
-    
+    display('g3')
     nprec = find(PROC_REC_WMO==dbdat.wmo_id);
     if isempty(nprec)
         logerr(3,['Creating new processing record as none found for float ' ...
@@ -193,7 +194,7 @@ if any(stage==1)
     
     % Set status to "stage 1 has failed", until we have succeeded!
     prec.proc_status(1) = -1;
-    
+    display('g4')
     %trust the profile number reported by the float - but check for rollover later!
     pro.profile_number=np  ; %-dbdat.np0;
     pro.position_accuracy='G';
@@ -203,7 +204,7 @@ if any(stage==1)
     try
         fclose(fid);
     end
-    
+    display('g5')
     cullAPF11Missions_iridium(dbdat,np);  %& No mission
     %     information for older apf11s!  Therefore must create mission for the
     %     successive profiles: and be flexible so can handle newer floats which
@@ -222,7 +223,7 @@ if any(stage==1)
                 c = [c;cc{:}];
             end
         end
-        
+        display('g6')
         % Checks if there are duplicated CTD_CP values in science_log.csv
         % First, remove timestamp of CTD_CP measurements:
         ii = find(cellfun(@isempty,strfind(c,'CTD_CP'))==0);
@@ -248,6 +249,7 @@ if any(stage==1)
             % Removes redundant data from "c"
             to_remove = iind(1):iind(2)-1;
             c(to_remove) = [];
+            display('g7')
         end
         
         %for all format types, the cp profile is labelled as
@@ -257,6 +259,7 @@ if any(stage==1)
             gg = c{ii(pm)};
             [~,pro.p_raw(pm),pro.t_raw(pm),pro.s_raw(pm),pro.nsamps(pm)] ...
                 =pts(gg);
+            display('g8')
         end
         
         %Now get all the PTSC spot samples. CHECK THAT CTD_PT are spot
@@ -282,7 +285,7 @@ if any(stage==1)
             end
             
         end
-        
+        display('g9')
         %Now get all the PTSC spot samples. Older format.
         ii = find(strncmp(c,'CTD,',4)==1);
         for pm = 1:length(ii)
@@ -303,7 +306,7 @@ if any(stage==1)
             else
                 cspot(pm) = NaN;
             end
-            
+            display('g10')
         end
         
         %Now get all the P measurements.
@@ -312,6 +315,7 @@ if any(stage==1)
         for pm = 1:length(ii)
             gg = c{ii(pm)};
             [jdpres(pm),p(pm)]  = pts(gg);
+            display('g11')
         end
         
         %Now get all the P measurements, older format
@@ -319,11 +323,12 @@ if any(stage==1)
         for pm = 1:length(ii)
             gg = c{ii(pm)};
             [jdpres(pm),p(pm)]  = pts(gg);
+            
         end
         
         %put the p-only measurements and pts spot samples into one array
         jdall = [jdpres,jdspot];
-        pall = [p,pspot];
+        pall = [p,pspot]; display(pspot)
         tall = [repmat(NaN,size(p)),tspot];
         sall = [repmat(NaN,size(p)),sspot];
         call = [repmat(NaN,size(p)),cspot];
@@ -340,7 +345,7 @@ if any(stage==1)
         else
             jday_pdm = [];
         end
-        
+        display(jday_pdm)
         ii = find(cellfun(@isempty,strfind(c,'Park Mission'))==0);
         if ~isempty(ii)
             jday_pm = pts(c{ii});
@@ -377,7 +382,7 @@ if any(stage==1)
                 jday_sm = pts(c{ii});
             end
         end
-        
+        display('g12')
         %put the descent to park info in
         if ~isempty(jday_pdm)
             pro.jday_start_descent_to_park = jday_pdm;
@@ -412,7 +417,7 @@ if any(stage==1)
                 pro.park_c = call(ii);
             end
         end
-        
+        display('g13')
         %put deep descent mission data in
         if ~isempty(jday_ddm)
             pro.jday_start_descent_to_profile = jday_ddm;
@@ -486,7 +491,7 @@ if any(stage==1)
                 end
             end
         end
-        
+        display('g15')
         ii = find(cellfun(@isempty,strfind(c,'GPS'))==0);
         if ~isempty(ii)
             for gps = 1:length(ii)
@@ -522,7 +527,7 @@ if any(stage==1)
         end
         
         % need to turn around the arrays to go in the correct direction        
-        kk=diff(pro.p_raw)>0;
+        kk=diff(pro.p_raw)>0;display('g16')
         if sum(kk) == length(pro.p_raw) -1;
             %array is around the wrong way for our processing
             pro.p_raw = fliplr(pro.p_raw);
@@ -550,7 +555,7 @@ if any(stage==1)
             pro.nsamps(end)=[];
         end
         
-        
+        display(p_raw)
         if ~isempty(pro.p_raw)
             kk=find(pro.p_raw==0 & pro.t_raw==0 & pro.s_raw==0);
             if ~isempty(kk)
@@ -574,7 +579,7 @@ if any(stage==1)
         if np>1
             % ensure that date is around the time of the previous profile
             % before add it in at that spot:
-            
+            display(np)
             if ~isempty(previouslocation)
                 pl=length(previouslocation);
                 
@@ -650,7 +655,7 @@ if any(stage==1)
             end
         end
     end
-    
+    display(logerr)
     
     %now open system log file and vitals log file and read further technical data:
     
@@ -727,7 +732,7 @@ if any(stage==1)
             end
         end
     end
-    
+        display(logerr)
     float(np) = pro;
     prec.profile_number = float(np).profile_number;
     
@@ -794,7 +799,7 @@ if any(stage==1)
             %             write_tesac(dbdat,float(np));
             
             % BOM write BUFR call
-            BOM_write_BUFR;
+%             BOM_write_BUFR;
             if outcome == 1
                 prec.gts_count = 0;
             else
@@ -897,6 +902,7 @@ if any(stage==1)
         save(PREC_FNM,'PROC_RECORDS','ftp_details','-v6');
     end
 end
+    display(logerr)
     return
     
     
